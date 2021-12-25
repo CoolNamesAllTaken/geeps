@@ -529,11 +529,7 @@
 			[
 				0,
 				1,
-				2,
-				3,
-				4,
-				5,
-				61
+				44
 			]
 		},
 		{
@@ -903,39 +899,39 @@
 			"language" : "C",
 			"sourceIndexes" : 
 			[
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
 				20,
 				21,
 				22,
-				23,
 				24,
 				25,
+				26,
 				27,
 				28,
-				29,
 				30,
-				31,
-				32,
 				33,
 				34,
-				35,
-				36,
-				37,
 				38,
 				39,
 				41,
-				42,
-				43,
-				44,
 				45,
-				47,
-				50,
-				51,
-				55,
-				56,
-				58,
-				62,
-				63,
-				64
+				46,
+				47
 			]
 		},
 		{
@@ -1302,17 +1298,17 @@
 			"language" : "ASM",
 			"sourceIndexes" : 
 			[
-				26,
+				9,
+				23,
+				29,
+				31,
+				32,
+				35,
+				36,
+				37,
 				40,
-				46,
-				48,
-				49,
-				52,
-				53,
-				54,
-				57,
-				59,
-				60
+				42,
+				43
 			]
 		}
 	],
@@ -2172,54 +2168,12 @@
 			[
 				0,
 				1,
-				2,
 				3,
 				4,
 				5,
-				20,
-				21,
-				22,
-				23,
-				24,
-				25,
-				27,
-				28,
-				29,
-				30,
-				31,
-				32,
-				33,
-				34,
-				35,
-				36,
-				37,
-				38,
-				39,
-				41,
-				42,
-				43,
-				44,
-				45,
-				47,
-				50,
-				51,
-				55,
-				56,
-				58,
-				61,
-				62,
-				63,
-				64
-			]
-		},
-		{
-			"name" : "Header Files",
-			"sourceIndexes" : 
-			[
 				6,
 				7,
 				8,
-				9,
 				10,
 				11,
 				12,
@@ -2229,24 +2183,49 @@
 				16,
 				17,
 				18,
-				19
+				19,
+				20,
+				21,
+				22,
+				24,
+				25,
+				26,
+				27,
+				28,
+				30,
+				33,
+				34,
+				38,
+				39,
+				41,
+				44,
+				45,
+				46,
+				47
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				2
 			]
 		},
 		{
 			"name" : "",
 			"sourceIndexes" : 
 			[
-				26,
+				9,
+				23,
+				29,
+				31,
+				32,
+				35,
+				36,
+				37,
 				40,
-				46,
-				48,
-				49,
-				52,
-				53,
-				54,
-				57,
-				59,
-				60
+				42,
+				43
 			]
 		}
 	],
@@ -2261,101 +2240,12 @@
 		{
 			"backtrace" : 18,
 			"compileGroupIndex" : 0,
-			"path" : "src/display/hV_Colours565.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 18,
-			"compileGroupIndex" : 0,
-			"path" : "src/display/hV_Font_Terminal.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 18,
-			"compileGroupIndex" : 0,
-			"path" : "src/display/hV_Screen_Buffer.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 18,
-			"compileGroupIndex" : 0,
-			"path" : "src/display/hV_Utilities.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 18,
-			"compileGroupIndex" : 0,
-			"path" : "src/display/Screen_EPD_EXT3.cpp",
+			"path" : "src/display/epaper.cc",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 19,
-			"path" : "inc/display/Arduino.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/Terminal12x16e.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/Terminal8x12e.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Documentation.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Screen_Buffer.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/PDLS_EXT3_Basic.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/Terminal16x24e.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Colours565.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Font.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Utilities.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/Screen_EPD_EXT3.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/Terminal6x8e.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Configuration.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 19,
-			"path" : "inc/display/hV_Font_Terminal.h",
+			"path" : "inc/display/epaper.hh",
 			"sourceGroupIndex" : 1
 		},
 		{

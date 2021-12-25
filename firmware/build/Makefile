@@ -175,140 +175,32 @@ bs2_default/fast:
 	$(MAKE) -f pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default.dir/build.make pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default.dir/build
 .PHONY : bs2_default/fast
 
-src/display/Screen_EPD_EXT3.obj: src/display/Screen_EPD_EXT3.cpp.obj
+src/display/epaper.obj: src/display/epaper.cc.obj
 
-.PHONY : src/display/Screen_EPD_EXT3.obj
-
-# target to build an object file
-src/display/Screen_EPD_EXT3.cpp.obj:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj
-.PHONY : src/display/Screen_EPD_EXT3.cpp.obj
-
-src/display/Screen_EPD_EXT3.i: src/display/Screen_EPD_EXT3.cpp.i
-
-.PHONY : src/display/Screen_EPD_EXT3.i
-
-# target to preprocess a source file
-src/display/Screen_EPD_EXT3.cpp.i:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.i
-.PHONY : src/display/Screen_EPD_EXT3.cpp.i
-
-src/display/Screen_EPD_EXT3.s: src/display/Screen_EPD_EXT3.cpp.s
-
-.PHONY : src/display/Screen_EPD_EXT3.s
-
-# target to generate assembly for a file
-src/display/Screen_EPD_EXT3.cpp.s:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.s
-.PHONY : src/display/Screen_EPD_EXT3.cpp.s
-
-src/display/hV_Colours565.obj: src/display/hV_Colours565.cpp.obj
-
-.PHONY : src/display/hV_Colours565.obj
+.PHONY : src/display/epaper.obj
 
 # target to build an object file
-src/display/hV_Colours565.cpp.obj:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj
-.PHONY : src/display/hV_Colours565.cpp.obj
+src/display/epaper.cc.obj:
+	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/epaper.cc.obj
+.PHONY : src/display/epaper.cc.obj
 
-src/display/hV_Colours565.i: src/display/hV_Colours565.cpp.i
+src/display/epaper.i: src/display/epaper.cc.i
 
-.PHONY : src/display/hV_Colours565.i
-
-# target to preprocess a source file
-src/display/hV_Colours565.cpp.i:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.i
-.PHONY : src/display/hV_Colours565.cpp.i
-
-src/display/hV_Colours565.s: src/display/hV_Colours565.cpp.s
-
-.PHONY : src/display/hV_Colours565.s
-
-# target to generate assembly for a file
-src/display/hV_Colours565.cpp.s:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.s
-.PHONY : src/display/hV_Colours565.cpp.s
-
-src/display/hV_Font_Terminal.obj: src/display/hV_Font_Terminal.cpp.obj
-
-.PHONY : src/display/hV_Font_Terminal.obj
-
-# target to build an object file
-src/display/hV_Font_Terminal.cpp.obj:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj
-.PHONY : src/display/hV_Font_Terminal.cpp.obj
-
-src/display/hV_Font_Terminal.i: src/display/hV_Font_Terminal.cpp.i
-
-.PHONY : src/display/hV_Font_Terminal.i
+.PHONY : src/display/epaper.i
 
 # target to preprocess a source file
-src/display/hV_Font_Terminal.cpp.i:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.i
-.PHONY : src/display/hV_Font_Terminal.cpp.i
+src/display/epaper.cc.i:
+	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/epaper.cc.i
+.PHONY : src/display/epaper.cc.i
 
-src/display/hV_Font_Terminal.s: src/display/hV_Font_Terminal.cpp.s
+src/display/epaper.s: src/display/epaper.cc.s
 
-.PHONY : src/display/hV_Font_Terminal.s
-
-# target to generate assembly for a file
-src/display/hV_Font_Terminal.cpp.s:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.s
-.PHONY : src/display/hV_Font_Terminal.cpp.s
-
-src/display/hV_Screen_Buffer.obj: src/display/hV_Screen_Buffer.cpp.obj
-
-.PHONY : src/display/hV_Screen_Buffer.obj
-
-# target to build an object file
-src/display/hV_Screen_Buffer.cpp.obj:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj
-.PHONY : src/display/hV_Screen_Buffer.cpp.obj
-
-src/display/hV_Screen_Buffer.i: src/display/hV_Screen_Buffer.cpp.i
-
-.PHONY : src/display/hV_Screen_Buffer.i
-
-# target to preprocess a source file
-src/display/hV_Screen_Buffer.cpp.i:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.i
-.PHONY : src/display/hV_Screen_Buffer.cpp.i
-
-src/display/hV_Screen_Buffer.s: src/display/hV_Screen_Buffer.cpp.s
-
-.PHONY : src/display/hV_Screen_Buffer.s
+.PHONY : src/display/epaper.s
 
 # target to generate assembly for a file
-src/display/hV_Screen_Buffer.cpp.s:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.s
-.PHONY : src/display/hV_Screen_Buffer.cpp.s
-
-src/display/hV_Utilities.obj: src/display/hV_Utilities.cpp.obj
-
-.PHONY : src/display/hV_Utilities.obj
-
-# target to build an object file
-src/display/hV_Utilities.cpp.obj:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj
-.PHONY : src/display/hV_Utilities.cpp.obj
-
-src/display/hV_Utilities.i: src/display/hV_Utilities.cpp.i
-
-.PHONY : src/display/hV_Utilities.i
-
-# target to preprocess a source file
-src/display/hV_Utilities.cpp.i:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.i
-.PHONY : src/display/hV_Utilities.cpp.i
-
-src/display/hV_Utilities.s: src/display/hV_Utilities.cpp.s
-
-.PHONY : src/display/hV_Utilities.s
-
-# target to generate assembly for a file
-src/display/hV_Utilities.cpp.s:
-	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.s
-.PHONY : src/display/hV_Utilities.cpp.s
+src/display/epaper.cc.s:
+	$(MAKE) -f CMakeFiles/geeps.dir/build.make CMakeFiles/geeps.dir/src/display/epaper.cc.s
+.PHONY : src/display/epaper.cc.s
 
 src/main.obj: src/main.cpp.obj
 
@@ -1367,21 +1259,9 @@ help:
 	@echo "... bs2_default_padded_checksummed_asm"
 	@echo "... bs2_default_bin"
 	@echo "... bs2_default"
-	@echo "... src/display/Screen_EPD_EXT3.obj"
-	@echo "... src/display/Screen_EPD_EXT3.i"
-	@echo "... src/display/Screen_EPD_EXT3.s"
-	@echo "... src/display/hV_Colours565.obj"
-	@echo "... src/display/hV_Colours565.i"
-	@echo "... src/display/hV_Colours565.s"
-	@echo "... src/display/hV_Font_Terminal.obj"
-	@echo "... src/display/hV_Font_Terminal.i"
-	@echo "... src/display/hV_Font_Terminal.s"
-	@echo "... src/display/hV_Screen_Buffer.obj"
-	@echo "... src/display/hV_Screen_Buffer.i"
-	@echo "... src/display/hV_Screen_Buffer.s"
-	@echo "... src/display/hV_Utilities.obj"
-	@echo "... src/display/hV_Utilities.i"
-	@echo "... src/display/hV_Utilities.s"
+	@echo "... src/display/epaper.obj"
+	@echo "... src/display/epaper.i"
+	@echo "... src/display/epaper.s"
 	@echo "... src/main.obj"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

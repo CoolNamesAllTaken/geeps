@@ -1,9 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj"
-  "CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj"
-  "CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj"
-  "CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj"
-  "CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj"
+  "CMakeFiles/geeps.dir/src/display/epaper.cc.obj"
   "CMakeFiles/geeps.dir/src/main.cpp.obj"
   "CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.obj"
   "CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.obj"

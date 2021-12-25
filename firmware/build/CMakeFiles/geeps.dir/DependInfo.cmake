@@ -234,11 +234,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
   "/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/include"
   )
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/jmcnelly/geeps/firmware/src/display/Screen_EPD_EXT3.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj"
-  "/home/jmcnelly/geeps/firmware/src/display/hV_Colours565.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj"
-  "/home/jmcnelly/geeps/firmware/src/display/hV_Font_Terminal.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj"
-  "/home/jmcnelly/geeps/firmware/src/display/hV_Screen_Buffer.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj"
-  "/home/jmcnelly/geeps/firmware/src/display/hV_Utilities.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj"
+  "/home/jmcnelly/geeps/firmware/src/display/epaper.cc" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/display/epaper.cc.obj"
   "/home/jmcnelly/geeps/firmware/src/main.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/src/main.cpp.obj"
   "/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp" "/home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj"
   )
