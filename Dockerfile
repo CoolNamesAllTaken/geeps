@@ -18,5 +18,5 @@ RUN ["/usr/bin/bash", "-c", "/usr/setup/setup_jlink/install_dependencies.sh"]
 ADD pico-sdk /usr/local/pico-sdk
 ENV PICO_SDK_PATH /usr/local/pico-sdk
 RUN ["/usr/bin/bash", "-c", "/usr/setup/setup_pico_sdk/install_dependencies.sh"]
-ENV CMAKE_C_COMPILER /usr/bin/arm-none-eabi-gcc
-ENV CMAKE_CXX_COMPILER /usr/bin/arm-none-eabi-g++
+# ENV CMAKE_C_COMPILER /usr/bin/arm-none-eabi-gcc
+# ENV CMAKE_CXX_COMPILER /usr/bin/arm-none-eabi-g++
