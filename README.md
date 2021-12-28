@@ -20,13 +20,13 @@ docker build -t pico-dev-image .
 Starting an interactive docker container on Linux or Mac. Mounts the `firmware` directory to `/root/firmware`.
 
 ```bash
-docker run --name pico-dev-container -it --mount type=bind,source="$(pwd)"/firmware,target=/root/firmware pico-dev-image --add-host=host.docker.internal:host-gateway
+docker run --name pico-dev-container -it --mount type=bind,source="$(pwd)"/firmware,target=/root/firmware pico-dev-image
 ```
 
 Starting an interactive docker container on Windows. Mounts the `firmware` directory to `/root/firmware`.
 
 ```bash
-winpty docker run --name pico-dev-container -it --mount type=bind,source="$(pwd)"/firmware,target=/root/firmware pico-dev-image --add-host=host.docker.internal:host-gateway
+winpty docker run --name pico-dev-container -it --mount type=bind,source="$(pwd)"/firmware,target=/root/firmware pico-dev-image
 ```
 
 ### Remove the Docker Image
