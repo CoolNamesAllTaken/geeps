@@ -12,7 +12,7 @@
             "request": "launch",
             "servertype": "external",
             "gdbPath": "arm-none-eabi-gdb",
-            "gdbTarget": "localhost:2331",
+            "gdbTarget": "host.docker.internal:2331",
             "svdFile": "/usr/local/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
             "runToMain": true,
             "preRestartCommands": [

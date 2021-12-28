@@ -1,0 +1,6 @@
+[submodule "docker/setup-scripts"]
+	path = setup-scripts
+	url = git@github.com:CoolNamesAllTaken/setup-scripts.git
+[submodule "docker/pico-sdk"]
+	path = pico-sdk
+	url = git@github.com:raspberrypi/pico-sdk.git

@@ -1,4 +1,4 @@
-# Install script for directory: /home/jmcnelly/geeps/firmware/inc/gps
+# Install script for directory: /root/firmware/inc/gps
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

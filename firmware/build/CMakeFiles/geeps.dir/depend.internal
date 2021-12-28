@@ -907,54 +907,10 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj
  /usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c
  generated/pico_base/pico/config_autogen.h
  generated/pico_base/pico/version.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj
- ../inc/display/Arduino.h
- ../inc/display/Screen_EPD_EXT3.h
- ../inc/display/Terminal12x16e.h
- ../inc/display/Terminal16x24e.h
- ../inc/display/Terminal6x8e.h
- ../inc/display/Terminal8x12e.h
- ../inc/display/hV_Colours565.h
- ../inc/display/hV_Configuration.h
- ../inc/display/hV_Font.h
- ../inc/display/hV_Font_Terminal.h
- ../inc/display/hV_Screen_Buffer.h
- ../inc/display/hV_Utilities.h
- /home/jmcnelly/geeps/firmware/src/display/Screen_EPD_EXT3.cpp
-CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj
- ../inc/display/Arduino.h
- ../inc/display/hV_Colours565.h
- /home/jmcnelly/geeps/firmware/src/display/hV_Colours565.cpp
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj
- ../inc/display/Arduino.h
- ../inc/display/Terminal12x16e.h
- ../inc/display/Terminal16x24e.h
- ../inc/display/Terminal6x8e.h
- ../inc/display/Terminal8x12e.h
- ../inc/display/hV_Configuration.h
- ../inc/display/hV_Font.h
- ../inc/display/hV_Font_Terminal.h
- ../inc/display/hV_Utilities.h
- /home/jmcnelly/geeps/firmware/src/display/hV_Font_Terminal.cpp
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj
- ../inc/display/Arduino.h
- ../inc/display/Terminal12x16e.h
- ../inc/display/Terminal16x24e.h
- ../inc/display/Terminal6x8e.h
- ../inc/display/Terminal8x12e.h
- ../inc/display/hV_Colours565.h
- ../inc/display/hV_Configuration.h
- ../inc/display/hV_Font.h
- ../inc/display/hV_Font_Terminal.h
- ../inc/display/hV_Screen_Buffer.h
- ../inc/display/hV_Utilities.h
- /home/jmcnelly/geeps/firmware/src/display/hV_Screen_Buffer.cpp
-CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj
- ../inc/display/Arduino.h
- ../inc/display/hV_Utilities.h
- /home/jmcnelly/geeps/firmware/src/display/hV_Utilities.cpp
+CMakeFiles/geeps.dir/src/display/epaper.cc.obj
+ /root/firmware/src/display/epaper.cc
 CMakeFiles/geeps.dir/src/main.cpp.obj
- /home/jmcnelly/geeps/firmware/src/main.cpp
+ /root/firmware/src/main.cpp
  /usr/local/pico-sdk/src/boards/include/boards/pico.h
  /usr/local/pico-sdk/src/common/pico_base/include/pico.h
  /usr/local/pico-sdk/src/common/pico_base/include/pico/assert.h

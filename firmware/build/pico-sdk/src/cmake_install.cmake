@@ -34,9 +34,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/jmcnelly/geeps/firmware/build/pico-sdk/src/common/cmake_install.cmake")
-  include("/home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/cmake_install.cmake")
-  include("/home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2040/cmake_install.cmake")
+  include("/root/firmware/build/pico-sdk/src/common/cmake_install.cmake")
+  include("/root/firmware/build/pico-sdk/src/rp2_common/cmake_install.cmake")
+  include("/root/firmware/build/pico-sdk/src/rp2040/cmake_install.cmake")
 
 endif()
 

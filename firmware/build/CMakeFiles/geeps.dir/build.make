@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jmcnelly/geeps/firmware
+CMAKE_SOURCE_DIR = /root/firmware
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jmcnelly/geeps/firmware/build
+CMAKE_BINARY_DIR = /root/firmware/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/geeps.dir/depend.make
@@ -59,33 +59,33 @@ include CMakeFiles/geeps.dir/flags.make
 
 CMakeFiles/geeps.dir/src/main.cpp.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/src/main.cpp.obj: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/geeps.dir/src/main.cpp.obj"
-	/bin/arm-none-eabi-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/geeps.dir/src/main.cpp.obj -c /home/jmcnelly/geeps/firmware/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/geeps.dir/src/main.cpp.obj"
+	/bin/arm-none-eabi-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/geeps.dir/src/main.cpp.obj -c /root/firmware/src/main.cpp
 
 CMakeFiles/geeps.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/geeps.dir/src/main.cpp.i"
-	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jmcnelly/geeps/firmware/src/main.cpp > CMakeFiles/geeps.dir/src/main.cpp.i
+	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/firmware/src/main.cpp > CMakeFiles/geeps.dir/src/main.cpp.i
 
 CMakeFiles/geeps.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/geeps.dir/src/main.cpp.s"
-	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jmcnelly/geeps/firmware/src/main.cpp -o CMakeFiles/geeps.dir/src/main.cpp.s
+	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/firmware/src/main.cpp -o CMakeFiles/geeps.dir/src/main.cpp.s
 
 CMakeFiles/geeps.dir/src/display/epaper.cc.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/src/display/epaper.cc.obj: ../src/display/epaper.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/geeps.dir/src/display/epaper.cc.obj"
-	/bin/arm-none-eabi-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/geeps.dir/src/display/epaper.cc.obj -c /home/jmcnelly/geeps/firmware/src/display/epaper.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/geeps.dir/src/display/epaper.cc.obj"
+	/bin/arm-none-eabi-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/geeps.dir/src/display/epaper.cc.obj -c /root/firmware/src/display/epaper.cc
 
 CMakeFiles/geeps.dir/src/display/epaper.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/geeps.dir/src/display/epaper.cc.i"
-	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jmcnelly/geeps/firmware/src/display/epaper.cc > CMakeFiles/geeps.dir/src/display/epaper.cc.i
+	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/firmware/src/display/epaper.cc > CMakeFiles/geeps.dir/src/display/epaper.cc.i
 
 CMakeFiles/geeps.dir/src/display/epaper.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/geeps.dir/src/display/epaper.cc.s"
-	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jmcnelly/geeps/firmware/src/display/epaper.cc -o CMakeFiles/geeps.dir/src/display/epaper.cc.s
+	/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/firmware/src/display/epaper.cc -o CMakeFiles/geeps.dir/src/display/epaper.cc.s
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.i: cmake_force
@@ -98,7 +98,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.i: cmake_force
@@ -111,7 +111,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.i: cmake_force
@@ -124,7 +124,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_claim/claim.c.s:
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.i: cmake_force
@@ -137,7 +137,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_platform/platform.c.
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.i: cmake_force
@@ -150,7 +150,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_sync/sync.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.i: cmake_force
@@ -163,12 +163,12 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_uart/uart.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S.obj: /usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_divider/divider.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.obj: /usr/local/pico-sdk/src/common/pico_time/time.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.obj   -c /usr/local/pico-sdk/src/common/pico_time/time.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.i: cmake_force
@@ -181,7 +181,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/time.c.s: cmake_for
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.obj: /usr/local/pico-sdk/src/common/pico_time/timeout_helper.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.obj   -c /usr/local/pico-sdk/src/common/pico_time/timeout_helper.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.i: cmake_force
@@ -194,7 +194,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_time/timeout_helper.c.s:
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.i: cmake_force
@@ -207,7 +207,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_timer/timer.c.s:
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.obj: /usr/local/pico-sdk/src/common/pico_sync/sem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.obj   -c /usr/local/pico-sdk/src/common/pico_sync/sem.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.i: cmake_force
@@ -220,7 +220,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/sem.c.s: cmake_forc
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.obj: /usr/local/pico-sdk/src/common/pico_sync/lock_core.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.obj   -c /usr/local/pico-sdk/src/common/pico_sync/lock_core.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.i: cmake_force
@@ -233,7 +233,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/lock_core.c.s: cmak
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.obj: /usr/local/pico-sdk/src/common/pico_sync/mutex.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.obj   -c /usr/local/pico-sdk/src/common/pico_sync/mutex.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.i: cmake_force
@@ -246,7 +246,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/mutex.c.s: cmake_fo
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.obj: /usr/local/pico-sdk/src/common/pico_sync/critical_section.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.obj   -c /usr/local/pico-sdk/src/common/pico_sync/critical_section.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.i: cmake_force
@@ -259,7 +259,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_sync/critical_section.c.
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.obj: /usr/local/pico-sdk/src/common/pico_util/datetime.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.obj   -c /usr/local/pico-sdk/src/common/pico_util/datetime.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.i: cmake_force
@@ -272,7 +272,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/datetime.c.s: cmake
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.obj: /usr/local/pico-sdk/src/common/pico_util/pheap.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.obj   -c /usr/local/pico-sdk/src/common/pico_util/pheap.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.i: cmake_force
@@ -285,7 +285,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/pheap.c.s: cmake_fo
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.obj: /usr/local/pico-sdk/src/common/pico_util/queue.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.obj   -c /usr/local/pico-sdk/src/common/pico_util/queue.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.i: cmake_force
@@ -298,7 +298,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/common/pico_util/queue.c.s: cmake_fo
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.i: cmake_force
@@ -311,7 +311,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_runtime/runtime.c.s:
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.i: cmake_force
@@ -324,7 +324,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_clocks/clocks.c.
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.i: cmake_force
@@ -337,12 +337,12 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq.c.s: cma
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj: /usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.i: cmake_force
@@ -355,7 +355,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_pll/pll.c.s: cma
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.i: cmake_force
@@ -368,7 +368,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_vreg/vreg.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdog.c.i: cmake_force
@@ -381,7 +381,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_watchdog/watchdo
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.obj: /usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.obj   -c /usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.i: cmake_force
@@ -394,7 +394,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/hardware_xosc/xosc.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.i: cmake_force
@@ -407,12 +407,12 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_printf/printf.c.s: c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_bit_ops/bit_ops_aeabi.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.i: cmake_force
@@ -425,17 +425,17 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_bootrom/bootrom.c.s:
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_divider/divider.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_double/double_aeabi.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_rom.c.i: cmake_force
@@ -448,7 +448,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_init_r
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c.i: cmake_force
@@ -461,22 +461,22 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_math.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_double/double_v1_rom_shim.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_float/float_aeabi.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom.c.i: cmake_force
@@ -489,7 +489,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_init_rom
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.i: cmake_force
@@ -502,12 +502,12 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_math.c.s
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_float/float_v1_rom_shim.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c.i: cmake_force
@@ -520,17 +520,17 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_malloc/pico_malloc.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S.obj: /usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building ASM object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S.obj"
 	/usr/bin/arm-none-eabi-gcc $(ASM_DEFINES) $(ASM_INCLUDES) $(ASM_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_standard_link/crt0.S
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj: /usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building CXX object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building CXX object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj"
 	/bin/arm-none-eabi-g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj -c /usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.i: cmake_force
@@ -543,7 +543,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/new_de
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.i: cmake_force
@@ -556,7 +556,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_standard_link/binary
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.i: cmake_force
@@ -569,7 +569,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio/stdio.c.s: cma
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj: CMakeFiles/geeps.dir/flags.make
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj: /usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building C object CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj"
 	/bin/arm-none-eabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj   -c /usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c
 
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.i: cmake_force
@@ -683,13 +683,13 @@ geeps.elf: CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdio_uar
 geeps.elf: CMakeFiles/geeps.dir/build.make
 geeps.elf: pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S
 geeps.elf: CMakeFiles/geeps.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Linking CXX executable geeps.elf"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Linking CXX executable geeps.elf"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/geeps.dir/link.txt --verbose=$(VERBOSE)
-	/usr/bin/arm-none-eabi-objcopy -Oihex /home/jmcnelly/geeps/firmware/build/geeps.elf geeps.hex
-	/usr/bin/arm-none-eabi-objcopy -Obinary /home/jmcnelly/geeps/firmware/build/geeps.elf geeps.bin
-	/usr/bin/arm-none-eabi-objdump -h /home/jmcnelly/geeps/firmware/build/geeps.elf >geeps.dis
-	/usr/bin/arm-none-eabi-objdump -d /home/jmcnelly/geeps/firmware/build/geeps.elf >>geeps.dis
-	elf2uf2/elf2uf2 /home/jmcnelly/geeps/firmware/build/geeps.elf geeps.uf2
+	/usr/bin/arm-none-eabi-objcopy -Oihex /root/firmware/build/geeps.elf geeps.hex
+	/usr/bin/arm-none-eabi-objcopy -Obinary /root/firmware/build/geeps.elf geeps.bin
+	/usr/bin/arm-none-eabi-objdump -h /root/firmware/build/geeps.elf >geeps.dis
+	/usr/bin/arm-none-eabi-objdump -d /root/firmware/build/geeps.elf >>geeps.dis
+	elf2uf2/elf2uf2 /root/firmware/build/geeps.elf geeps.uf2
 
 # Rule to build all files generated by this target.
 CMakeFiles/geeps.dir/build: geeps.elf
@@ -701,6 +701,6 @@ CMakeFiles/geeps.dir/clean:
 .PHONY : CMakeFiles/geeps.dir/clean
 
 CMakeFiles/geeps.dir/depend:
-	cd /home/jmcnelly/geeps/firmware/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jmcnelly/geeps/firmware /home/jmcnelly/geeps/firmware /home/jmcnelly/geeps/firmware/build /home/jmcnelly/geeps/firmware/build /home/jmcnelly/geeps/firmware/build/CMakeFiles/geeps.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/firmware/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/firmware /root/firmware /root/firmware/build /root/firmware/build /root/firmware/build/CMakeFiles/geeps.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/geeps.dir/depend
 

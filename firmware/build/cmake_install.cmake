@@ -1,4 +1,4 @@
-# Install script for directory: /home/jmcnelly/geeps/firmware
+# Install script for directory: /root/firmware
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,9 +34,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/jmcnelly/geeps/firmware/build/pico-sdk/cmake_install.cmake")
-  include("/home/jmcnelly/geeps/firmware/build/src/cmake_install.cmake")
-  include("/home/jmcnelly/geeps/firmware/build/inc/cmake_install.cmake")
+  include("/root/firmware/build/pico-sdk/cmake_install.cmake")
+  include("/root/firmware/build/src/cmake_install.cmake")
+  include("/root/firmware/build/inc/cmake_install.cmake")
 
 endif()
 
@@ -48,5 +48,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/jmcnelly/geeps/firmware/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/root/firmware/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

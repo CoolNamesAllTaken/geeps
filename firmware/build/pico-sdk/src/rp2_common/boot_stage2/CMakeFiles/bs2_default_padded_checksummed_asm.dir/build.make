@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jmcnelly/geeps/firmware
+CMAKE_SOURCE_DIR = /root/firmware
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jmcnelly/geeps/firmware/build
+CMAKE_BINARY_DIR = /root/firmware/build
 
 # Utility rule file for bs2_default_padded_checksummed_asm.
 
@@ -57,12 +57,12 @@ pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_as
 
 
 pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S: pico-sdk/src/rp2_common/boot_stage2/bs2_default.bin
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating bs2_default_padded_checksummed.S"
-	cd /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2 && /usr/bin/python3.8 /usr/local/pico-sdk/src/rp2_common/boot_stage2/pad_checksum -s 0xffffffff /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default.bin /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating bs2_default_padded_checksummed.S"
+	cd /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2 && /usr/bin/python3.8 /usr/local/pico-sdk/src/rp2_common/boot_stage2/pad_checksum -s 0xffffffff /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default.bin /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S
 
 pico-sdk/src/rp2_common/boot_stage2/bs2_default.bin: pico-sdk/src/rp2_common/boot_stage2/bs2_default.elf
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/jmcnelly/geeps/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating bs2_default.bin"
-	cd /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2 && /usr/bin/arm-none-eabi-objcopy -Obinary /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default.elf /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default.bin
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/root/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating bs2_default.bin"
+	cd /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2 && /usr/bin/arm-none-eabi-objcopy -Obinary /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default.elf /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2/bs2_default.bin
 
 bs2_default_padded_checksummed_asm: pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm
 bs2_default_padded_checksummed_asm: pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S
@@ -77,10 +77,10 @@ pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_as
 .PHONY : pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/build
 
 pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/clean:
-	cd /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2 && $(CMAKE_COMMAND) -P CMakeFiles/bs2_default_padded_checksummed_asm.dir/cmake_clean.cmake
+	cd /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2 && $(CMAKE_COMMAND) -P CMakeFiles/bs2_default_padded_checksummed_asm.dir/cmake_clean.cmake
 .PHONY : pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/clean
 
 pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/depend:
-	cd /home/jmcnelly/geeps/firmware/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jmcnelly/geeps/firmware /usr/local/pico-sdk/src/rp2_common/boot_stage2 /home/jmcnelly/geeps/firmware/build /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2 /home/jmcnelly/geeps/firmware/build/pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/firmware/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/firmware /usr/local/pico-sdk/src/rp2_common/boot_stage2 /root/firmware/build /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2 /root/firmware/build/pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/depend
 

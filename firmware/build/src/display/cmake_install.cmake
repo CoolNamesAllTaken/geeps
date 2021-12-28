@@ -1,4 +1,4 @@
-# Install script for directory: /home/jmcnelly/geeps/firmware/src/display
+# Install script for directory: /root/firmware/src/display
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

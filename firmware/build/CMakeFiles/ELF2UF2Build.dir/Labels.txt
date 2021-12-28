@@ -1,13 +1,13 @@
 # Target labels
  ELF2UF2Build
 # Source files and their labels
-/home/jmcnelly/geeps/firmware/build/CMakeFiles/ELF2UF2Build
-/home/jmcnelly/geeps/firmware/build/CMakeFiles/ELF2UF2Build.rule
-/home/jmcnelly/geeps/firmware/build/CMakeFiles/ELF2UF2Build-complete.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-install.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-mkdir.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-download.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-update.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-patch.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-configure.rule
-/home/jmcnelly/geeps/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-build.rule
+/root/firmware/build/CMakeFiles/ELF2UF2Build
+/root/firmware/build/CMakeFiles/ELF2UF2Build.rule
+/root/firmware/build/CMakeFiles/ELF2UF2Build-complete.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-install.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-mkdir.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-download.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-update.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-patch.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-configure.rule
+/root/firmware/build/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-build.rule

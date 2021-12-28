@@ -907,51 +907,7 @@ CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj:
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj: generated/pico_base/pico/config_autogen.h
 CMakeFiles/geeps.dir/usr/local/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj: generated/pico_base/pico/version.h
 
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/Arduino.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/Screen_EPD_EXT3.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/Terminal12x16e.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/Terminal16x24e.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/Terminal6x8e.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/Terminal8x12e.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/hV_Colours565.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/hV_Configuration.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/hV_Font.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/hV_Font_Terminal.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/hV_Screen_Buffer.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../inc/display/hV_Utilities.h
-CMakeFiles/geeps.dir/src/display/Screen_EPD_EXT3.cpp.obj: ../src/display/Screen_EPD_EXT3.cpp
-
-CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj: ../inc/display/Arduino.h
-CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj: ../inc/display/hV_Colours565.h
-CMakeFiles/geeps.dir/src/display/hV_Colours565.cpp.obj: ../src/display/hV_Colours565.cpp
-
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/Arduino.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/Terminal12x16e.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/Terminal16x24e.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/Terminal6x8e.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/Terminal8x12e.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/hV_Configuration.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/hV_Font.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/hV_Font_Terminal.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../inc/display/hV_Utilities.h
-CMakeFiles/geeps.dir/src/display/hV_Font_Terminal.cpp.obj: ../src/display/hV_Font_Terminal.cpp
-
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/Arduino.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/Terminal12x16e.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/Terminal16x24e.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/Terminal6x8e.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/Terminal8x12e.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/hV_Colours565.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/hV_Configuration.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/hV_Font.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/hV_Font_Terminal.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/hV_Screen_Buffer.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../inc/display/hV_Utilities.h
-CMakeFiles/geeps.dir/src/display/hV_Screen_Buffer.cpp.obj: ../src/display/hV_Screen_Buffer.cpp
-
-CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj: ../inc/display/Arduino.h
-CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj: ../inc/display/hV_Utilities.h
-CMakeFiles/geeps.dir/src/display/hV_Utilities.cpp.obj: ../src/display/hV_Utilities.cpp
+CMakeFiles/geeps.dir/src/display/epaper.cc.obj: ../src/display/epaper.cc
 
 CMakeFiles/geeps.dir/src/main.cpp.obj: ../src/main.cpp
 CMakeFiles/geeps.dir/src/main.cpp.obj: /usr/local/pico-sdk/src/boards/include/boards/pico.h

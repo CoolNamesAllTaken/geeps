@@ -1,4 +1,4 @@
-# Install script for directory: /home/jmcnelly/geeps/firmware/src
+# Install script for directory: /root/firmware/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,8 +34,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/jmcnelly/geeps/firmware/build/src/display/cmake_install.cmake")
-  include("/home/jmcnelly/geeps/firmware/build/src/gps/cmake_install.cmake")
+  include("/root/firmware/build/src/display/cmake_install.cmake")
+  include("/root/firmware/build/src/gps/cmake_install.cmake")
 
 endif()
 
