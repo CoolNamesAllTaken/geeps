@@ -21,20 +21,21 @@ add_compile_options(
     -Wno-maybe-uninitialized
 )
 
-add_executable(geeps src/main.cpp)
+# Source files are added with target_sources in subdirectories
+add_executable(geeps "")
 
-# Add subdirectories after creating the target so that CMake doesn't get upset.
 add_subdirectory(src)
 add_subdirectory(inc)
 
-# pull in common dependencies
-target_link_libraries(geeps pico_stdlib)
-
-# create map/bin/hex file etc
-pico_add_extra_outputs(geeps)
-pico_enable_stdio_uart(geeps 1)
-
+# In case there are files directly in src and inc
 target_include_directories(geeps PRIVATE 
     src
     inc
 )
+
+# Firmware: Create map/bin/hex file etc
+pico_add_extra_outputs(geeps)
+pico_enable_stdio_uart(geeps 1)
+
+# Firmware: Pull in Pico library
+target_link_libraries(geeps pico_stdlib)

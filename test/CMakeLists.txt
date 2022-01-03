@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(geeps_test_project C CXX ASM)
+# Flag indicating that build is not for the embedded target. Used to toggle target_source calls.
+set(CROSS_COMPILED 1)
+
+project(geeps_project C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -11,24 +14,22 @@ add_compile_options(
     -Wno-maybe-uninitialized
 )
 
-file (GLOB gtest_src CONFIGURE_DEPENDS "src/*.h" "src/*.cpp")
-
-add_executable(geeps_test ${gtest_src})
+# Source files are added with target_sources in subdirectories
+add_executable(geeps_test "")
 
 # Add subdirectories after creating the target so that CMake doesn't get upset.
-#add_subdirectory(src)
-#add_subdirectory(inc)
+add_subdirectory(/root/geeps/firmware/src firmware/src)
+add_subdirectory(/root/geeps/firmware/inc firmware/inc)
+add_subdirectory(src)
+add_subdirectory(inc)
 
+# In case there are files directly in src and inc
 target_include_directories(geeps_test PRIVATE 
     src
     inc
-    ../firmware/src
-    ../firmware/inc
 )
 
-# Pull in google test library
+# Test: Pull in google test library
 add_library(libgtest SHARED IMPORTED)
-
-# Provide the full path to the library, so CMake knows where to find it.
-set_target_properties(libgtest PROPERTIES IMPORTED_LOCATION /root/modules/googletest/lib/libgtest.so)
+set_target_properties(libgtest PROPERTIES IMPORTED_LOCATION /root/geeps/modules/googletest/lib/libgtest.so)
 target_link_libraries(geeps_test PRIVATE libgtest)
