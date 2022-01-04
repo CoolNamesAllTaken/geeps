@@ -18,8 +18,8 @@ add_compile_options(
 add_executable(geeps_test "")
 
 # Add subdirectories after creating the target so that CMake doesn't get upset.
-add_subdirectory(/root/geeps/firmware/src firmware/src)
-add_subdirectory(/root/geeps/firmware/inc firmware/inc)
+add_subdirectory(/root/geeps/firmware/src firmware/src) # maps firmware src folder to local firmware/src
+add_subdirectory(/root/geeps/firmware/inc firmware/inc) # maps firmware inc folder to local firmware/inc
 add_subdirectory(src)
 add_subdirectory(inc)
 
