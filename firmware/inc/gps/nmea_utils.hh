@@ -18,9 +18,12 @@ public:
 
     // Public interface functions.
     uint8_t CalculateChecksum();
+    bool IsValid();
 protected:
     char packet_str_[kMaxPacketLen];
     uint16_t packet_str_len_;
+
+    bool is_valid_;
 };
 
 /**
@@ -45,10 +48,7 @@ public:
     float GetMSLAltitude(); // [meters]
     float GetGeoidalSeparation();
 
-    bool IsValid();
-
 private:
-    bool is_valid_;
 };
 
 #endif /* _NMEA_UTILS_HH_ */
