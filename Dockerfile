@@ -2,6 +2,8 @@ FROM ubuntu
 ADD modules/setup-scripts /usr/setup
 WORKDIR /usr/setup
 
+# NOTE: don't run this before updating all git submodules, e.g. tinyusb for the pico SDK!
+
 # Install sudo to allow the use of scripts meant for use in non-root environment.
 RUN ["/usr/bin/bash", "-c", "apt update && apt -y install sudo"]
 RUN ["/usr/bin/bash", "-c", "apt -y install wget"]

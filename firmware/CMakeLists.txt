@@ -35,7 +35,8 @@ target_include_directories(geeps PRIVATE
 
 # Firmware: Create map/bin/hex file etc
 pico_add_extra_outputs(geeps)
-pico_enable_stdio_uart(geeps 1)
+pico_enable_stdio_usb(geeps 1) # use USB for standard printing
+pico_enable_stdio_uart(geeps 0) # disable STDIO UART
 
 # Firmware: Pull in Pico library
 target_link_libraries(geeps pico_stdlib)
