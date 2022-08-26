@@ -16,17 +16,17 @@ NMEAPacket::NMEAPacket(
     uint16_t packet_str_len)
     : packet_str_len_(MIN(kMaxPacketLen, packet_str_len))
     , is_valid_(false)
+    , packet_type_(UNKNOWN)
 {
     strncpy(packet_str_, packet_str, packet_str_len_);
 
     char * end_token_ptr = strchr(packet_str_, '*');
     if (!end_token_ptr) {
-        is_valid_ = false;
         return; // guard against case where end token is not sent
     }
     uint16_t transmitted_checksum = static_cast<uint16_t>(strtol(end_token_ptr+1, NULL, GPS_CHECKSUM_BASE));
-    if (CalculateChecksum() == transmitted_checksum) {
-        is_valid_ = true;
+    if (CalculateChecksum() != transmitted_checksum) {
+        return; // guard against bad checksum
     }
 
     char strtok_buf[kMaxPacketLen];
@@ -43,8 +43,10 @@ NMEAPacket::NMEAPacket(
     } else if (strcmp(header_str, "$GPVTG") == 0) {
         packet_type_ = VTG;
     } else {
-        packet_type_ = UNKNOWN;
+        return; // guard against unknown header type; set packet type as invalid, unknown
     }
+
+    is_valid_ = true;
 }
 
 uint8_t NMEAPacket::CalculateChecksum() {
@@ -82,27 +84,67 @@ GGAPacket::GGAPacket(
     uint16_t packet_str_len) 
     : NMEAPacket(packet_str, packet_str_len)
 {
+    if (!is_valid_) {
+        return; // validity check failed in parent consturctor, abort!
+    }
+
+    // Parse GGA message.
+    is_valid_ = false; // set this false by default and return if parsing any field fails
+
+    // Parse Header
     char strtok_buf[kMaxPacketLen];
-    strncpy(strtok_buf, packet_str, kMaxPacketFieldLen); // strtok modifies the input string, be safe!
+    strncpy(strtok_buf, packet_str, kMaxPacketLen); // strtok modifies the input string, be safe!
     char * header_str = strtok(strtok_buf, GPS_PACKET_DELIM);
     if (strcmp(header_str, "$GPGGA")) {
         // Header is wrong (different packet type).
-        is_valid_ = false;
         return;
     }
 
-    // strncpy(utc_time_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // utc time
-    // strncpy(latitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // latitude
-    // strcat(latitude_str_, strtok(NULL, GPS_PACKET_DELIM)); // N/S indicator
-    // strncpy(longitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // longitude
-    // strcat(longitude_str_, strtok(NULL, GPS_PACKET_DELIM)); // E/W indicator
-    // char pos_fix_str_[kMaxPacketFieldLen];
-    // strncpy(pos_fix_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // position fix indicator
-    // pos_fix_ = static_cast<PositionFixIndicator_t>(strtol(pos_fix_str_, NULL, GPS_NUMBERS_BASE));
-    // // satellites_used_ = strtol(strtok(NULL, GPS_PACKET_DELIM), NULL, GPS_NUMBERS_BASE);
-    // hdop_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // horizontal dilution of position
-    // msl_altitude_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // mean sea level altitude
-    // geoidal_separation_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // geoidal separation
+    // Parse Fields
+    strncpy(utc_time_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // utc time
+    strncpy(latitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen-1); // latitude
+    strncat(latitude_str_, strtok(NULL, GPS_PACKET_DELIM), 1); // N/S indicator
+    strncpy(longitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen-1); // longitude
+    strncat(longitude_str_, strtok(NULL, GPS_PACKET_DELIM), 1); // E/W indicator
+    char pos_fix_str_[kMaxPacketFieldLen];
+    strncpy(pos_fix_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // position fix indicator
+    uint pos_fix = strtol(pos_fix_str_, NULL, GPS_NUMBERS_BASE);
+    if (pos_fix >= 0 && pos_fix <= static_cast<uint>(PositionFixIndicator_t::DIFFERENTIAL_GPS_FIX)) {
+        // Position fix is in the valid enum range.
+        pos_fix_ = static_cast<PositionFixIndicator_t>(pos_fix);
+    } else {
+        // Position fix value is unrecognized. Throw a fit about it.
+        pos_fix_ = PositionFixIndicator_t::FIX_NOT_AVAILABLE;
+        return;
+    }
+    satellites_used_ = strtol(strtok(NULL, GPS_PACKET_DELIM), NULL, GPS_NUMBERS_BASE);
+    hdop_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // horizontal dilution of position
+    msl_altitude_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // mean sea level altitude
+    if (strcmp(strtok(NULL, GPS_PACKET_DELIM), "M") != 0) {
+        // MSL altitude not in meters, abort!
+        return;
+    }
+
+    // Reading geoidal separation is a special case, since it might not be populated.
+    // If it's populated, it needs to have the right units for the packet to be called valid.
+    // If it's not populated, set to 0.0, ignore it, and say the packet is valid if other stuff is OK.
+    char * geoidal_separation_str = strtok(NULL, GPS_PACKET_DELIM);
+    if (*(geoidal_separation_str-1) == '\0') {
+        // strtok did not skip any fields, so geoidal_separation_str was populated.
+        geoidal_separation_ = strtof(geoidal_separation_str, NULL); // geoidal separation
+        if (strcmp(strtok(NULL, GPS_PACKET_DELIM), "M") != 0) {
+            // Geoidal separation not in meters, abort!
+            return;
+        }
+    } else { // previous character is a delimiter or something
+        // strtok skipped at least one field, don't try reading geoidal separation.
+        geoidal_separation_ = 0.0;
+    }
+    
+    // Skip age of correction data.
+    // Skip differential base station ID.
+
+    is_valid_ = true; // Got here without aborting, good enough!
 }
 
 void GGAPacket::GetUTCTimeStr(char * str_buf) {
