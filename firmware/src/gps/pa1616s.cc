@@ -2,11 +2,20 @@
 #include <string.h>
 #include <stdio.h> // for debug printfs
 
+/**
+ * @brief Construct a new PA1616S::PA1616S object.
+ * 
+ * @param config Configuration parameters for PA1616S.
+ */
 PA1616S::PA1616S(PA1616SConfig_t config) 
     : config_(config)
-    , uart_buf_len_(0) {
+    , uart_buf_len_(0)
+    , latest_gga_packet(GGAPacket(static_cast<char *>(""), 0)) {
 }
 
+/**
+ * @brief Initializes the PA1616S.
+ */
 void PA1616S::Init() {
     printf("pa1616s: Init started.\r\n");
     uart_init(config_.uart_id, config_.uart_baud);
@@ -23,21 +32,40 @@ void PA1616S::Init() {
     printf("pa1616s: Init completed.\r\n");
 }
 
+/**
+ * @brief Ingests pending UART packets and updates parameters.
+ * 
+ */
 void PA1616S::Update() {
     while (uart_is_readable(config_.uart_id)) {
         char new_char = uart_getc(config_.uart_id);
         if (new_char == '$') {
             // Start of new string.
             printf("pa1616s: Received sentence %s\r\n", uart_buf_);
-            memset(uart_buf_, '\0', kMaxUARTBufLen);
-            uart_buf_len_ = 0;
+            NMEAPacket packet = NMEAPacket(uart_buf_, uart_buf_len_);
+            if (packet.IsValid()) {
+                printf("pa1616s:     Packet is valid!\r\n");
+                if (packet.GetPacketType() == NMEAPacket::GGA) {
+                    latest_gga_packet = GGAPacket(uart_buf_, uart_buf_len_);
+                    if (latest_gga_packet.IsValid()) {
+                        printf("pa1616s:         Formed a valid GGA Packet!\r\n");
+                    }
+                }
+            } else {
+                printf("pa1616s:     Packet is invalid.\r\n");
+            }
+            FlushUARTBuf();
         } else if (uart_buf_len_ >= kMaxUARTBufLen) {
             // String too long! Abort.
             printf("pa1616s: String too long! Aborting.\r\n");
-            memset(uart_buf_, '\0', kMaxUARTBufLen);
-            uart_buf_len_ = 0;
+            FlushUARTBuf();
         }
         strncat(uart_buf_, &new_char, 1); // add new char to end of buffer
         uart_buf_len_++;
     }
+}
+
+void PA1616S::FlushUARTBuf() {
+    memset(uart_buf_, '\0', kMaxUARTBufLen);
+    uart_buf_len_ = 0;
 }

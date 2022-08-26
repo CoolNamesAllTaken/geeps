@@ -26,6 +26,7 @@ add_executable(geeps "")
 
 add_subdirectory(src)
 add_subdirectory(inc)
+add_subdirectory(../modules/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
 
 # In case there are files directly in src and inc
 target_include_directories(geeps PRIVATE 
@@ -39,4 +40,8 @@ pico_enable_stdio_usb(geeps 1) # use USB for standard printing
 pico_enable_stdio_uart(geeps 0) # disable STDIO UART
 
 # Firmware: Pull in Pico library
-target_link_libraries(geeps pico_stdlib)
+target_link_libraries(geeps 
+    pico_stdlib
+    FatFs_SPI
+    pico_float # for math functions
+)

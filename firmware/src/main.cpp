@@ -3,6 +3,7 @@
 #include "hardware/gpio.h"
 #include "pico/binary_info.h"
 #include "pa1616s.hh"
+#include "epaper.hh"
 
 #define GPS_UART_ID uart1
 #define GPS_UART_BAUD 9600
@@ -32,6 +33,11 @@ int main() {
     //     puts("Hello World\n");
     //     sleep_ms(1000);
     // }
+    EPaperDisplay::EPaper_Config_t display_config;
+    EPaperDisplay * display = new EPaperDisplay(display_config);
+    display->Init();
+    display->Clear();
+    display->Update();
 
     PA1616S::PA1616SConfig_t gps_config = {
         .uart_id = GPS_UART_ID,
@@ -46,7 +52,7 @@ int main() {
     while(true) {
         gpio_put(LED_PIN, 1);
         gps.Update();
-        uart_puts(GPS_UART_ID, "hi");
+        // uart_puts(GPS_UART_ID, "hi");
         gpio_put(LED_PIN, 0);
         sleep_ms(10);
     }

@@ -7,7 +7,7 @@
         
 
         {
-            "name": "Blink Remote Debug",
+            "name": "Remote Debug",
             "type": "cortex-debug",
             "cwd": "${workspaceRoot}",
             "executable": "${command:cmake.launchTargetPath}",
@@ -16,7 +16,7 @@
             "gdbPath": "arm-none-eabi-gdb",
             "gdbTarget": "host.docker.internal:2331",
             "svdFile": "/usr/local/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
-            "runToMain": true,
+            "runToEntryPoint": "main",
             "preRestartCommands": [
                 "file ${command:cmake.launchTargetPath}",
                 "load",
