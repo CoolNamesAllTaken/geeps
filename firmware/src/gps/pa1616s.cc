@@ -8,9 +8,9 @@
  * @param config Configuration parameters for PA1616S.
  */
 PA1616S::PA1616S(PA1616SConfig_t config) 
-    : config_(config)
-    , uart_buf_len_(0)
-    , latest_gga_packet(GGAPacket(static_cast<char *>(""), 0)) {
+    : latest_gga_packet(GGAPacket((char *)"", 0)) 
+    , config_(config)
+    , uart_buf_len_(0) {
 }
 
 /**

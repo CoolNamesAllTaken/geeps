@@ -7,6 +7,9 @@
 #define GPS_PACKET_DELIM ","
 #define GPS_NUMBERS_BASE 10
 #define GPS_CHECKSUM_BASE 16
+#define LATITUDE_DEGREES_NUM_DIGITS 2
+#define LONGITUDE_DEGREES_NUM_DIGITS 3
+#define MINUTES_PER_DEGREE 60.0f
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -78,6 +81,7 @@ NMEAPacket::PacketType_t NMEAPacket::GetPacketType() {
 /**
  * @brief Constructor for a $GPGGA packet.
  * @param[in] packet_str C-string buffer with packet contents.
+ * @param[in] packet_str_len Number of characters in packet_str.
  */
 GGAPacket::GGAPacket(
     char packet_str[kMaxPacketLen],
@@ -91,7 +95,7 @@ GGAPacket::GGAPacket(
     // Parse GGA message.
     is_valid_ = false; // set this false by default and return if parsing any field fails
 
-    // Parse Header
+    // Parse header.
     char strtok_buf[kMaxPacketLen];
     strncpy(strtok_buf, packet_str, kMaxPacketLen); // strtok modifies the input string, be safe!
     char * header_str = strtok(strtok_buf, GPS_PACKET_DELIM);
@@ -100,16 +104,46 @@ GGAPacket::GGAPacket(
         return;
     }
 
-    // Parse Fields
+    // Parse UTC time.
     strncpy(utc_time_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // utc time
-    strncpy(latitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen-1); // latitude
-    strncat(latitude_str_, strtok(NULL, GPS_PACKET_DELIM), 1); // N/S indicator
-    strncpy(longitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen-1); // longitude
-    strncat(longitude_str_, strtok(NULL, GPS_PACKET_DELIM), 1); // E/W indicator
+
+    // Parse latitude.
+    strncpy(latitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen-1); // latitude as string
+    char * latitude_indicator = strtok(NULL, GPS_PACKET_DELIM);
+    // Latitude has form DDmm.mm. Convert to degrees!
+    char latitude_degrees_str[kMaxPacketFieldLen];
+    strncpy(latitude_degrees_str, latitude_str_, LATITUDE_DEGREES_NUM_DIGITS);
+    latitude_degrees_str[LATITUDE_DEGREES_NUM_DIGITS] = '\0'; // null-terminate so that strtof doesn't break
+    latitude_ = strtof(latitude_degrees_str, NULL);
+    latitude_ += (strtof(latitude_str_+LATITUDE_DEGREES_NUM_DIGITS, NULL) / MINUTES_PER_DEGREE);
+    if (strcmp(latitude_indicator, "S") == 0) {
+        latitude_ *= -1.0f; // South is negative
+    } else if (strcmp(latitude_indicator, "N") != 0) {
+        return; // Unknown N/S indicator character, packet is invalid.
+    }
+    strncat(latitude_str_, latitude_indicator, 1); // Add N/S indicator to string.
+
+    // Parse longitude.
+    strncpy(longitude_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen-1); // longitude as string
+    char * longitude_indicator = strtok(NULL, GPS_PACKET_DELIM);
+    // Longitude has form DDDmm.mm. Convert to degrees!
+    char longitude_degrees_str[kMaxPacketFieldLen];
+    strncpy(longitude_degrees_str, longitude_str_, LONGITUDE_DEGREES_NUM_DIGITS);
+    longitude_degrees_str[LONGITUDE_DEGREES_NUM_DIGITS] = '\0'; // null-terminate so that strtof doesn't break
+    longitude_ = strtof(longitude_degrees_str, NULL);
+    longitude_ += (strtof(longitude_str_+LONGITUDE_DEGREES_NUM_DIGITS, NULL) / MINUTES_PER_DEGREE);
+    if (strcmp(longitude_indicator, "W") == 0) {
+        longitude_ *= -1.0f; // West is negative
+    } else if (strcmp(longitude_indicator, "E") != 0) {
+        return; // Unknown E/W indicator character, packet is invalid.
+    }
+    strncat(longitude_str_, longitude_indicator, 1); // Add E/W indicator to string.
+    
+    // Parse position fix.
     char pos_fix_str_[kMaxPacketFieldLen];
     strncpy(pos_fix_str_, strtok(NULL, GPS_PACKET_DELIM), kMaxPacketFieldLen); // position fix indicator
-    uint pos_fix = strtol(pos_fix_str_, NULL, GPS_NUMBERS_BASE);
-    if (pos_fix >= 0 && pos_fix <= static_cast<uint>(PositionFixIndicator_t::DIFFERENTIAL_GPS_FIX)) {
+    int32_t pos_fix = strtol(pos_fix_str_, NULL, GPS_NUMBERS_BASE);
+    if (pos_fix >= 0 && pos_fix <= static_cast<int32_t>(PositionFixIndicator_t::DIFFERENTIAL_GPS_FIX)) {
         // Position fix is in the valid enum range.
         pos_fix_ = static_cast<PositionFixIndicator_t>(pos_fix);
     } else {
@@ -117,14 +151,21 @@ GGAPacket::GGAPacket(
         pos_fix_ = PositionFixIndicator_t::FIX_NOT_AVAILABLE;
         return;
     }
+    
+    // Parse satellites.
     satellites_used_ = strtol(strtok(NULL, GPS_PACKET_DELIM), NULL, GPS_NUMBERS_BASE);
+    
+    // Parse horizontal dilution of position.
     hdop_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // horizontal dilution of position
+    
+    // Parse MSL altitude.
     msl_altitude_ = strtof(strtok(NULL, GPS_PACKET_DELIM), NULL); // mean sea level altitude
     if (strcmp(strtok(NULL, GPS_PACKET_DELIM), "M") != 0) {
         // MSL altitude not in meters, abort!
         return;
     }
 
+    // Parse geoidal separation.
     // Reading geoidal separation is a special case, since it might not be populated.
     // If it's populated, it needs to have the right units for the packet to be called valid.
     // If it's not populated, set to 0.0, ignore it, and say the packet is valid if other stuff is OK.
@@ -157,6 +198,22 @@ void GGAPacket::GetLatitudeStr(char * str_buf) {
 
 void GGAPacket::GetLongitudeStr(char * str_buf) {
     strcpy(str_buf, longitude_str_);
+}
+
+/**
+ * @brief Returns latitude as a float.
+ * @retval Latitude, positive if N, negative if S.
+ */
+float GGAPacket::GetLatitude() {
+    return latitude_;
+}
+
+/**
+ * @brief Returns longitude as a float.
+ * @retval Longitude, positive if E, negative if W.
+ */
+float GGAPacket::GetLongitude() {
+    return longitude_;
 }
 
 GGAPacket::PositionFixIndicator_t GGAPacket::GetPositionFixIndicator() {

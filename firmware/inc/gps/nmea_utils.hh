@@ -55,6 +55,8 @@ public:
     void GetUTCTimeStr(char * str_buf);
     void GetLatitudeStr(char * str_buf); // includes "N" or "S" suffix
     void GetLongitudeStr(char * str_buf); // includes "E" ow "W" suffix
+    float GetLatitude();
+    float GetLongitude();
     GGAPacket::PositionFixIndicator_t GetPositionFixIndicator();
     uint16_t GetSatellitesUsed();
     float GetHDOP();
@@ -70,6 +72,8 @@ private:
     char utc_time_str_[kMaxPacketFieldLen];
     char latitude_str_[kMaxPacketFieldLen];
     char longitude_str_[kMaxPacketFieldLen];
+    float latitude_;
+    float longitude_;
     PositionFixIndicator_t pos_fix_ = FIX_NOT_AVAILABLE;
     uint16_t satellites_used_ = 0;
     float hdop_;

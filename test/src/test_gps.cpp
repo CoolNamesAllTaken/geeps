@@ -2,6 +2,8 @@
 #include "nmea_utils.hh"
 #include <string.h>
 
+#define FLOAT_RELTOL 0.0005f
+
 const uint16_t kStrBufLen = 100;
 
 TEST(NMEAPacketCalculateChecksum, NMEAPacket) {
@@ -87,7 +89,7 @@ TEST(GGAPacketParser, ReadUTCTimeStr) {
 	ASSERT_EQ(strcmp(field_str_buf, "161229.487"), 0); // strings should match
 }
 
-TEST(GGAPacketParser, ReadLatitudeStr) {
+TEST(GGAPacketParser, ReadLatitudeN) {
     // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -95,9 +97,32 @@ TEST(GGAPacketParser, ReadLatitudeStr) {
 	test_packet.GetLatitudeStr(field_str_buf);
 	ASSERT_TRUE(test_packet.IsValid());
 	ASSERT_EQ(strcmp(field_str_buf, "3723.2475N"), 0); // strings should match
+	ASSERT_NEAR(test_packet.GetLatitude(), 37.3875f, FLOAT_RELTOL);
 }
 
-TEST(GGAPacketParser, ReadLongitudeStr) {
+TEST(GGAPacketParser, ReadLatitudeS) {
+    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,S,12158.3416,W,1,07,1.0,9.0,M,,,,0000*05";
+	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
+	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
+	test_packet.GetLatitudeStr(field_str_buf);
+	ASSERT_TRUE(test_packet.IsValid());
+	ASSERT_EQ(strcmp(field_str_buf, "3723.2475S"), 0); // strings should match
+	ASSERT_NEAR(test_packet.GetLatitude(), -37.3875f, FLOAT_RELTOL);
+}
+
+TEST(GGAPacketParser, ReadLongitudeE) {
+    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,E,1,07,1.0,9.0,M,,,,0000*0A";
+	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
+	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
+	test_packet.GetLongitudeStr(field_str_buf);
+	ASSERT_TRUE(test_packet.IsValid());
+	ASSERT_EQ(strcmp(field_str_buf, "12158.3416E"), 0); // strings should match
+	ASSERT_NEAR(test_packet.GetLongitude(), 121.97236f, FLOAT_RELTOL);
+}
+
+TEST(GGAPacketParser, ReadLongitudeW) {
     // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -105,6 +130,7 @@ TEST(GGAPacketParser, ReadLongitudeStr) {
 	test_packet.GetLongitudeStr(field_str_buf);
 	ASSERT_TRUE(test_packet.IsValid());
 	ASSERT_EQ(strcmp(field_str_buf, "12158.3416W"), 0); // strings should match
+	ASSERT_NEAR(test_packet.GetLongitude(), -121.97236f, FLOAT_RELTOL);
 }
 
 TEST(GGAPacketParser, ReadPositionFixIndicatorBasic) {
