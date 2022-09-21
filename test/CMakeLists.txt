@@ -31,5 +31,5 @@ target_include_directories(geeps_test PRIVATE
 
 # Test: Pull in google test library
 add_library(libgtest SHARED IMPORTED)
-set_target_properties(libgtest PROPERTIES IMPORTED_LOCATION /root/geeps/modules/googletest/lib/libgtest.so)
+set_target_properties(libgtest PROPERTIES IMPORTED_LOCATION /root/geeps/modules/googletest/build/lib/libgtest.so)
 target_link_libraries(geeps_test PRIVATE libgtest)

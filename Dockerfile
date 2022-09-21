@@ -19,6 +19,7 @@ RUN ["/usr/bin/bash", "-c", "/usr/setup/setup_jlink/install_dependencies.sh"]
 # Install Pico SDK
 ADD modules/pico-sdk /usr/local/pico-sdk
 ENV PICO_SDK_PATH /usr/local/pico-sdk
+RUN ["/usr/bin/bash", "-c", "/usr/setup/setup_pico_sdk/install_dependencies.sh"]
 
 # Install GDB for local debugging
 RUN ["/usr/bin/bash", "-c", "apt -y install gdb"]
