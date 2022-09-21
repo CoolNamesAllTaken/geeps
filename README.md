@@ -3,11 +3,13 @@ Pronounced Gee-Pee-Ess.
 
 ## Docker Setup Instructions
 
-Run these commands from the `docker` directory.
+Run these commands from the top level directory.
 
 NOTE: Cloning git repos onto windows may result in files with CR+LF line endings. Docker does NOT like these, and they will break everything. Make sure that you set `git config --global core.autocrlf false` before cloning repos that will get added or mounted to a Docker container.
 
 ### Build the Docker Image
+
+Be sure to run `git submodule update --init` before building!
 
 From this directory, run the following shell command.
 
