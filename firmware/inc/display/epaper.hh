@@ -7,6 +7,7 @@
 #include "hV_Configuration.h" // for pins_t object
 #include "Screen_EPD_EXT3.h" // for screen object
 #include "nmea_utils.hh" // for GPS stuff
+#include "geeps_gui.hh" // for various GUI screens
 
 class EPaperDisplay {
 public:
@@ -34,10 +35,7 @@ public:
     void Clear();
     void Update();
 
-    static const uint kHintTextMaxLen = 300;
-
-    GGAPacket gps_packet;
-    char hint_text[kHintTextMaxLen];
+    Screen_EPD_EXT3 * GetScreen();
 
 private:
     EPaper_Config_t config_;

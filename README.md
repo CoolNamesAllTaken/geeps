@@ -43,6 +43,7 @@ docker image rm pico-dev-image
 2. Right click on the available pico-dev-container and select "Attach Visual Studio Code" from the dropdown menu.
 3. Open the attached VS Code, and wait for it to finish installing docker stuff.
 4. In the attached visual studio code, install Cortex-Debug and the C/C++ extension.
+5. To debug using the `launch.json` file in the `firmware/.vscode` directory, use the "Open Folder" function to navigate the attached VS Code instance to the `firmware` directory.
 
 ## Building Tests
 

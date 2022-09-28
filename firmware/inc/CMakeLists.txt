@@ -6,11 +6,13 @@ if(CROSS_COMPILED)
 target_include_directories(geeps_test PRIVATE
     display
     gps
+    app
 )
 else()
 # Build for embedded target
 target_include_directories(geeps PRIVATE
     display
     gps
+    app
 )
 endif()
