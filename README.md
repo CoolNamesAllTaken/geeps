@@ -67,3 +67,7 @@ cmake ..
 make
 ./geeps_test
 ```
+
+## Initializing Submodules
+
+From the `modules` directory, run `git submodule update --init --recursive`.

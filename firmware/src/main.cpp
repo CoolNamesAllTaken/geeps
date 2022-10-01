@@ -5,6 +5,7 @@
 #include "pa1616s.hh"
 #include "epaper.hh"
 #include "geeps_gui.hh"
+#include "gui_bitmaps.hh"
 
 #define GPS_UART_ID         uart1
 #define GPS_UART_BAUD       9600
@@ -53,35 +54,65 @@ int main() {
     display = new EPaperDisplay(display_config);
     display->Init();
     display->Clear();
-    // display->Update();
 
-    GeepsGUIElement::GeepsGUIElementConfig_t status_bar_config;
-    status_bar_config.screen = display->GetScreen();
-    status_bar = new GUIStatusBar(status_bar_config);
+    // EPaper display testing
+    display->DrawText(
+        0, 0, 
+        (char *)"Black6x8", 
+        EPaperDisplay::EPAPER_BLACK,
+        EPaperDisplay::EPAPER_NONE,
+        EPaperDisplay::EPAPER_TERMINAL_6X8);
+    display->DrawText(
+        0, 15, 
+        (char *)"12x16", 
+        EPaperDisplay::EPAPER_BLACK,
+        EPaperDisplay::EPAPER_RED,
+        EPaperDisplay::EPAPER_TERMINAL_12X16);
+    display->DrawText(
+        0, 30,
+        (char *)"16x24",
+        EPaperDisplay::EPAPER_RED,
+        EPaperDisplay::EPAPER_NONE,
+        EPaperDisplay::EPAPER_TERMINAL_16X24);
+    display->DrawRectangle(0, 50, 20, 20, EPaperDisplay::EPAPER_RED, true);
+    display->DrawRectangle(20, 50, 20, 20, EPaperDisplay::EPAPER_BLACK, true);
+    display->DrawRectangle(40, 50, 20, 20, EPaperDisplay::EPAPER_RED, false);
+    display->DrawRectangle(60, 50, 20, 20, EPaperDisplay::EPAPER_BLACK, false);
+    display->DrawPoint(85, 50, EPaperDisplay::EPAPER_RED);
+    display->DrawBitmap(0, 100, satellite_icon_20x20, 20, 20, EPaperDisplay::EPAPER_RED);
+    display->Update();
 
-    PA1616S::PA1616SConfig_t gps_config = {
-        .uart_id = GPS_UART_ID,
-        .uart_baud = GPS_UART_BAUD,
-        .uart_tx_pin = GPS_UART_TX_PIN,
-        .uart_rx_pin = GPS_UART_RX_PIN
-    };
+    while (true) {
 
-    gps = new PA1616S(gps_config);
-    gps->Init();
-
-    uint32_t gps_refresh_time_ms = 0;
-    uint32_t display_refresh_time_ms = 0;
-    while(true) {
-        uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
-        if (curr_time_ms >= gps_refresh_time_ms) {
-            // Refresh the GPS.
-            RefreshGPS();
-            gps_refresh_time_ms = curr_time_ms + kGPSUpdateInterval;
-        }
-        if (curr_time_ms >= display_refresh_time_ms) {
-            // Refresh the display.
-            RefreshScreen();
-            display_refresh_time_ms = curr_time_ms + kDisplayUpdateInterval;
-        }
     }
+
+    // GeepsGUIElement::GeepsGUIElementConfig_t status_bar_config;
+    // status_bar_config.screen = display->GetScreen();
+    // status_bar = new GUIStatusBar(status_bar_config);
+
+    // PA1616S::PA1616SConfig_t gps_config = {
+    //     .uart_id = GPS_UART_ID,
+    //     .uart_baud = GPS_UART_BAUD,
+    //     .uart_tx_pin = GPS_UART_TX_PIN,
+    //     .uart_rx_pin = GPS_UART_RX_PIN
+    // };
+
+    // gps = new PA1616S(gps_config);
+    // gps->Init();
+
+    // uint32_t gps_refresh_time_ms = 0;
+    // uint32_t display_refresh_time_ms = 0;
+    // while(true) {
+    //     uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
+    //     if (curr_time_ms >= gps_refresh_time_ms) {
+    //         // Refresh the GPS.
+    //         RefreshGPS();
+    //         gps_refresh_time_ms = curr_time_ms + kGPSUpdateInterval;
+    //     }
+    //     if (curr_time_ms >= display_refresh_time_ms) {
+    //         // Refresh the display.
+    //         RefreshScreen();
+    //         display_refresh_time_ms = curr_time_ms + kDisplayUpdateInterval;
+    //     }
+    // }
 }

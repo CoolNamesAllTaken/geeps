@@ -9,3 +9,7 @@ Frickk wait this doesn't work, it's baked into the image. Poop.
 ### Getting a weird link issue.
 
 Make sure that you added the file to the CMakeLists.txt file AND added its directory using `add_subdirectory()`!
+
+### Need to see symbols properly when debugging
+
+Run the following from the `firmware/build` directory: `cmake -DPICO_DEOPTIMIZED_DEBUG=1 ..`.

@@ -30,16 +30,42 @@ public:
         uint spi_mosi_pin = 11;
     } EPaper_Config_t;
 
+    typedef enum {
+        EPAPER_NONE = 0,
+        EPAPER_BLACK,
+        EPAPER_RED
+    } EPaper_Color_t;
+
+    typedef enum {
+        EPAPER_TERMINAL_6X8 = 0,
+        EPAPER_TERMINAL_8X12,
+        EPAPER_TERMINAL_12X16,
+        EPAPER_TERMINAL_16X24
+    } EPaper_Font_t;
+
     EPaperDisplay(EPaper_Config_t config);
     void Init();
     void Clear();
     void Update();
+
+    void DrawPoint(uint16_t pos_x, uint16_t pos_y, EPaper_Color_t color);
+    void DrawRectangle(uint16_t pos_x, uint16_t pos_y, uint16_t size_x, uint16_t size_y, EPaper_Color_t color, bool filled = false);
+    void DrawText(
+        uint16_t pos_x,
+        uint16_t pos_y,
+        char * text,
+        EPaper_Color_t text_color = EPAPER_BLACK,
+        EPaper_Color_t background_color = EPAPER_NONE,
+        EPaper_Font_t font = EPAPER_TERMINAL_6X8);
+    void DrawBitmap(uint16_t pos_x, uint16_t pos_y, uint8_t bitmap[], uint16_t size_x, uint16_t size_y, EPaper_Color_t color);
 
     Screen_EPD_EXT3 * GetScreen();
 
 private:
     EPaper_Config_t config_;
     Screen_EPD_EXT3 * screen_;
+
+    uint16_t EPaperColorsToScreenColors(EPaper_Color_t color);
 
 };
 
