@@ -7,7 +7,6 @@
 #include "hV_Configuration.h" // for pins_t object
 #include "Screen_EPD_EXT3.h" // for screen object
 #include "nmea_utils.hh" // for GPS stuff
-#include "geeps_gui.hh" // for various GUI screens
 
 class EPaperDisplay {
 public:
@@ -48,22 +47,33 @@ public:
     void Clear();
     void Update();
 
+    uint16_t GetSizeX();
+    uint16_t GetSizeY();
+
     void DrawPoint(uint16_t pos_x, uint16_t pos_y, EPaper_Color_t color);
     void DrawRectangle(uint16_t pos_x, uint16_t pos_y, uint16_t size_x, uint16_t size_y, EPaper_Color_t color, bool filled = false);
     void DrawText(
         uint16_t pos_x,
         uint16_t pos_y,
-        char * text,
+        char * text, // Should probably be const except that we pass it unprotected to gText().
         EPaper_Color_t text_color = EPAPER_BLACK,
         EPaper_Color_t background_color = EPAPER_NONE,
         EPaper_Font_t font = EPAPER_TERMINAL_6X8);
-    void DrawBitmap(uint16_t pos_x, uint16_t pos_y, uint8_t bitmap[], uint16_t size_x, uint16_t size_y, EPaper_Color_t color);
+    void DrawBitmap(
+        uint16_t pos_x, 
+        uint16_t pos_y, 
+        const uint8_t bitmap[], 
+        uint16_t size_x, 
+        uint16_t size_y, 
+        EPaper_Color_t color);
 
-    Screen_EPD_EXT3 * GetScreen();
+    // Screen_EPD_EXT3 * GetScreen();
 
 private:
     EPaper_Config_t config_;
     Screen_EPD_EXT3 * screen_;
+    uint16_t size_x_;
+    uint16_t size_y_;
 
     uint16_t EPaperColorsToScreenColors(EPaper_Color_t color);
 

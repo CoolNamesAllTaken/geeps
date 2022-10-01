@@ -24,6 +24,8 @@ EPaperDisplay::EPaperDisplay(EPaper_Config_t config)
     epd_pins.cardDetect = config_.card_detect_pin;
 
     screen_ = new Screen_EPD_EXT3(eScreen_EPD_EXT3_213_0C, epd_pins, config_.spi_inst);
+    size_x_ = 104; // [pixels] Hardcoded for selected screen.
+    size_y_ = 212; // [pixe;s] Hardcoded for selected screen.
 }
 
 /**
@@ -52,12 +54,28 @@ void EPaperDisplay::Update() {
 }
 
 /**
- * @brief Getter for a pointer to the private EPaper screen instance.
- * @retval Pointer to the screen's Screen_EPD_EXT3 object.
+ * @brief Returns the x dimension of the screen.
+ * @retval X dimension, in pixels.
  */
-Screen_EPD_EXT3 * EPaperDisplay::GetScreen() {
-    return screen_;
+uint16_t EPaperDisplay::GetSizeX() {
+    return size_x_;
 }
+
+/**
+ * @brief Returns the y dimension of the screen.
+ * @retval Y dimension, in pixels.
+ */
+uint16_t EPaperDisplay::GetSizeY() {
+    return size_y_;
+}
+
+// /**
+//  * @brief Getter for a pointer to the private EPaper screen instance.
+//  * @retval Pointer to the screen's Screen_EPD_EXT3 object.
+//  */
+// Screen_EPD_EXT3 * EPaperDisplay::GetScreen() {
+//     return screen_;
+// }
 
 /**
  * @brief Helper function that converts an EPaperDisplay color enum into a color used by the underlying
@@ -160,7 +178,7 @@ void EPaperDisplay::DrawText(
 void EPaperDisplay::DrawBitmap(
     uint16_t pos_x,
     uint16_t pos_y,
-    uint8_t bitmap[],
+    const uint8_t bitmap[],
     uint16_t size_x,
     uint16_t size_y,
     EPaper_Color_t color)

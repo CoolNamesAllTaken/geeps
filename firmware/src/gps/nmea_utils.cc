@@ -88,6 +88,11 @@ GGAPacket::GGAPacket(
     uint16_t packet_str_len) 
     : NMEAPacket(packet_str, packet_str_len)
 {
+    // Make string fields safe to use.
+    memset(utc_time_str_, '\0', kMaxPacketFieldLen);
+    memset(latitude_str_, '\0', kMaxPacketFieldLen);
+    memset(longitude_str_, '\0', kMaxPacketFieldLen);
+    
     if (!is_valid_) {
         return; // validity check failed in parent consturctor, abort!
     }

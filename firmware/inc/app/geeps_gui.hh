@@ -4,6 +4,7 @@
 #include "pico/stdlib.h" // idk if we need this
 #include "nmea_utils.hh"
 #include "epaper.hh"
+#include "gui_bitmaps.hh"
 
 class GeepsGUIElement {
 public:
@@ -13,7 +14,7 @@ public:
     typedef struct {
         uint16_t pos_x = 0;
         uint16_t pos_y = 0;
-        Screen_EPD_EXT3 * screen = NULL;
+        EPaperDisplay * display = NULL;
     } GeepsGUIElementConfig_t;
     
     GeepsGUIElement(GeepsGUIElementConfig_t config); // constructor
@@ -28,7 +29,7 @@ protected:
 
 class GUIStatusBar: public GeepsGUIElement {
 public:
-    static const uint16_t kStatusBarHeight = 12;
+    static const uint16_t kStatusBarHeight = 15;
 
     float battery_life;
     GGAPacket::PositionFixIndicator_t position_fix;
