@@ -17,7 +17,7 @@
 #define GPS_UART_RX_PIN 5 // UART1 RX
 
 const uint16_t kGPSUpdateInterval = 50; // [ms]
-const uint16_t kDisplayUpdateInterval = 10000; // [ms]
+const uint16_t kDisplayUpdateInterval = 60e3; // [ms]
 
 const uint16_t LED_PIN = 25;
 
@@ -29,19 +29,23 @@ void RefreshGPS() {
     gpio_put(LED_PIN, 1);
     gps->Update();
     gpio_put(LED_PIN, 0);
+    gps->latest_gga_packet.GetUTCTimeStr(status_bar->time_string);
+    gps->latest_gga_packet.GetLatitudeStr(status_bar->latitude_string);
+    gps->latest_gga_packet.GetLongitudeStr(status_bar->longitude_string);
+    // gps->latest_gga_packet.GetSatellitesUsed
 }
 
 void RefreshScreen() {
-    display->Clear();
+    // display->Clear();
 
-    // status_bar->Draw();
+    status_bar->Draw();
     // Latitude
-    char latitude_str[NMEAPacket::kMaxPacketFieldLen];
-    char longitude_str[NMEAPacket::kMaxPacketFieldLen];
-    gps->latest_gga_packet.GetLatitudeStr(latitude_str);
-    gps->latest_gga_packet.GetLongitudeStr(longitude_str);
-    display->DrawText(0, 200, latitude_str);
-    display->DrawText(0, 220, longitude_str);
+    // char latitude_str[NMEAPacket::kMaxPacketFieldLen];
+    // char longitude_str[NMEAPacket::kMaxPacketFieldLen];
+    // gps->latest_gga_packet.GetLatitudeStr(latitude_str);
+    // gps->latest_gga_packet.GetLongitudeStr(longitude_str);
+    // display->DrawText(0, 200, latitude_str);
+    // display->DrawText(0, 220, longitude_str);
 
     display->Update();
 }
@@ -63,36 +67,36 @@ int main() {
     display->Clear();
 
     // EPaper display testing
-    display->DrawText(
-        0, 0, 
-        (char *)"Black6x8", 
-        EPaperDisplay::EPAPER_BLACK,
-        EPaperDisplay::EPAPER_NONE,
-        EPaperDisplay::EPAPER_TERMINAL_6X8);
-    display->DrawText(
-        0, 15, 
-        (char *)"12x16", 
-        EPaperDisplay::EPAPER_BLACK,
-        EPaperDisplay::EPAPER_RED,
-        EPaperDisplay::EPAPER_TERMINAL_12X16);
-    display->DrawText(
-        0, 30,
-        (char *)"16x24",
-        EPaperDisplay::EPAPER_RED,
-        EPaperDisplay::EPAPER_NONE,
-        EPaperDisplay::EPAPER_TERMINAL_16X24);
-    display->DrawRectangle(0, 50, 20, 20, EPaperDisplay::EPAPER_RED, true);
-    display->DrawRectangle(20, 50, 20, 20, EPaperDisplay::EPAPER_BLACK, true);
-    display->DrawRectangle(40, 50, 20, 20, EPaperDisplay::EPAPER_RED, false);
-    display->DrawRectangle(60, 50, 20, 20, EPaperDisplay::EPAPER_BLACK, false);
-    display->DrawPoint(85, 50, EPaperDisplay::EPAPER_RED);
-    display->DrawBitmap(0, 100, satellite_icon_20x20, 20, 20, EPaperDisplay::EPAPER_RED);
-    display->DrawBitmap(30, 100, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
-    display->Update();
+    // display->DrawText(
+    //     0, 0, 
+    //     (char *)"Black6x8", 
+    //     EPaperDisplay::EPAPER_BLACK,
+    //     EPaperDisplay::EPAPER_NONE,
+    //     EPaperDisplay::EPAPER_TERMINAL_6X8);
+    // display->DrawText(
+    //     0, 15, 
+    //     (char *)"12x16", 
+    //     EPaperDisplay::EPAPER_BLACK,
+    //     EPaperDisplay::EPAPER_RED,
+    //     EPaperDisplay::EPAPER_TERMINAL_12X16);
+    // display->DrawText(
+    //     0, 30,
+    //     (char *)"16x24",
+    //     EPaperDisplay::EPAPER_RED,
+    //     EPaperDisplay::EPAPER_NONE,
+    //     EPaperDisplay::EPAPER_TERMINAL_16X24);
+    // display->DrawRectangle(0, 50, 20, 20, EPaperDisplay::EPAPER_RED, true);
+    // display->DrawRectangle(20, 50, 20, 20, EPaperDisplay::EPAPER_BLACK, true);
+    // display->DrawRectangle(40, 50, 20, 20, EPaperDisplay::EPAPER_RED, false);
+    // display->DrawRectangle(60, 50, 20, 20, EPaperDisplay::EPAPER_BLACK, false);
+    // display->DrawPoint(85, 50, EPaperDisplay::EPAPER_RED);
+    // display->DrawBitmap(0, 100, satellite_icon_20x20, 20, 20, EPaperDisplay::EPAPER_RED);
+    // display->DrawBitmap(30, 100, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
+    // display->Update();
 
-    // GeepsGUIElement::GeepsGUIElementConfig_t status_bar_config;
-    // status_bar_config.screen = display->GetScreen();
-    // status_bar = new GUIStatusBar(status_bar_config);
+    GeepsGUIElement::GeepsGUIElementConfig_t status_bar_config;
+    status_bar_config.display = display;
+    status_bar = new GUIStatusBar(status_bar_config);
 
     PA1616S::PA1616SConfig_t gps_config = {
         .uart_id = GPS_UART_ID,

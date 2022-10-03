@@ -10,6 +10,8 @@
 
 class EPaperDisplay {
 public:
+    const uint16_t kDisplayRegenerationInterval = 5; // Number of fast updates before a regeneration is forced to clear ghosting.
+
     // Configuration struct used to define GPIO and SPI config.
     typedef struct {
         uint8_t panel_busy_pin = 8;
@@ -74,6 +76,7 @@ private:
     Screen_EPD_EXT3 * screen_;
     uint16_t size_x_;
     uint16_t size_y_;
+    uint16_t refresh_counter_;
 
     uint16_t EPaperColorsToScreenColors(EPaper_Color_t color);
 

@@ -30,10 +30,16 @@ protected:
 class GUIStatusBar: public GeepsGUIElement {
 public:
     static const uint16_t kStatusBarHeight = 15;
+    static const uint16_t kNumberStringLength = 10;
 
-    float battery_life;
+    float battery_percent;
     GGAPacket::PositionFixIndicator_t position_fix;
+   
+
+    uint16_t num_satellites;
     char time_string[NMEAPacket::kMaxPacketFieldLen];
+    char latitude_string[NMEAPacket::kMaxPacketFieldLen];
+    char longitude_string[NMEAPacket::kMaxPacketFieldLen];
     
     GUIStatusBar(GeepsGUIElementConfig_t config); // constructor
     void Draw();

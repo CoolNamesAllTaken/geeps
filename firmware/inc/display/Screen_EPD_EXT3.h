@@ -138,6 +138,16 @@ class Screen_EPD_EXT3 final : public hV_Screen_Buffer
     ///
     uint8_t getRefreshTime();
 
+    /**
+     * Speedy functions added for fast updating.
+     */
+
+    /// @brief Update the display, fast update. Added from Screen_EPD_EXT3_Basic_Fast
+    void flush_fast();
+
+    /// @brief  Clear the screen to fix ghosting. Recommended after 50ish fast updates or around 30s of operation.
+    void regenerate();
+
   protected:
     /// @cond
 

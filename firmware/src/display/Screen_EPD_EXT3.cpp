@@ -20,8 +20,19 @@ uint8_t bitRead(uint8_t value, uint8_t bit) {
 void bitClear(uint8_t &value, uint8_t bit) {
     value &= ~(0b1<<bit);
 }
+void digitalWrite(uint gpio, bool value) {
+    gpio_put(gpio, value);
+}
+bool digitalRead(uint gpio) {
+    return gpio_get(gpio);
+}
 
-// Class
+/**
+ * @brief Class constructor for Screen_EPD_EXT3 class.
+ * @param[in] eScreen_EPD_EXT3 uint32_t that designates a screen type.
+ * @param[in] board Struct containing a bunch of uint8_t's that describe each GPIO pin used by thge screen.
+ * @param[in] epd_spi Pointer to the spi_inst_t that is used to communicate with the display.
+ */
 Screen_EPD_EXT3::Screen_EPD_EXT3(eScreen_EPD_EXT3_t eScreen_EPD_EXT3, pins_t board, spi_inst_t * epd_spi)
 {
     _pin = board;
@@ -30,6 +41,10 @@ Screen_EPD_EXT3::Screen_EPD_EXT3(eScreen_EPD_EXT3_t eScreen_EPD_EXT3, pins_t boa
     epd_spi_ = epd_spi;
 }
 
+/**
+ * @brief Sets model specific parameters (height / width etc), allocates the framebuffer if it's not yet allocated, then initializes
+ * GPIO pins and SPI port to their relevant starting configurations.
+ */
 void Screen_EPD_EXT3::begin()
 {
     _codeExtra = (_eScreen_EPD_EXT3 >> 16) & 0xff;
@@ -172,25 +187,12 @@ void Screen_EPD_EXT3::begin()
             break;
     }
 
-#if defined(BOARD_HAS_PSRAM) // ESP32 PSRAM specific case
-
-    if (_newImage == 0)
-    {
-        static uint8_t * _newFrameBuffer;
-        _newFrameBuffer = (uint8_t *) ps_malloc(_sizePageColour * _depthBuffer);
-        _newImage = (uint8_t *) _newFrameBuffer;
-    }
-
-#else // default case
-
-    if (_newImage == 0)
+    if (_newImage == NULL)
     {
         static uint8_t * _newFrameBuffer;
         _newFrameBuffer = new uint8_t[_sizePageColour * _depthBuffer];
         _newImage = (uint8_t *) _newFrameBuffer;
     }
-
-#endif // ESP32 BOARD_HAS_PSRAM
 
     // Check FRAM
     bool flag = true;
@@ -258,12 +260,6 @@ void Screen_EPD_EXT3::begin()
     spi_init(epd_spi_, SPI_FREQ);
     spi_set_format(epd_spi_, SPI_BITS_PER_TRANSFER, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST); // SPI Mode 0, MSB first, 1 Byte
 
-    // SPI.setBitOrder(MSBFIRST);
-    // SPI.setDataMode(SPI_MODE0);
-    // SPI.setClockDivider(SPI_CLOCK_DIV32);
-    // SPI.begin();
-    // SPI.beginTransaction(_settingScreen);
-
     // Reset
     switch (_codeSize)
     {
@@ -311,6 +307,14 @@ void Screen_EPD_EXT3::begin()
     clear();
 }
 
+/**
+ * @brief Resets the panel.
+ * @param[in] ms1 Duration to wait before raising panelReset pin (ms).
+ * @param[in] ms2 Duration of first panelReset pin HIGH (ms).
+ * @param[in] ms3 Duration of first panelReset pin LOW (ms).
+ * @param[in] ms4 Duration of second panelReset pin HIGH (ms) before raising panelCS pin.
+ * @param[in] ms5 Duration to wait after raising panelCS pin before returning (ms).
+ */
 void Screen_EPD_EXT3::_reset(uint32_t ms1, uint32_t ms2, uint32_t ms3, uint32_t ms4, uint32_t ms5)
 {
     // gpio_put(PNLON_PIN, HIGH); // PANEL_ON# = 1
@@ -335,6 +339,10 @@ void Screen_EPD_EXT3::_reset(uint32_t ms1, uint32_t ms2, uint32_t ms3, uint32_t 
     delay_ms(ms5);
 }
 
+/**
+ * @brief Fills a string buffer with an info string that contains screen diagonal dimension and font mode.
+ * @param[out] str_buf String buffer to fill with information string.
+ */
 void Screen_EPD_EXT3::WhoAmI(char * str_buf)
 {   
     char font_mode = '?';
@@ -356,6 +364,10 @@ void Screen_EPD_EXT3::WhoAmI(char * str_buf)
     sprintf(str_buf, "iTC %d.%d \" -%c", _screenDiagonal / 100, _screenDiagonal % 100, font_mode);
 }
 
+/**
+ * @brief Standard function for flushing a framebuffer to a display with the proper global refresh. Takes a long-ass
+ *          time but maybe does good things.
+ */
 void Screen_EPD_EXT3::flush()
 {
     uint8_t * blackBuffer = _newImage;
@@ -813,6 +825,11 @@ void Screen_EPD_EXT3::flush()
     gpio_put(_pin.panelCS, HIGH); // CS# = 1
 }
 
+/**
+ * @brief Clears the framebuffer by setting all pixels to a specific color.
+ * @param[in] colour uint16_t indicating which color to fill the framebuffer with. Options are black, white, gray,
+ *                      red, dark red, light red.
+ */
 void Screen_EPD_EXT3::clear(uint16_t colour)
 {
     if (colour == myColours.red)
@@ -875,6 +892,10 @@ void Screen_EPD_EXT3::clear(uint16_t colour)
     }
 }
 
+/**
+ * @brief Sets a flag that inverts the colors on the screen. Useful for toggling pixels for important reasons.
+ * @param[in] flag Invert if true, don't invert if false.
+ */
 void Screen_EPD_EXT3::invert(bool flag)
 {
     _invert = flag;
@@ -1001,6 +1022,12 @@ bool Screen_EPD_EXT3::_orientCoordinates(uint16_t & x, uint16_t & y)
     return flag;
 }
 
+/**
+ * @brief Returns byte index of a given set of X/Y coordinates in the framebuffer.
+ * @param[in] x1 X-coordinate for given byte.
+ * @param[in] y1 Y-coordinate for given byte.
+ * @retval Byte index of given location.
+ */
 uint32_t Screen_EPD_EXT3::_getZ(uint16_t x1, uint16_t y1)
 {
     uint32_t z1 = 0;
@@ -1197,5 +1224,78 @@ void Screen_EPD_EXT3::_sendIndexDataSlave(uint8_t index, const uint8_t * data, u
 uint8_t Screen_EPD_EXT3::getRefreshTime()
 {
     return _refreshTime;
+}
+
+// Functions imported from Screen_EPD_EXT3_Basic-Fast
+
+void Screen_EPD_EXT3::_waitBusy()
+{
+    // LOW = busy, HIGH = ready
+    while (digitalRead(_pin.panelBusy) != HIGH)
+    {
+        delay_ms(32); // non-blocking
+    }
+}
+
+void Screen_EPD_EXT3::flush_fast() {
+    uint8_t * nextBuffer = _newImage;
+    uint8_t * previousBuffer = _newImage + _sizePageColour;
+
+    _reset(5, 5, 10, 5, 5);
+
+    uint8_t data9[] = {0x0e};
+    _sendIndexData(0x00, data9, 1); // Soft-reset
+    delay_ms(5);
+
+    uint8_t data7[] = {0x19 | 0x40};
+    // uint8_t data7[] = {getTemperature() };
+    _sendIndexData(0xe5, data7, 1); // Input Temperature 0°C = 0x00, 22°C = 0x16, 25°C = 0x19
+    uint8_t data6[] = {0x02};
+    _sendIndexData(0xe0, data6, 1); // Active Temperature
+
+    uint8_t data0[] = {0xcf | 0x10, 0x8d | 0x02};
+    _sendIndexData(0x00, data0, 2); // PSR
+
+    uint8_t data4[] = {0x07};
+    _sendIndexData(0x50, data4, 1); // Vcom and data interval setting
+
+    // Send image data
+    _sendIndexData(0x10, previousBuffer, _sizeFrame); // Previous frame
+    _sendIndexData(0x13, nextBuffer, _sizeFrame); // Next frame
+    memcpy(previousBuffer, nextBuffer, _sizeFrame); // Copy displayed next to previous
+
+    delay_ms(50);
+    _waitBusy();
+    uint8_t data8[] = {0x00};
+    _sendIndexData(0x04, data8, 1); // Power on
+    delay_ms(5);
+    _waitBusy();
+
+    // This is the step that takes freakin forever.
+    _sendIndexData(0x12, data8, 1); // Display Refresh
+    delay_ms(5);
+    _waitBusy();
+
+    _sendIndexData(0x02, data8, 1); // Turn off DC/DC
+    delay_ms(5);
+    _waitBusy();
+    digitalWrite(_pin.panelDC, LOW);
+    digitalWrite(_pin.panelCS, LOW);
+
+    digitalWrite(_pin.panelReset, LOW);
+    // digitalWrite(PNLON_PIN, LOW);
+
+    digitalWrite(_pin.panelCS, HIGH); // CS# = 1
+}
+
+void Screen_EPD_EXT3::regenerate()
+{
+    clear(myColours.black);
+    flush_fast();
+
+    delay_ms(100);
+
+    clear(myColours.white);
+    flush_fast();
 }
 

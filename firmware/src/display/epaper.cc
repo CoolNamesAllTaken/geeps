@@ -9,7 +9,9 @@
  * @param[in] config Struct with configuration info for initializing the screen.
  */
 EPaperDisplay::EPaperDisplay(EPaper_Config_t config)
-:config_(config) {
+    : config_(config)
+    , refresh_counter_(0)
+{
     pins_t epd_pins;
     epd_pins.panelBusy = config_.panel_busy_pin;
     epd_pins.panelDC = config_.panel_data_command_pin;
@@ -37,6 +39,7 @@ void EPaperDisplay::Init() {
     gpio_set_function(config_.spi_mosi_pin, GPIO_FUNC_SPI);
     screen_->begin();
     screen_->setOrientation(6); // portrait
+    // screen_->regenerate(); // clear ghosts
 }
 
 /**
@@ -50,7 +53,12 @@ void EPaperDisplay::Clear() {
  * @brief Draws the contents onto the EPaper screen.
  */
 void EPaperDisplay::Update() {
+    // if (refresh_counter_ >= kDisplayRegenerationInterval) {
+    //     screen_->regenerate();
+    //     refresh_counter_ = 0;
+    // }
     screen_->flush();
+    // refresh_counter_++;
 }
 
 /**
