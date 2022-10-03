@@ -16,7 +16,7 @@
 #define GPS_UART_TX_PIN 4 // UART1 TX
 #define GPS_UART_RX_PIN 5 // UART1 RX
 
-const uint16_t kGPSUpdateInterval = 50; // [ms]
+const uint16_t kGPSUpdateInterval = 5; // [ms]
 const uint16_t kDisplayUpdateInterval = 60e3; // [ms]
 
 const uint16_t LED_PIN = 25;
@@ -32,12 +32,12 @@ void RefreshGPS() {
     gps->latest_gga_packet.GetUTCTimeStr(status_bar->time_string);
     gps->latest_gga_packet.GetLatitudeStr(status_bar->latitude_string);
     gps->latest_gga_packet.GetLongitudeStr(status_bar->longitude_string);
-    // gps->latest_gga_packet.GetSatellitesUsed
+    status_bar->num_satellites = gps->latest_gga_packet.GetSatellitesUsed();
 }
 
 void RefreshScreen() {
     // display->Clear();
-
+    display->Clear();
     status_bar->Draw();
     // Latitude
     // char latitude_str[NMEAPacket::kMaxPacketFieldLen];
