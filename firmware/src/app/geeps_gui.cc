@@ -31,7 +31,7 @@ void GUIStatusBar::Draw() {
     // TODO: Draw battery icon with fill bar in top left.
     config_.display->DrawBitmap(0, 0, battery_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
     char battery_text[kNumberStringLength]; // this could be shorter
-    sprintf(battery_text, "%.0f\%", battery_percent);
+    sprintf(battery_text, "%.0f%%", battery_percent);
     config_.display->DrawText(20, kStatusBarHeight/3, battery_text);
 
     config_.display->DrawText(0, 20, time_string);

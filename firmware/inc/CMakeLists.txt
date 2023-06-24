@@ -1,3 +1,4 @@
+add_subdirectory(app)
 add_subdirectory(display)
 add_subdirectory(gps)
 
