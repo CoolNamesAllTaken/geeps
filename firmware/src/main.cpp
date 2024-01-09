@@ -16,19 +16,20 @@
 #define GPS_UART_TX_PIN 4 // UART1 TX
 #define GPS_UART_RX_PIN 5 // UART1 RX
 
-const uint16_t kGPSUpdateInterval = 5; // [ms]
-const uint16_t kDisplayUpdateInterval = 60e3; // [ms]
+const uint16_t kGPSUpdateIntervalMs = 5; // [ms]
+const uint16_t kDisplayUpdateIntervalMs = 1000; // [ms]
+const uint16_t kStatusLEDBlinkIntervalMs = 500;
 
-const uint16_t LED_PIN = 25;
+const uint16_t kStatusLEDPin = 15;
 
 PA1616S * gps = NULL;
 EPaperDisplay * display = NULL;
 GUIStatusBar * status_bar = NULL;
 
 void RefreshGPS() {
-    gpio_put(LED_PIN, 1);
+    // gpio_put(kStatusLEDPin, 1);
     gps->Update();
-    gpio_put(LED_PIN, 0);
+    // gpio_put(kStatusLEDPin, 0);
     gps->latest_gga_packet.GetUTCTimeStr(status_bar->time_string);
     gps->latest_gga_packet.GetLatitudeStr(status_bar->latitude_string);
     gps->latest_gga_packet.GetLongitudeStr(status_bar->longitude_string);
@@ -52,12 +53,12 @@ void RefreshScreen() {
 
 int main() {
     bi_decl(bi_program_description("This is a test binary."));
-    bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
+    bi_decl(bi_1pin_with_name(kStatusLEDPin, "On-board LED"));
 
     stdio_init_all();
 
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
+    gpio_init(kStatusLEDPin);
+    gpio_set_dir(kStatusLEDPin, GPIO_OUT);
 
     puts("Hi hello starting program.\r\n");
 
@@ -108,19 +109,34 @@ int main() {
     gps = new PA1616S(gps_config);
     gps->Init();
 
+    // while(true) {
+    //     gpio_put(kStatusLEDPin, 1);
+    //     sleep_ms(500);
+    //     gpio_put(kStatusLEDPin, 0);
+    //     sleep_ms(500);
+    //     printf("timestamp: %d\r\n", to_ms_since_boot(get_absolute_time()));
+    // }
+
     uint32_t gps_refresh_time_ms = 0;
     uint32_t display_refresh_time_ms = 0;
+    uint32_t status_led_last_toggled_timestamp_ms = 0;
     while(true) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
+        printf("timestamp: %d\r\n", to_ms_since_boot(get_absolute_time()));
         if (curr_time_ms >= gps_refresh_time_ms) {
             // Refresh the GPS.
             RefreshGPS();
-            gps_refresh_time_ms = curr_time_ms + kGPSUpdateInterval;
+            gps_refresh_time_ms = curr_time_ms + kGPSUpdateIntervalMs;
         }
         if (curr_time_ms >= display_refresh_time_ms) {
             // Refresh the display.
             RefreshScreen();
-            display_refresh_time_ms = curr_time_ms + kDisplayUpdateInterval;
+            display_refresh_time_ms = curr_time_ms + kDisplayUpdateIntervalMs;
+        }
+        if (curr_time_ms - status_led_last_toggled_timestamp_ms > kStatusLEDBlinkIntervalMs) {
+            bool curr_out_level = gpio_get_out_level(kStatusLEDPin);
+            gpio_put(kStatusLEDPin, !curr_out_level);
+            status_led_last_toggled_timestamp_ms = curr_time_ms;
         }
     }
 }

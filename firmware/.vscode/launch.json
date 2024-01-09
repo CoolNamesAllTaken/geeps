@@ -9,7 +9,7 @@
             "type": "cortex-debug",
             "cwd": "${workspaceRoot}",
             "executable": "${command:cmake.launchTargetPath}",
-            "request": "launch",
+            "request": "attach",
             "servertype": "external",
             "gdbPath": "arm-none-eabi-gdb",
             "gdbTarget": "host.docker.internal:2331",

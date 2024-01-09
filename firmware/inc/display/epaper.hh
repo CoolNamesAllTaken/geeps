@@ -14,9 +14,9 @@ public:
 
     // Configuration struct used to define GPIO and SPI config.
     typedef struct {
-        uint8_t panel_busy_pin = 8;
-        uint8_t panel_data_command_pin = 6;
-        uint8_t panel_reset_pin = 7;
+        uint8_t panel_busy_pin = 9;
+        uint8_t panel_data_command_pin = 7;
+        uint8_t panel_reset_pin = 8;
         uint8_t flash_cs_pin = NOT_CONNECTED;
         uint8_t panel_cs_pin = 12;
         uint8_t flash_css_pin = NOT_CONNECTED;
