@@ -20,7 +20,7 @@ public:
         uint8_t flash_cs_pin = NOT_CONNECTED;
         uint8_t panel_cs_pin = 12;
         uint8_t flash_css_pin = NOT_CONNECTED;
-        uint8_t panel_css_pin = 13;
+        uint8_t panel_css_pin = NOT_CONNECTED;
         uint8_t touch_reset_pin = NOT_CONNECTED;
         uint8_t touch_interrupt_pin = NOT_CONNECTED;
         uint8_t card_cs_pin = NOT_CONNECTED;
