@@ -1,0 +1,16 @@
+services:
+  # Pico SDK container for compiling main firmware project.
+  geeps-docker:
+    image: coolnamesalltaken/pico-docker:2.0.0-v1
+    network_mode: host
+    volumes:
+      - .:/geeps
+
+    command: tail -f /dev/null # keep the container running forever
+  # ESP IDF container for compiling custom ESP-AT firmware.
+  # esp-docker:
+  #   # image: espressif/idf:release-v4.4
+  #   build: ./esp_at
+  #   volumes:
+  #     - .:/ads_bee # Bind mount ./esp_at as a folder for generated output from the configurator.
+  #   entrypoint: /bin/bash -c "/project/entrypoint.sh && tail -f /dev/null"

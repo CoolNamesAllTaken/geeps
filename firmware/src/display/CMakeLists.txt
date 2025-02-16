@@ -8,9 +8,9 @@ else()
 target_sources(geeps PRIVATE
     epaper.cc
     hV_Colours565.cpp
-    hv_Font_Terminal.cpp
-    hv_Screen_Buffer.cpp
-    hv_Utilities.cpp
+    hV_Font_Terminal.cpp
+    hV_Screen_Buffer.cpp
+    hV_Utilities.cpp
     Screen_EPD_EXT3.cpp
 )
 endif()
