@@ -25,7 +25,6 @@ add_compile_options(
 add_executable(geeps "")
 
 add_subdirectory(src)
-add_subdirectory(inc)
 add_subdirectory(../modules/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
 
 # In case there are files directly in src and inc

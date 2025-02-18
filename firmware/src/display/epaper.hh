@@ -53,7 +53,7 @@ public:
     EPaperDisplay(EPaper_Config_t config);
     void Init();
     void Clear();
-    void Update();
+    void Update(bool fast = false);
 
     uint16_t GetSizeX();
     uint16_t GetSizeY();
@@ -67,7 +67,7 @@ public:
         EPaper_Color_t text_color = EPAPER_BLACK,
         EPaper_Color_t background_color = EPAPER_NONE,
         EPaper_Font_t font = EPAPER_TERMINAL_6X8);
-    void DrawBitmap(
+    void DrawBitMap(
         uint16_t pos_x,
         uint16_t pos_y,
         const uint8_t bitmap[],

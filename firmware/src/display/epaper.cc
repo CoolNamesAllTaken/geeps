@@ -48,7 +48,7 @@ void EPaperDisplay::Init()
     gpio_set_slew_rate(config_.spi_clk_pin, GPIO_SLEW_RATE_FAST);
     gpio_set_slew_rate(config_.spi_mosi_pin, GPIO_SLEW_RATE_FAST);
     screen_->begin();
-    screen_->setOrientation(6); // portrait
+    screen_->setOrientation(3); // landscape
     // screen_->regenerate(); // clear ghosts
 }
 
@@ -63,13 +63,20 @@ void EPaperDisplay::Clear()
 /**
  * @brief Draws the contents onto the EPaper screen.
  */
-void EPaperDisplay::Update()
+void EPaperDisplay::Update(bool fast)
 {
     // if (refresh_counter_ >= kDisplayRegenerationInterval) {
     //     screen_->regenerate();
     //     refresh_counter_ = 0;
     // }
-    screen_->flush();
+    if (fast)
+    {
+        screen_->flush_fast();
+    }
+    else
+    {
+        screen_->flush();
+    }
     // refresh_counter_++;
 }
 
@@ -201,7 +208,7 @@ void EPaperDisplay::DrawText(
  * @param[in] size_y Height of bitmap, in pixels.
  * @param[in] color EPaper_Color_t of bitmap.
  */
-void EPaperDisplay::DrawBitmap(
+void EPaperDisplay::DrawBitMap(
     uint16_t pos_x,
     uint16_t pos_y,
     const uint8_t bitmap[],

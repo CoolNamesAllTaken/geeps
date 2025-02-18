@@ -4,19 +4,19 @@
 
 /**
  * @brief Construct a new PA1616S::PA1616S object.
- * 
+ *
  * @param config Configuration parameters for PA1616S.
  */
-PA1616S::PA1616S(PA1616SConfig_t config) 
-    : latest_gga_packet(GGAPacket((char *)"", 0)) 
-    , config_(config)
-    , uart_buf_len_(0) {
+PA1616S::PA1616S(PA1616SConfig_t config)
+    : latest_gga_packet(GGAPacket((char *)"", 0)), config_(config), uart_buf_len_(0)
+{
 }
 
 /**
  * @brief Initializes the PA1616S.
  */
-void PA1616S::Init() {
+void PA1616S::Init()
+{
     printf("pa1616s: Init started.\r\n");
     uart_init(config_.uart_id, config_.uart_baud);
     gpio_set_function(config_.uart_tx_pin, GPIO_FUNC_UART);
@@ -29,33 +29,48 @@ void PA1616S::Init() {
     memset(uart_buf_, '\0', kMaxUARTBufLen);
     uart_buf_len_ = 0;
 
+    // Enable reset pin and set it high.
+    gpio_init(config_.reset_pin);
+    gpio_set_dir(config_.reset_pin, GPIO_OUT);
+    gpio_put(config_.reset_pin, 1);
+
     printf("pa1616s: Init completed.\r\n");
 }
 
 /**
  * @brief Ingests pending UART packets and updates parameters.
- * 
+ *
  */
-void PA1616S::Update() {
-    while (uart_is_readable(config_.uart_id)) {
+void PA1616S::Update()
+{
+    while (uart_is_readable(config_.uart_id))
+    {
         char new_char = uart_getc(config_.uart_id);
-        if (new_char == '$') {
+        if (new_char == '$')
+        {
             // Start of new string.
             printf("pa1616s: Received sentence %s\r\n", uart_buf_);
             NMEAPacket packet = NMEAPacket(uart_buf_, uart_buf_len_);
-            if (packet.IsValid()) {
+            if (packet.IsValid())
+            {
                 printf("pa1616s:     Packet is valid!\r\n");
-                if (packet.GetPacketType() == NMEAPacket::GGA) {
+                if (packet.GetPacketType() == NMEAPacket::GGA)
+                {
                     latest_gga_packet = GGAPacket(uart_buf_, uart_buf_len_);
-                    if (latest_gga_packet.IsValid()) {
+                    if (latest_gga_packet.IsValid())
+                    {
                         printf("pa1616s:         Formed a valid GGA Packet!\r\n");
                     }
                 }
-            } else {
+            }
+            else
+            {
                 printf("pa1616s:     Packet is invalid.\r\n");
             }
             FlushUARTBuf();
-        } else if (uart_buf_len_ >= kMaxUARTBufLen) {
+        }
+        else if (uart_buf_len_ >= kMaxUARTBufLen)
+        {
             // String too long! Abort.
             printf("pa1616s: String too long! Aborting.\r\n");
             FlushUARTBuf();
@@ -65,7 +80,8 @@ void PA1616S::Update() {
     }
 }
 
-void PA1616S::FlushUARTBuf() {
+void PA1616S::FlushUARTBuf()
+{
     memset(uart_buf_, '\0', kMaxUARTBufLen);
     uart_buf_len_ = 0;
 }
