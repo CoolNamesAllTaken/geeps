@@ -2,7 +2,8 @@
 
 #include <string.h>  // for string tools
 
-#include "hV_Configuration.h"
+// #include "hV_Configuration.h"
+#include "hV_List_Screens.h"
 
 #define BITS_PER_BYTE 8
 
@@ -24,7 +25,7 @@ EPaperDisplay::EPaperDisplay(EPaper_Config_t config) : config_(config), refresh_
     epd_pins.cardCS = config_.card_cs_pin;
     epd_pins.cardDetect = config_.card_detect_pin;
 
-    screen_ = new Screen_EPD_EXT3(eScreen_EPD_EXT3_213_0C /*eScreen_EPD_EXT3_213_0C*/, epd_pins, config_.spi_inst);
+    screen_ = new Screen_EPD_EXT3_Fast(eScreen_EPD_213_PS_0E, epd_pins);
     size_x_ = 104;  // [pixels] Hardcoded for selected screen.
     size_y_ = 212;  // [pixe;s] Hardcoded for selected screen.
 }
@@ -65,7 +66,8 @@ void EPaperDisplay::Update(bool fast) {
     //     refresh_counter_ = 0;
     // }
     if (fast) {
-        screen_->flush_fast();
+        // screen_->flush_fast();
+        screen_->flush();
     } else {
         screen_->flush();
     }
