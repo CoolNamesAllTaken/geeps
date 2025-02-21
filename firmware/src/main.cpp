@@ -6,6 +6,7 @@
 #include "epaper.hh"
 #include "geeps_gui.hh"
 #include "string.h"
+#include "pico/multicore.h"
 // #include "gui_bitmaps.hh"
 
 // #define GPS_UART_ID uart1
@@ -17,8 +18,8 @@
 // #define GPS_UART_TX_PIN 4 // UART1 TX
 // #define GPS_UART_RX_PIN 5 // UART1 RX
 
-const uint16_t kGPSUpdateIntervalMs = 5;        // [ms]
-const uint16_t kDisplayUpdateIntervalMs = 1000; // [ms]
+const uint16_t kGPSUpdateIntervalMs = 5;          // [ms]
+const uint16_t kDisplayUpdateIntervalMs = 10'000; // [ms]
 const uint16_t kStatusLEDBlinkIntervalMs = 500;
 const uint16_t kMsPerSec = 1e3;
 
@@ -38,8 +39,12 @@ void RefreshGPS()
     gps.Update();
     // gpio_put(kStatusLEDPin, 0);
     gps.latest_gga_packet.GetUTCTimeStr(status_bar.time_string);
-    gps.latest_gga_packet.GetLatitudeStr(status_bar.latitude_string);
-    gps.latest_gga_packet.GetLongitudeStr(status_bar.longitude_string);
+    float latitude_deg = gps.latest_gga_packet.GetLatitude();
+    float longitude_deg = gps.latest_gga_packet.GetLongitude();
+    sprintf(status_bar.latitude_string, "%f%c", latitude_deg, latitude_deg > 0 ? 'N' : 'S');
+    sprintf(status_bar.longitude_string, "%f%c", longitude_deg, longitude_deg > 0 ? 'E' : 'W');
+    // gps.latest_gga_packet.GetLatitudeStr(status_bar.latitude_string);
+    // gps.latest_gga_packet.GetLongitudeStr(status_bar.longitude_string);
     status_bar.num_satellites = gps.latest_gga_packet.GetSatellitesUsed();
 }
 
@@ -62,6 +67,16 @@ void BlinkStatusLED(uint16_t blink_rate_hz)
     }
 }
 
+void main_core1()
+{
+    gps.Init();
+
+    while (true)
+    {
+        RefreshGPS();
+    }
+}
+
 int main()
 {
     bi_decl(bi_program_description("This is a test binary."));
@@ -72,16 +87,19 @@ int main()
     gpio_init(kStatusLEDPin);
     gpio_set_dir(kStatusLEDPin, GPIO_OUT);
 
-    gps.Init();
+    multicore_reset_core1();
+    multicore_launch_core1(main_core1);
 
     gui.AddElement(&status_bar);
     hint_box.width_chars = 20;
+    hint_box.pos_x = 10;
+    hint_box.pos_y = GUIStatusBar::kStatusBarHeight + 10;
     gui.AddElement(&hint_box);
     gui.AddElement(&splash_screen);
 
     display.Init();
 
-    snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Hello!\nBooting up...\n");
+    snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Waiting for GPS fix\n");
     gui.Draw();
 
     uint32_t last_dot_ms = to_ms_since_boot(get_absolute_time());
@@ -95,28 +113,19 @@ int main()
             gui.Draw(true);
         }
 
-        gps.Update();
-        status_bar.num_satellites = gps.latest_gga_packet.GetSatellitesUsed();
-        gps.latest_gga_packet.GetLatitudeStr(status_bar.latitude_string);
-        gps.latest_gga_packet.GetLongitudeStr(status_bar.longitude_string);
         BlinkStatusLED(10);
     }
+    snprintf(hint_box.text, GUITextBox::kTextMaxLen, "GPS fix acquired!\n");
 
-    // while(true) {
-    //     gpio_put(kStatusLEDPin, 1);
-    //     sleep_ms(500);
-    //     gpio_put(kStatusLEDPin, 0);
-    //     sleep_ms(500);
-    //     printf("timestamp: %d\r\n", to_ms_since_boot(get_absolute_time()));
-    // }
+    // Placeholder stuff
+    status_bar.progress_frac = 0.75;
+    status_bar.battery_charge_frac = 0.5;
 
     uint32_t gps_refresh_time_ms = 0;
     uint32_t display_refresh_time_ms = 0;
-    uint32_t status_led_last_toggled_timestamp_ms = 0;
     while (true)
     {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
-        printf("timestamp: %d\r\n", to_ms_since_boot(get_absolute_time()));
         if (curr_time_ms >= gps_refresh_time_ms)
         {
             // Refresh the GPS.
@@ -126,16 +135,10 @@ int main()
         if (curr_time_ms >= display_refresh_time_ms)
         {
             // Refresh the display.
-
-            display.Clear();
-            gui.Draw();
+            gui.Draw(false);
             display_refresh_time_ms = curr_time_ms + kDisplayUpdateIntervalMs;
         }
-        if (curr_time_ms - status_led_last_toggled_timestamp_ms > kStatusLEDBlinkIntervalMs)
-        {
-            bool curr_out_level = gpio_get_out_level(kStatusLEDPin);
-            gpio_put(kStatusLEDPin, !curr_out_level);
-            status_led_last_toggled_timestamp_ms = curr_time_ms;
-        }
+
+        BlinkStatusLED(2);
     }
 }

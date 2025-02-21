@@ -35,8 +35,8 @@ protected:
 class GeepsGUI
 {
 public:
-    static const uint16_t kScreenWidth = 104;  // [pixels] Screen X dimension.
-    static const uint16_t kScreenHeight = 212; // [pixels] Screen Y dimension.
+    static const uint16_t kScreenWidth = 212;  // [pixels] Screen X dimension.
+    static const uint16_t kScreenHeight = 104; // [pixels] Screen Y dimension.
     static const uint16_t kMaxNumElements = 10;
 
     struct GeepsGUIConfig
@@ -48,6 +48,7 @@ public:
 
     inline void Draw(bool fast = false)
     {
+        config_.display.Clear();
         for (uint i = 0; i < kMaxNumElements; i++)
         {
             if (elements_[i] != nullptr)
@@ -119,16 +120,18 @@ public:
 class GUIStatusBar : public GeepsGUIElement
 {
 public:
-    static const uint16_t kStatusBarHeight = 15;
+    static const uint16_t kStatusBarHeight = 30;
     static const uint16_t kNumberStringLength = 10;
 
-    float battery_percent;
+    float battery_charge_frac;
     GGAPacket::PositionFixIndicator_t position_fix;
 
     uint16_t num_satellites;
     char time_string[NMEAPacket::kMaxPacketFieldLen];
     char latitude_string[NMEAPacket::kMaxPacketFieldLen];
     char longitude_string[NMEAPacket::kMaxPacketFieldLen];
+
+    float progress_frac = 0.0f;
 
     GUIStatusBar(GeepsGUIElementConfig config); // constructor
     void Draw(EPaperDisplay &display);

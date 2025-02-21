@@ -49,8 +49,8 @@ void PA1616S::Update()
         if (new_char == '$')
         {
             // Start of new string.
-            printf("pa1616s: Received sentence %s\r\n", uart_buf_);
-            NMEAPacket packet = NMEAPacket(uart_buf_, uart_buf_len_);
+            printf("pa1616s: Received sentence %s", uart_buf_);
+            NMEAPacket packet = NMEAPacket(uart_buf_, strlen(uart_buf_));
             if (packet.IsValid())
             {
                 printf("pa1616s:     Packet is valid!\r\n");
@@ -75,7 +75,8 @@ void PA1616S::Update()
             printf("pa1616s: String too long! Aborting.\r\n");
             FlushUARTBuf();
         }
-        strncat(uart_buf_, &new_char, 1); // add new char to end of buffer
+        uart_buf_[uart_buf_len_] = new_char; // add new char to end of buffer
+        uart_buf_[uart_buf_len_ + 1] = '\0'; // null terminate
         uart_buf_len_++;
     }
 }

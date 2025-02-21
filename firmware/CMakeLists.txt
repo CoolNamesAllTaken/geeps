@@ -43,4 +43,5 @@ target_link_libraries(geeps
     pico_stdlib
     FatFs_SPI
     pico_float # for math functions
+    pico_multicore
 )

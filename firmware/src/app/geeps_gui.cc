@@ -50,7 +50,7 @@ void GUITextBox::Draw(EPaperDisplay &display)
 
 /* GUIStatusBar */
 GUIStatusBar::GUIStatusBar(GeepsGUIElementConfig config)
-    : GeepsGUIElement(config), battery_percent(0.0f), position_fix(GGAPacket::FIX_NOT_AVAILABLE), num_satellites(0)
+    : GeepsGUIElement(config), battery_charge_frac(0.0f), position_fix(GGAPacket::FIX_NOT_AVAILABLE), num_satellites(0)
 {
     memset(time_string, '\0', NMEAPacket::kMaxPacketFieldLen);
     memset(latitude_string, '\0', NMEAPacket::kMaxPacketFieldLen);
@@ -62,22 +62,30 @@ GUIStatusBar::GUIStatusBar(GeepsGUIElementConfig config)
  */
 void GUIStatusBar::Draw(EPaperDisplay &display)
 {
-    // TODO: Draw battery icon with fill bar in top left.
+    // Draw battery icon and percentage.
     display.DrawBitMap(pos_x + 0, pos_y + 0, battery_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
     char battery_text[kNumberStringLength]; // this could be shorter
-    sprintf(battery_text, "%.0f%%", battery_percent);
-    display.DrawText(pos_x + 20, pos_y + kStatusBarHeight / 3, battery_text);
+    sprintf(battery_text, "%.0f%%", 100 * battery_charge_frac);
+    display.DrawText(pos_x + 18, pos_y + 4, battery_text);
+    display.DrawRectangle(pos_x + 2, pos_y + 5, battery_charge_frac * 9, 4, EPaperDisplay::EPAPER_BLACK, true);
 
-    display.DrawText(pos_x + 0, pos_y + 20, time_string);
-
-    // TODO: Draw Satellite icon in middle with number of sats (red if none).
+    // Draw satellite icon and number of satellites visible.
     char satellites_str[kNumberStringLength];
     sprintf(satellites_str, "%d", num_satellites);
-    display.DrawBitMap(pos_x + 50, pos_y + 0, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
-    display.DrawText(pos_x + 70, pos_y + kStatusBarHeight / 3, satellites_str, EPaperDisplay::EPAPER_BLACK);
+    display.DrawBitMap(pos_x + 41, pos_y + 0, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
+    display.DrawText(pos_x + 58, pos_y + 5, satellites_str, EPaperDisplay::EPAPER_BLACK);
 
-    // TODO: Draw GPS coordinates on second line (red "NO FIX" if no fix).
-    display.DrawText(pos_x + 0, pos_y + 50, latitude_string);
-    display.DrawText(pos_x + 0, pos_y + 70, longitude_string);
-    // config_.display.DrawBitMap(70, 0, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
+    // Draw progress bar.
+    display.DrawRectangle(pos_x + 70, pos_y + 0, 140, 15, EPaperDisplay::EPAPER_BLACK, false);
+    display.DrawRectangle(pos_x + 70, pos_y + 0, progress_frac * 140, 15, EPaperDisplay::EPAPER_BLACK, true);
+
+    // Draw latitude and longitude string below the satellite and battery icons.
+    display.DrawText(pos_x + 0, pos_y + 20, latitude_string);
+    display.DrawText(pos_x + 70, pos_y + 20, longitude_string);
+
+    // Draw time string to the right of lat and lon.
+    display.DrawText(pos_x + 150, pos_y + 20, time_string);
+
+    // Draw line below the status bar.
+    display.DrawLine(pos_x, pos_y + kStatusBarHeight, GeepsGUI::kScreenWidth, pos_y + kStatusBarHeight, EPaperDisplay::EPAPER_BLACK);
 }

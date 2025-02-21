@@ -6,7 +6,8 @@
 
 const uint16_t kStrBufLen = 100;
 
-TEST(NMEAPacketCalculateChecksum, NMEAPacket) {
+TEST(NMEAPacketCalculateChecksum, NMEAPacket)
+{
 	// Example sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	ASSERT_EQ(strchr(str_buf, '*'), str_buf + 65);
@@ -20,9 +21,17 @@ TEST(NMEAPacketCalculateChecksum, NMEAPacket) {
 	test_packet = NMEAPacket(str_buf, 71);
 	expected_checksum = strtol("66", NULL, 16);
 	ASSERT_EQ(expected_checksum, test_packet.CalculateChecksum());
+
+	memset(str_buf, '\0', kStrBufLen);
+	strcpy(str_buf, "$GLGSV,2,2,07,83,25,219,,78,16,139,,88,05,036,*57");
+	test_packet = NMEAPacket(str_buf, strlen(str_buf));
+	expected_checksum = strtol("57", NULL, 16);
+	ASSERT_EQ(expected_checksum, test_packet.CalculateChecksum());
+	ASSERT_TRUE(test_packet.IsValid());
 }
 
-TEST(NMEAPacketCalculateChecksum, GGAPacket) {
+TEST(NMEAPacketCalculateChecksum, GGAPacket)
+{
 	// Example sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(str_buf, 70);
@@ -37,50 +46,57 @@ TEST(NMEAPacketCalculateChecksum, GGAPacket) {
 	ASSERT_EQ(expected_checksum, test_packet.CalculateChecksum());
 }
 
-TEST(NMEAPacketIsValid, ValidPacket) {
+TEST(NMEAPacketIsValid, ValidPacket)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(str_buf, 70);
 	ASSERT_TRUE(test_packet.IsValid());
 }
 
-TEST(NMEAPacketIsValid, BadTransmittedChecksum) {
+TEST(NMEAPacketIsValid, BadTransmittedChecksum)
+{
 	// Invalid transmitted checksum.
 	char str_buf[kStrBufLen] = "$GPGGA,091626.000,2236.2791,N,12017.2818,E,1,10,1.00,8.8,M,18.7,M,,*67";
 	GGAPacket test_packet = GGAPacket(str_buf, 71);
 	ASSERT_FALSE(test_packet.IsValid());
 }
 
-TEST(NMEAPacketIsValid, InjectedGibberish) {
+TEST(NMEAPacketIsValid, InjectedGibberish)
+{
 	// Corrupted packet contents
 	char str_buf[kStrBufLen] = "$GPGGA,09162ashgsaggh88586N,12017.2818,E,1,10,1.00,8.8,M,18.7,M,,*66";
 	GGAPacket test_packet = GGAPacket(str_buf, 71);
 	ASSERT_FALSE(test_packet.IsValid());
 }
 
-TEST(NMEAPacketIsValid, NoEndToken) {
+TEST(NMEAPacketIsValid, NoEndToken)
+{
 	// '*' suffix token not transmitted
 	char str_buf[kStrBufLen] = "$GPGGA,09162ashgsaggh88586N,12017.2818,E,1,10,1.00,8.8,M,18.7,M,,66";
 	GGAPacket test_packet = GGAPacket(str_buf, 71);
 	ASSERT_FALSE(test_packet.IsValid());
 }
 
-TEST(NMEAPacketIsValid, NoStartToken) {
+TEST(NMEAPacketIsValid, NoStartToken)
+{
 	// '$' prefix token not transmitted
 	char str_buf[kStrBufLen] = "GPGGA,091626.000,2236.2791,N,12017.2818,E,1,10,1.00,8.8,M,18.7,M,,*66";
 	GGAPacket test_packet = GGAPacket(str_buf, 71);
 	ASSERT_FALSE(test_packet.IsValid());
 }
 
-TEST(NMEAPacketConstructor, SenseHeader) {
-    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+TEST(NMEAPacketConstructor, SenseHeader)
+{
+	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(str_buf, 70);
 	ASSERT_EQ(test_packet.GetPacketType(), NMEAPacket::GGA);
 }
 
-TEST(GGAPacketParser, ReadUTCTimeStr) {
-    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+TEST(GGAPacketParser, ReadUTCTimeStr)
+{
+	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
 	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
@@ -89,8 +105,9 @@ TEST(GGAPacketParser, ReadUTCTimeStr) {
 	ASSERT_EQ(strcmp(field_str_buf, "161229.487"), 0); // strings should match
 }
 
-TEST(GGAPacketParser, ReadLatitudeN) {
-    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+TEST(GGAPacketParser, ReadLatitudeN)
+{
+	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
 	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
@@ -100,8 +117,9 @@ TEST(GGAPacketParser, ReadLatitudeN) {
 	ASSERT_NEAR(test_packet.GetLatitude(), 37.3875f, FLOAT_RELTOL);
 }
 
-TEST(GGAPacketParser, ReadLatitudeS) {
-    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+TEST(GGAPacketParser, ReadLatitudeS)
+{
+	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,S,12158.3416,W,1,07,1.0,9.0,M,,,,0000*05";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
 	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
@@ -111,8 +129,9 @@ TEST(GGAPacketParser, ReadLatitudeS) {
 	ASSERT_NEAR(test_packet.GetLatitude(), -37.3875f, FLOAT_RELTOL);
 }
 
-TEST(GGAPacketParser, ReadLongitudeE) {
-    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+TEST(GGAPacketParser, ReadLongitudeE)
+{
+	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,E,1,07,1.0,9.0,M,,,,0000*0A";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
 	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
@@ -122,8 +141,9 @@ TEST(GGAPacketParser, ReadLongitudeE) {
 	ASSERT_NEAR(test_packet.GetLongitude(), 121.97236f, FLOAT_RELTOL);
 }
 
-TEST(GGAPacketParser, ReadLongitudeW) {
-    // Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
+TEST(GGAPacketParser, ReadLongitudeW)
+{
+	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
 	char field_str_buf[NMEAPacket::kMaxPacketFieldLen];
@@ -133,7 +153,8 @@ TEST(GGAPacketParser, ReadLongitudeW) {
 	ASSERT_NEAR(test_packet.GetLongitude(), -121.97236f, FLOAT_RELTOL);
 }
 
-TEST(GGAPacketParser, ReadPositionFixIndicatorBasic) {
+TEST(GGAPacketParser, ReadPositionFixIndicatorBasic)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -141,7 +162,8 @@ TEST(GGAPacketParser, ReadPositionFixIndicatorBasic) {
 	ASSERT_EQ(test_packet.GetPositionFixIndicator(), GGAPacket::PositionFixIndicator_t::GPS_FIX);
 }
 
-TEST(GGAPacketParser, ReadPositionFixIndicatorFixNotAvailable) {
+TEST(GGAPacketParser, ReadPositionFixIndicatorFixNotAvailable)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	// Modify fix indicator and put through checksum calculator at https://nmeachecksum.eqth.net/.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,0,07,1.0,9.0,M,,,,0000*19";
@@ -150,7 +172,8 @@ TEST(GGAPacketParser, ReadPositionFixIndicatorFixNotAvailable) {
 	ASSERT_EQ(test_packet.GetPositionFixIndicator(), GGAPacket::PositionFixIndicator_t::FIX_NOT_AVAILABLE);
 }
 
-TEST(GGAPacketParser, ReadPositionFixIndicatorFixDifferential) {
+TEST(GGAPacketParser, ReadPositionFixIndicatorFixDifferential)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	// Modify fix indicator and put through checksum calculator at https://nmeachecksum.eqth.net/.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,2,07,1.0,9.0,M,,,,0000*1B";
@@ -159,7 +182,8 @@ TEST(GGAPacketParser, ReadPositionFixIndicatorFixDifferential) {
 	ASSERT_EQ(test_packet.GetPositionFixIndicator(), GGAPacket::PositionFixIndicator_t::DIFFERENTIAL_GPS_FIX);
 }
 
-TEST(GGAPacketParser, ReadPositionFixIndicatorFixOther) {
+TEST(GGAPacketParser, ReadPositionFixIndicatorFixOther)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	// Modify fix indicator and put through checksum calculator at https://nmeachecksum.eqth.net/.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,8,07,1.0,9.0,M,,,,0000*11";
@@ -168,7 +192,8 @@ TEST(GGAPacketParser, ReadPositionFixIndicatorFixOther) {
 	ASSERT_EQ(test_packet.GetPositionFixIndicator(), GGAPacket::PositionFixIndicator_t::FIX_NOT_AVAILABLE);
 }
 
-TEST(GGAPacketParser, ReadSatellitesUsed) {
+TEST(GGAPacketParser, ReadSatellitesUsed)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -176,7 +201,8 @@ TEST(GGAPacketParser, ReadSatellitesUsed) {
 	ASSERT_EQ(test_packet.GetSatellitesUsed(), 7);
 }
 
-TEST(GGAPacketParser, ReadHDOP) {
+TEST(GGAPacketParser, ReadHDOP)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -184,7 +210,8 @@ TEST(GGAPacketParser, ReadHDOP) {
 	ASSERT_EQ(test_packet.GetHDOP(), 1.0);
 }
 
-TEST(GGAPacketParser, ReadMSLAltitudeBasic) {
+TEST(GGAPacketParser, ReadMSLAltitudeBasic)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,M,,,,0000*18";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -192,7 +219,8 @@ TEST(GGAPacketParser, ReadMSLAltitudeBasic) {
 	ASSERT_EQ(test_packet.GetMSLAltitude(), 9.0);
 }
 
-TEST(GGAPacketParser, ReadMSLAltitudeWrongUnits) {
+TEST(GGAPacketParser, ReadMSLAltitudeWrongUnits)
+{
 	// Example GPGGA sentence from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html.
 	// Modify units and put through checksum calculator at https://nmeachecksum.eqth.net/.
 	char message_str_buf[kStrBufLen] = "$GPGGA,161229.487,3723.2475,N,12158.3416,W,1,07,1.0,9.0,FT,,,,0000*47";
@@ -200,7 +228,8 @@ TEST(GGAPacketParser, ReadMSLAltitudeWrongUnits) {
 	ASSERT_FALSE(test_packet.IsValid());
 }
 
-TEST(GGAPacketParser, ReadGeoidalSeparationBasic) {
+TEST(GGAPacketParser, ReadGeoidalSeparationBasic)
+{
 	// Example GPGGA sentence from PA1616S Datasheet pg.14.
 	char message_str_buf[kStrBufLen] = "$GPGGA,091626.000,2236.2791,N,12017.2818,E,1,10,1.00,8.8,M,18.7,M,,*66";
 	GGAPacket test_packet = GGAPacket(message_str_buf, 70);
@@ -208,7 +237,8 @@ TEST(GGAPacketParser, ReadGeoidalSeparationBasic) {
 	ASSERT_EQ(test_packet.GetGeoidalSeparation(), 18.7f);
 }
 
-TEST(GGAPacketParser, ReadGeoidalSeparationWrongUnits) {
+TEST(GGAPacketParser, ReadGeoidalSeparationWrongUnits)
+{
 	// Example GPGGA sentence from PA1616S Datasheet pg.14.
 	// Modify units and put through checksum calculator at https://nmeachecksum.eqth.net/.
 	char message_str_buf[kStrBufLen] = "$GPGGA,091626.000,2236.2791,N,12017.2818,E,1,10,1.00,8.8,M,18.7,FT,,*39";

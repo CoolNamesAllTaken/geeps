@@ -58,6 +58,7 @@ public:
     uint16_t GetSizeX();
     uint16_t GetSizeY();
 
+    void DrawLine(uint16_t pos_x, uint16_t pos_y, uint16_t end_x, uint16_t end_y, EPaper_Color_t color);
     void DrawPoint(uint16_t pos_x, uint16_t pos_y, EPaper_Color_t color);
     void DrawRectangle(uint16_t pos_x, uint16_t pos_y, uint16_t size_x, uint16_t size_y, EPaper_Color_t color, bool filled = false);
     void DrawText(

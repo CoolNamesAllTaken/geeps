@@ -126,6 +126,19 @@ uint16_t EPaperDisplay::EPaperColorsToScreenColors(EPaper_Color_t color)
 }
 
 /**
+ * @brief Draws a line on the display.
+ * @param[in] pos_x X position of start of line.
+ * @param[in] pos_y Y position of start of line.
+ * @param[in] end_x X position of end of line.
+ * @param[in] end_y Y position of end of line.
+ * @param[in] color EPaper_Color_t of line.
+ */
+void EPaperDisplay::DrawLine(uint16_t pos_x, uint16_t pos_y, uint16_t end_x, uint16_t end_y, EPaper_Color_t color)
+{
+    screen_->line(pos_x, pos_y, end_x, end_y, EPaperColorsToScreenColors(color));
+}
+
+/**
  * @brief Draws a point on the display.
  * @param[in] pos_x X position of point.
  * @param[in] pos_y Y position of point.
