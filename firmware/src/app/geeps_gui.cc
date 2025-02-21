@@ -1,46 +1,36 @@
 #include "geeps_gui.hh"
-#include <stdio.h>  // for printf
-#include <string.h> // for c-string operations
+
+#include <stdio.h>   // for printf
+#include <string.h>  // for c-string operations
+
 #include "gui_bitmaps.hh"
 
 /* GUIBitMap */
-GUIBitMap::GUIBitMap(GeepsGUIElementConfig config_in) : GeepsGUIElement(config_in)
-{
-}
-void GUIBitMap::Draw(EPaperDisplay &display)
-{
+GUIBitMap::GUIBitMap(GeepsGUIElementConfig config_in) : GeepsGUIElement(config_in) {}
+void GUIBitMap::Draw(EPaperDisplay &display) {
     display.DrawBitMap(pos_x, pos_y, bitmap, size_x, size_y, EPaperDisplay::EPaper_Color_t::EPAPER_BLACK);
 }
 
 /* GUITextBox */
-GUITextBox::GUITextBox(GeepsGUIElementConfig config)
-    : GeepsGUIElement(config)
-{
-}
+GUITextBox::GUITextBox(GeepsGUIElementConfig config) : GeepsGUIElement(config) {}
 
-void GUITextBox::Draw(EPaperDisplay &display)
-{
+void GUITextBox::Draw(EPaperDisplay &display) {
     uint16_t chars_to_print = MIN(strlen(text), kTextMaxLen);
     uint16_t chars_printed = 0;
-    for (uint row = 0; row < kMaxNumRows && chars_printed < chars_to_print; row++)
-    {
+    for (uint row = 0; row < kMaxNumRows && chars_printed < chars_to_print; row++) {
         // Copy characters to the line of text on each row one by one.
         char row_chars[kMaxNumCols];
         bool encountered_newline = false;
-        for (uint16_t col = 0; col < width_chars && !encountered_newline && chars_printed < chars_to_print; col++)
-        {
-            if (text[chars_printed] == '\n')
-            {
+        for (uint16_t col = 0; col < width_chars && !encountered_newline && chars_printed < chars_to_print; col++) {
+            if (text[chars_printed] == '\n') {
                 // Jump to the next line upon receiving newline characters.
                 encountered_newline = true;
-            }
-            else
-            {
+            } else {
                 row_chars[col] = text[chars_printed];
             }
             chars_printed++;
         }
-        row_chars[chars_printed] = '\0'; // Add null terminator.
+        row_chars[chars_printed] = '\0';  // Add null terminator.
 
         // Print the row of text.
         display.DrawText(pos_x, pos_y + row * kCharHeight, row_chars);
@@ -50,8 +40,10 @@ void GUITextBox::Draw(EPaperDisplay &display)
 
 /* GUIStatusBar */
 GUIStatusBar::GUIStatusBar(GeepsGUIElementConfig config)
-    : GeepsGUIElement(config), battery_charge_frac(0.0f), position_fix(GGAPacket::FIX_NOT_AVAILABLE), num_satellites(0)
-{
+    : GeepsGUIElement(config),
+      battery_charge_frac(0.0f),
+      position_fix(GGAPacket::FIX_NOT_AVAILABLE),
+      num_satellites(0) {
     memset(time_string, '\0', NMEAPacket::kMaxPacketFieldLen);
     memset(latitude_string, '\0', NMEAPacket::kMaxPacketFieldLen);
     memset(longitude_string, '\0', NMEAPacket::kMaxPacketFieldLen);
@@ -60,11 +52,10 @@ GUIStatusBar::GUIStatusBar(GeepsGUIElementConfig config)
 /**
  * @brief Draws a status bar in the specified y location (always takes full width of screen).
  */
-void GUIStatusBar::Draw(EPaperDisplay &display)
-{
+void GUIStatusBar::Draw(EPaperDisplay &display) {
     // Draw battery icon and percentage.
     display.DrawBitMap(pos_x + 0, pos_y + 0, battery_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
-    char battery_text[kNumberStringLength]; // this could be shorter
+    char battery_text[kNumberStringLength];  // this could be shorter
     sprintf(battery_text, "%.0f%%", 100 * battery_charge_frac);
     display.DrawText(pos_x + 18, pos_y + 4, battery_text);
     display.DrawRectangle(pos_x + 2, pos_y + 5, battery_charge_frac * 9, 4, EPaperDisplay::EPAPER_BLACK, true);
@@ -87,5 +78,15 @@ void GUIStatusBar::Draw(EPaperDisplay &display)
     display.DrawText(pos_x + 150, pos_y + 20, time_string);
 
     // Draw line below the status bar.
-    display.DrawLine(pos_x, pos_y + kStatusBarHeight, GeepsGUI::kScreenWidth, pos_y + kStatusBarHeight, EPaperDisplay::EPAPER_BLACK);
+    display.DrawLine(pos_x, pos_y + kStatusBarHeight, GeepsGUI::kScreenWidth, pos_y + kStatusBarHeight,
+                     EPaperDisplay::EPAPER_BLACK);
+
+    // Draw up and down arrows on the sidebar.
+    display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight, button_up_pressed ? arrow_up_solid_30x30 : arrow_up_30x30,
+                       30, 30, EPaperDisplay::EPAPER_BLACK);
+    display.DrawRectangle(pos_x + 180, pos_y + kStatusBarHeight + 30, 30, 20, EPaperDisplay::EPAPER_BLACK,
+                          button_center_pressed);
+    display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight + 50,
+                       button_down_pressed ? arrow_down_solid_30x30 : arrow_down_30x30, 30, 30,
+                       EPaperDisplay::EPAPER_BLACK);
 }
