@@ -9,5 +9,6 @@
         "binary_info.h": "c",
         "cmath": "cpp"
     },
-    "cmake.sourceDirectory": "/geeps/test"
+    // "cmake.sourceDirectory": "/geeps/test"
+    "cmake.sourceDirectory": "/geeps/firmware"
 }

@@ -14,6 +14,12 @@ class BSP {
     static const uint32_t epaper_spi_clk_rate_hz = 4'000'000;  // Default to 4MHz, don't exceed 16MHz.
     static const uint16_t epaper_spi_bits_per_transfer = 8;
     static spi_inst_t *epaper_spi_inst;
+
+    static const uint16_t sd_card_detect_pin = 17;
+    static const uint16_t sd_card_clk_pin = 18;
+    static const uint16_t sd_card_mosi_pin = 19;
+    static const uint16_t sd_card_miso_pin = 20;
+    static const uint16_t sd_card_cs_pin = 21;
 };
 
 inline spi_inst_t *BSP::epaper_spi_inst = spi1;
