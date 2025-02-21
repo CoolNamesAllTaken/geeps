@@ -20,5 +20,6 @@ target_include_directories(geeps PRIVATE
 target_sources(geeps
 PRIVATE
     main.cpp
+    bsp.cpp
 )
 endif()

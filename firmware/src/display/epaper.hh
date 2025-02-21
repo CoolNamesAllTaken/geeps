@@ -28,7 +28,8 @@ class EPaperDisplay {
         uint8_t card_cs_pin = NOT_CONNECTED;
         uint8_t card_detect_pin = NOT_CONNECTED;
 
-        // spi_inst_t *spi_inst = BSP::epaper_spi_inst;
+        spi_inst_t *spi_inst = BSP::epaper_spi_inst;
+        uint32_t spi_clk_rate_hz = BSP::epaper_spi_clk_rate_hz;
         uint spi_clk_pin = BSP::epaper_spi_clk_pin;
         uint spi_mosi_pin = BSP::epaper_spi_mosi_pin;
 

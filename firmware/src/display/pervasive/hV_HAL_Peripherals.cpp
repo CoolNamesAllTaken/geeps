@@ -100,7 +100,7 @@ bool flagSPI = false;  // Some SPI implementations require unique initialisation
 
 void hV_HAL_SPI_begin(uint32_t speed) {
     if (flagSPI != true) {
-        _settingScreen = {speed, MSBFIRST, arduino::SPI_MODE0};
+        _settingScreen = {speed, SPI_MSB_FIRST, SPI_MODE0};
 
 #if defined(ENERGIA)
 

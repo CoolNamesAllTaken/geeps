@@ -24,10 +24,11 @@ EPaperDisplay::EPaperDisplay(EPaper_Config_t config) : config_(config), refresh_
     epd_pins.touchInt = config_.touch_interrupt_pin;
     epd_pins.cardCS = config_.card_cs_pin;
     epd_pins.cardDetect = config_.card_detect_pin;
+    epd_pins.panelPower = NOT_CONNECTED;
 
     screen_ = new Screen_EPD_EXT3_Fast(eScreen_EPD_213_PS_0E, epd_pins);
-    size_x_ = 104;  // [pixels] Hardcoded for selected screen.
-    size_y_ = 212;  // [pixe;s] Hardcoded for selected screen.
+    size_x_ = screen_->screenSizeX();  // [pixels] Hardcoded for selected screen.
+    size_y_ = screen_->screenSizeY();  // [pixe;s] Hardcoded for selected screen.
 }
 
 /**
@@ -37,19 +38,14 @@ void EPaperDisplay::Init() {
     gpio_init(config_.panel_enable);
     gpio_set_dir(config_.panel_enable, GPIO_OUT);
     gpio_put(config_.panel_enable, 0);  // Power on
+
     delay_ms(500);
 
-    // Init SPI pins
-    gpio_set_function(config_.spi_clk_pin, GPIO_FUNC_SPI);
-    gpio_set_function(config_.spi_mosi_pin, GPIO_FUNC_SPI);
-    // Configure pinouts for SPI to have strongest drive mode
-    gpio_set_drive_strength(config_.spi_clk_pin, GPIO_DRIVE_STRENGTH_12MA);
-    gpio_set_drive_strength(config_.spi_mosi_pin, GPIO_DRIVE_STRENGTH_12MA);
-    gpio_set_slew_rate(config_.spi_clk_pin, GPIO_SLEW_RATE_FAST);
-    gpio_set_slew_rate(config_.spi_mosi_pin, GPIO_SLEW_RATE_FAST);
+    // SPI initialization taken care of in SPI.h.
+
     screen_->begin();
     screen_->setOrientation(3);  // landscape
-    // screen_->regenerate(); // clear ghosts
+    screen_->regenerate();       // clear ghosts
 }
 
 /**
@@ -65,6 +61,7 @@ void EPaperDisplay::Update(bool fast) {
     //     screen_->regenerate();
     //     refresh_counter_ = 0;
     // }
+    // screen_->regenerate();
     if (fast) {
         // screen_->flush_fast();
         screen_->flush();

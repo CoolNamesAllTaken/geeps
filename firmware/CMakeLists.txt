@@ -44,4 +44,9 @@ target_link_libraries(geeps
     FatFs_SPI
     pico_float # for math functions
     pico_multicore
+    hardware_spi
+    hardware_i2c
+    hardware_dma
+    hardware_gpio
+    hardware_irq
 )

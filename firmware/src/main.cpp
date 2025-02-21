@@ -19,8 +19,8 @@
 // #define GPS_UART_TX_PIN 4 // UART1 TX
 // #define GPS_UART_RX_PIN 5 // UART1 RX
 
-const uint16_t kGPSUpdateIntervalMs = 5;           // [ms]
-const uint16_t kDisplayUpdateIntervalMs = 10'000;  // [ms]
+const uint16_t kGPSUpdateIntervalMs = 5;          // [ms]
+const uint16_t kDisplayUpdateIntervalMs = 2'000;  // [ms]
 const uint16_t kStatusLEDBlinkIntervalMs = 500;
 const uint16_t kMsPerSec = 1e3;
 

@@ -67,8 +67,8 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
     display.DrawText(pos_x + 58, pos_y + 5, satellites_str, EPaperDisplay::EPAPER_BLACK);
 
     // Draw progress bar.
-    display.DrawRectangle(pos_x + 70, pos_y + 0, 140, 15, EPaperDisplay::EPAPER_BLACK, false);
-    display.DrawRectangle(pos_x + 70, pos_y + 0, progress_frac * 140, 15, EPaperDisplay::EPAPER_BLACK, true);
+    display.DrawRectangle(pos_x + 75, pos_y + 0, 135, 15, EPaperDisplay::EPAPER_BLACK, false);
+    display.DrawRectangle(pos_x + 75, pos_y + 0, progress_frac * 135, 15, EPaperDisplay::EPAPER_BLACK, true);
 
     // Draw latitude and longitude string below the satellite and battery icons.
     display.DrawText(pos_x + 0, pos_y + 20, latitude_string);
