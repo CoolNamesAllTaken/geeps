@@ -84,7 +84,7 @@ void gpio_irq_callback(uint gpio, uint32_t events) {
     if (gpio == BSP::sd_card_detect_pin) {
         // IRQ is from SD card.
         card_detect_callback(gpio, events);
-        sprintf(hint_box.text, "SD card %s.", pSD->mounted ? "mounted" : "unmounted");
+        sprintf(scavenger_hunt.status_text, "SD card %s.", pSD->mounted ? "mounted" : "unmounted");
     } else {
         // IRQ is from buttons.
         buttons.GPIOIRQCallback(gpio, events);
@@ -161,7 +161,5 @@ int main() {
         status_bar.button_up_pressed = buttons.pressed[0];
         status_bar.button_center_pressed = buttons.pressed[1];
         status_bar.button_down_pressed = buttons.pressed[2];
-        sprintf(hint_box.text, "Button 1: %d\nButton 2: %d\nButton 3: %d\n", buttons.pressed[0], buttons.pressed[1],
-                buttons.pressed[2]);
     }
 }
