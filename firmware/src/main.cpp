@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "buttons.hh"
 #include "epaper.hh"
 #include "geeps_gui.hh"
 #include "hardware/gpio.h"
@@ -8,6 +9,7 @@
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include "scavenger_hunt.hh"
+#include "sd_utils.hh"  // For accessing SD card GPIO IRQ callback.
 #include "string.h"
 // #include "gui_bitmaps.hh"
 
@@ -20,10 +22,11 @@
 // #define GPS_UART_TX_PIN 4 // UART1 TX
 // #define GPS_UART_RX_PIN 5 // UART1 RX
 
-const uint16_t kGPSUpdateIntervalMs = 5;          // [ms]
-const uint16_t kDisplayUpdateIntervalMs = 2'000;  // [ms]
+const uint16_t kGPSUpdateIntervalMs = 5;        // [ms]
+const uint16_t kDisplayUpdateIntervalMs = 500;  // [ms]
 const uint16_t kStatusLEDBlinkIntervalMs = 500;
 const uint16_t kMsPerSec = 1e3;
+static const uint32_t kButtonDebounceIntervalMs = 10;
 
 const uint16_t kStatusLEDPin = 15;
 
@@ -46,6 +49,11 @@ GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = 30});
 GUIBitMap splash_screen = GUIBitMap({});
 
 ScavengerHunt scavenger_hunt = ScavengerHunt();
+
+Buttons buttons = Buttons({
+    .button_pins = {BSP::button_top_pin, BSP::button_middle_pin, BSP::button_bottom_pin},
+    .button_pressed_callbacks = {nullptr, nullptr, nullptr},
+});
 
 void RefreshGPS() {
     gps.Update();
@@ -72,28 +80,18 @@ void BlinkStatusLED(uint16_t blink_rate_hz) {
     }
 }
 
-void main_core1() {
-    gps.Init();
-    scavenger_hunt.Init();
-
-    while (true) {
-        RefreshGPS();
-        strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
+void gpio_irq_callback(uint gpio, uint32_t events) {
+    if (gpio == BSP::sd_card_detect_pin) {
+        // IRQ is from SD card.
+        card_detect_callback(gpio, events);
+        sprintf(hint_box.text, "SD card %s.", pSD->mounted ? "mounted" : "unmounted");
+    } else {
+        // IRQ is from buttons.
+        buttons.GPIOIRQCallback(gpio, events);
     }
 }
 
-int main() {
-    bi_decl(bi_program_description("This is a test binary."));
-    bi_decl(bi_1pin_with_name(kStatusLEDPin, "On-board LED"));
-
-    stdio_init_all();
-
-    gpio_init(kStatusLEDPin);
-    gpio_set_dir(kStatusLEDPin, GPIO_OUT);
-
-    multicore_reset_core1();
-    multicore_launch_core1(main_core1);
-
+void main_core1() {
     gui.AddElement(&status_bar);
     hint_box.width_chars = 25;
     hint_box.pos_x = 10;
@@ -134,5 +132,36 @@ int main() {
         }
 
         BlinkStatusLED(2);
+    }
+}
+
+int main() {
+    stdio_init_all();
+
+    gpio_init(kStatusLEDPin);
+    gpio_set_dir(kStatusLEDPin, GPIO_OUT);
+
+    multicore_reset_core1();
+    multicore_launch_core1(main_core1);
+
+    gps.Init();
+
+    // gpio_set_irq_callback(gpio_irq_callback);
+    gpio_set_irq_enabled_with_callback(BSP::button_top_pin, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_callback);
+    gpio_set_irq_enabled(BSP::button_middle_pin, GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled(BSP::button_bottom_pin, GPIO_IRQ_EDGE_FALL, true);
+    buttons.Init();
+    gpio_set_irq_enabled(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    scavenger_hunt.Init();
+
+    while (true) {
+        RefreshGPS();
+        strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
+        buttons.Update();
+        status_bar.button_up_pressed = buttons.pressed[0];
+        status_bar.button_center_pressed = buttons.pressed[1];
+        status_bar.button_down_pressed = buttons.pressed[2];
+        sprintf(hint_box.text, "Button 1: %d\nButton 2: %d\nButton 3: %d\n", buttons.pressed[0], buttons.pressed[1],
+                buttons.pressed[2]);
     }
 }

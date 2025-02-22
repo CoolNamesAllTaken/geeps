@@ -6,8 +6,8 @@ bool ScavengerHunt::Init() {
     if (pSD->use_card_detect) {
         // Set up an interrupt on Card Detect to detect removal of the card
         // when it happens:
-        gpio_set_irq_enabled_with_callback(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true,
-                                           &card_detect_callback);
+        // gpio_set_irq_enabled_with_callback(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true,
+        //                                    &card_detect_callback);
     }
 
     int ret = sd_init_card(pSD);
