@@ -7,6 +7,7 @@
 #include "pico/binary_info.h"
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
+#include "scavenger_hunt.hh"
 #include "string.h"
 // #include "gui_bitmaps.hh"
 
@@ -33,6 +34,8 @@ GeepsGUI gui = GeepsGUI({.display = display});
 GUIStatusBar status_bar = GUIStatusBar({});
 GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = 30});
 GUIBitMap splash_screen = GUIBitMap({});
+
+// ScavengerHunt scavenger_hunt = ScavengerHunt();
 
 void RefreshGPS() {
     // gpio_put(kStatusLEDPin, 1);
@@ -65,6 +68,7 @@ void BlinkStatusLED(uint16_t blink_rate_hz) {
 
 void main_core1() {
     gps.Init();
+    // scavenger_hunt.Init();
 
     while (true) {
         RefreshGPS();

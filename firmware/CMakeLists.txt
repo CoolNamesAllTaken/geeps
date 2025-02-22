@@ -49,4 +49,5 @@ target_link_libraries(geeps
     hardware_dma
     hardware_gpio
     hardware_irq
+    hardware_clocks
 )

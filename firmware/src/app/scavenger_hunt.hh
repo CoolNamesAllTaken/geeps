@@ -28,7 +28,7 @@ class ScavengerHunt {
    public:
     static const uint16_t kMaxHints = 100;
 
-    ScavengerHunt();
+    ScavengerHunt() {};
 
     bool Init();
     bool Update(float lat_deg, float lon_deg, uint32_t timestamp_utc);
@@ -36,3 +36,5 @@ class ScavengerHunt {
     Hint hints[kMaxHints];
     uint16_t num_hints;
 };
+
+extern ScavengerHunt scavenger_hunt;

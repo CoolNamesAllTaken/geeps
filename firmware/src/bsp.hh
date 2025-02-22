@@ -20,6 +20,9 @@ class BSP {
     static const uint16_t sd_card_mosi_pin = 19;
     static const uint16_t sd_card_miso_pin = 20;
     static const uint16_t sd_card_cs_pin = 21;
+    static const uint32_t sd_card_spi_clk_rate_hz = 12'000'000;  // 12 MHz
+    static spi_inst_t *sd_card_spi_inst;
 };
 
 inline spi_inst_t *BSP::epaper_spi_inst = spi1;
+inline spi_inst_t *BSP::sd_card_spi_inst = spi0;
