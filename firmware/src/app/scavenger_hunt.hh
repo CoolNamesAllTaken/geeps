@@ -35,6 +35,8 @@ class ScavengerHunt {
 
     Hint hints[kMaxHints];
     uint16_t num_hints;
+
+    char status_text[Hint::kHintTextMaxLen] = {'\0'};
 };
 
 extern ScavengerHunt scavenger_hunt;

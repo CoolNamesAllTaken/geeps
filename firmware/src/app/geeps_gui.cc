@@ -21,11 +21,22 @@ void GUITextBox::Draw(EPaperDisplay &display) {
         // Copy characters to the line of text on each row one by one.
         char row_chars[kMaxNumCols];
         bool encountered_newline = false;
+        uint16_t word_start = chars_printed;
         for (uint16_t col = 0; col < width_chars && !encountered_newline && chars_printed < chars_to_print; col++) {
             if (text[chars_printed] == '\n') {
-                // Jump to the next line upon receiving newline characters.
                 encountered_newline = true;
+            } else if (text[chars_printed] == ' ') {
+                word_start = chars_printed + 1;
+                row_chars[col] = text[chars_printed];
             } else {
+                // Look ahead to see if current word fits
+                if (col == width_chars - 1 && chars_printed + 1 < chars_to_print && text[chars_printed + 1] != ' ' &&
+                    text[chars_printed + 1] != '\n') {
+                    // Word continues beyond line width, go back to start of word
+                    chars_printed = word_start;
+                    encountered_newline = true;
+                    break;
+                }
                 row_chars[col] = text[chars_printed];
             }
             chars_printed++;
@@ -33,7 +44,7 @@ void GUITextBox::Draw(EPaperDisplay &display) {
         row_chars[chars_printed] = '\0';  // Add null terminator.
 
         // Print the row of text.
-        display.DrawText(pos_x, pos_y + row * kCharHeight, row_chars);
+        display.DrawText(pos_x, pos_y + row * kRowHeight, row_chars);
         memset(row_chars, '\0', kMaxNumCols);
     }
 }

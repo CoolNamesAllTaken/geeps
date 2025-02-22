@@ -88,11 +88,10 @@ class GUIBitMap : public GeepsGUIElement {
 class GUITextBox : public GeepsGUIElement {
    public:
     static const uint kTextMaxLen = 300;
-    static const uint16_t kCharWidth = 6;     // [pixels]
-    static const uint16_t kCharHeight = 8;    // [pixels]
+    static const uint16_t kRowHeight = 10;    // [pixels]
     static const uint16_t kTextMargin = 10;   // [pixels]
     static const uint16_t kMaxNumCols = 300;  // [chars] Used for buffer sizing.
-    static const uint16_t kMaxNumRows = (GeepsGUI::kScreenHeight - 2 * kTextMargin) / kCharHeight;
+    static const uint16_t kMaxNumRows = (GeepsGUI::kScreenHeight - 2 * kTextMargin) / kRowHeight;
 
     GUITextBox(GeepsGUIElementConfig config);  // constructor
     void Draw(EPaperDisplay &display);

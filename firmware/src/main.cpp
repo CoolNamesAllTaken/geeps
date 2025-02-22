@@ -35,19 +35,15 @@ GUIStatusBar status_bar = GUIStatusBar({});
 GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = 30});
 GUIBitMap splash_screen = GUIBitMap({});
 
-// ScavengerHunt scavenger_hunt = ScavengerHunt();
+ScavengerHunt scavenger_hunt = ScavengerHunt();
 
 void RefreshGPS() {
-    // gpio_put(kStatusLEDPin, 1);
     gps.Update();
-    // gpio_put(kStatusLEDPin, 0);
     gps.latest_gga_packet.GetUTCTimeStr(status_bar.time_string);
     float latitude_deg = gps.latest_gga_packet.GetLatitude();
     float longitude_deg = gps.latest_gga_packet.GetLongitude();
     sprintf(status_bar.latitude_string, "%f%c", latitude_deg, latitude_deg > 0 ? 'N' : 'S');
     sprintf(status_bar.longitude_string, "%f%c", longitude_deg, longitude_deg > 0 ? 'E' : 'W');
-    // gps.latest_gga_packet.GetLatitudeStr(status_bar.latitude_string);
-    // gps.latest_gga_packet.GetLongitudeStr(status_bar.longitude_string);
     status_bar.num_satellites = gps.latest_gga_packet.GetSatellitesUsed();
 }
 
@@ -68,10 +64,11 @@ void BlinkStatusLED(uint16_t blink_rate_hz) {
 
 void main_core1() {
     gps.Init();
-    // scavenger_hunt.Init();
+    scavenger_hunt.Init();
 
     while (true) {
         RefreshGPS();
+        strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
     }
 }
 
@@ -88,7 +85,7 @@ int main() {
     multicore_launch_core1(main_core1);
 
     gui.AddElement(&status_bar);
-    hint_box.width_chars = 20;
+    hint_box.width_chars = 25;
     hint_box.pos_x = 10;
     hint_box.pos_y = GUIStatusBar::kStatusBarHeight + 10;
     gui.AddElement(&hint_box);
@@ -117,15 +114,9 @@ int main() {
     status_bar.progress_frac = 0.75;
     status_bar.battery_charge_frac = 0.5;
 
-    uint32_t gps_refresh_time_ms = 0;
     uint32_t display_refresh_time_ms = 0;
     while (true) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
-        if (curr_time_ms >= gps_refresh_time_ms) {
-            // Refresh the GPS.
-            RefreshGPS();
-            gps_refresh_time_ms = curr_time_ms + kGPSUpdateIntervalMs;
-        }
         if (curr_time_ms >= display_refresh_time_ms) {
             // Refresh the display.
             gui.Draw(true);

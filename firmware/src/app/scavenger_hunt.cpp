@@ -12,21 +12,26 @@ bool ScavengerHunt::Init() {
 
     int ret = sd_init_card(pSD);
     if (ret != 0) {
-        printf("ScavengerHunt::Init: Failed to initialize SD card: [");
+        char fail_reason[100] = {'\0'};
+        sprintf(fail_reason, "Failed to initialize SD card: ");
         if (ret & STA_NOINIT) {
-            printf("STA_NOINIT ");
+            strcat(fail_reason, "STA_NOINIT ");
         }
         if (ret & STA_NODISK) {
-            printf("STA_NODISK ");
+            strcat(fail_reason, "STA_NODISK ");
         }
         if (ret & STA_PROTECT) {
-            printf("STA_PROTECT ");
+            strcat(fail_reason, "STA_PROTECT ");
         }
-        printf("]\r\n");
+
+        printf("ScavengerHunt::Init: %s\r\n", fail_reason);
+        strcpy(status_text, fail_reason);
         return false;
     } else {
         printf("ScavengerHunt::Init: Initialized SD card.\r\n");
     }
+
+    snprintf(status_text, Hint::kHintTextMaxLen, "SD card initialized.");
 
     return true;
 }
