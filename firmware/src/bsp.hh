@@ -1,5 +1,6 @@
 #pragma once
 #include "hardware/spi.h"
+#include "hardware/uart.h"
 #include "stdint.h"
 
 class BSP {
@@ -22,7 +23,22 @@ class BSP {
     static const uint16_t sd_card_cs_pin = 21;
     static const uint32_t sd_card_spi_clk_rate_hz = 12'000'000;  // 12 MHz
     static spi_inst_t *sd_card_spi_inst;
+
+    static const uint16_t button_top_pin = 0;
+    static const uint16_t button_middle_pin = 1;
+    static const uint16_t button_bottom_pin = 2;
+
+    static uart_inst_t *gps_uart_inst;
+    static const uint32_t gps_uart_baud = 9600;
+    static const uint16_t gps_uart_data_bits = 8;
+    static const uint16_t gps_uart_stop_bits = 1;
+    static const uart_parity_t gps_uart_parity = UART_PARITY_NONE;
+    static const uint16_t gps_fix_pin = 3;
+    static const uint16_t gps_tx_pin = 4;
+    static const uint16_t gps_rx_pin = 5;
+    static const uint16_t gps_reset_pin = 6;
 };
 
 inline spi_inst_t *BSP::epaper_spi_inst = spi1;
 inline spi_inst_t *BSP::sd_card_spi_inst = spi0;
+inline uart_inst_t *BSP::gps_uart_inst = uart1;

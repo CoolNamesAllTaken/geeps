@@ -27,7 +27,17 @@ const uint16_t kMsPerSec = 1e3;
 
 const uint16_t kStatusLEDPin = 15;
 
-PA1616S gps = PA1616S({});
+PA1616S gps = PA1616S({
+    .uart_id = BSP::gps_uart_inst,
+    .uart_baud = BSP::gps_uart_baud,
+    .uart_tx_pin = BSP::gps_tx_pin,
+    .uart_rx_pin = BSP::gps_rx_pin,
+    .data_bits = BSP::gps_uart_data_bits,
+    .stop_bits = BSP::gps_uart_stop_bits,
+    .parity = BSP::gps_uart_parity,
+    .reset_pin = BSP::gps_reset_pin,
+    .fix_pin = BSP::gps_fix_pin,
+});
 EPaperDisplay display = EPaperDisplay({});
 GeepsGUI gui = GeepsGUI({.display = display});
 
