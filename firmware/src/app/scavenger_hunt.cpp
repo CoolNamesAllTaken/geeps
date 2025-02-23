@@ -86,9 +86,31 @@ bool ScavengerHunt::UnmountSDCard() {
     }
 }
 
-char *ParsePlainToken() {}
+/**
+ * Find the next token in a string. Mimicks strtok but accepts delimiters that are not separated.
+ * @param token_start Pointer to the start of the token.
+ * @param delim Pointer to the delimiter.
+ * @return Pointer to the next token, or NULL if no more delimiters are found.
+ */
+char *find_next_token(char *token_start, const char *delim) {
+    static char *line = "\0";
+    token_start = token_start == NULL ? line : token_start;
+    if (strlen(token_start) == 0) {
+        // No more characters. Return NULL.
+        return NULL;
+    }
+    char *token_end = strchr(token_start, *delim);
+    if (token_end == NULL) {
+        // No more delimiters, return the rest of the string as a token.
+        line = token_start + strlen(token_start);
+    } else {
+        // Found a delimiter. Null terminate the token.
+        *token_end = '\0';
+        line = token_end + 1;
+    }
 
-char *ParseQuotedToken() {}
+    return token_start;
+}
 
 bool ScavengerHunt::LoadHints() {
     FRESULT fr;
@@ -104,20 +126,6 @@ bool ScavengerHunt::LoadHints() {
     }
     uint32_t hints_txt_size_bytes = f_size(&hints_txt_file);
     printf("File size: %lu bytes\n", hints_txt_size_bytes);
-
-    // // Read hints.txt into a buffer.
-    // char *hints_txt_buf = (char *)malloc(hints_txt_size_bytes);
-    // if (NULL == hints_txt_buf) {
-    //     LogMessage("Failed to allocate buffer for hints.txt\n");
-    //     return false;
-    // }
-    // uint hints_txt_bytes_read = 0;
-    // fr = f_read(&hints_txt_file, hints_txt_buf, hints_txt_size_bytes, &hints_txt_bytes_read);
-    // if (FR_OK != fr) {
-    //     LogMessage("f_read error: %s (%d)\n", FRESULT_str(fr), fr);
-    //     return false;
-    // }
-    // printf("%s\n", hints_txt_buf);
 
     // Step through hints.txt line by line.
     uint16_t bytes_read = 0;
@@ -172,7 +180,7 @@ bool ScavengerHunt::LoadHints() {
 
         char *token;
         // Parse latitude.
-        token = strtok(line, ",");
+        token = find_next_token(line, ",");
         if (!token || *token == '\0') {
             LogMessage("hints.txt line %d is missing latitude.\n", lines_read);
             return false;
@@ -180,7 +188,7 @@ bool ScavengerHunt::LoadHints() {
         hints[num_hints].lat_deg = atof(token);
 
         // Parse longitude.
-        token = strtok(NULL, ",");
+        token = find_next_token(NULL, ",");
         if (!token || *token == '\0') {
             LogMessage("hints.txt line %d is missing longitude.\n", lines_read);
             return false;
@@ -188,7 +196,7 @@ bool ScavengerHunt::LoadHints() {
         hints[num_hints].lon_deg = atof(token);
 
         // Parse hint_type.
-        token = strtok(NULL, ",");
+        token = find_next_token(NULL, ",");
         if (!token || *token == '\0') {
             LogMessage("hints.txt line %d is missing hint type.\n", lines_read);
             return false;
@@ -213,8 +221,8 @@ bool ScavengerHunt::LoadHints() {
             return false;
         }
         // Parse hint_text.
-        strtok(NULL, "\"");          // Skip leading characters before first quote.
-        token = strtok(NULL, "\"");  // Get characters between quotes.
+        token = find_next_token(NULL, "\"");  // Skip leading characters before first quote.
+        token = find_next_token(NULL, "\"");  // Get characters between quotes.
         if (token != NULL) {
             strncpy(hints[num_hints].hint_text, token, Hint::kHintTextMaxLen - 1);
             hints[num_hints].hint_text[Hint::kHintTextMaxLen - 1] = '\0';
@@ -222,11 +230,11 @@ bool ScavengerHunt::LoadHints() {
             LogMessage("hints.txt line %d is missing hint text.\n", lines_read);
             return false;
         }
-        strtok(NULL, ",");  // Skip to the next CSV field.
+        token = find_next_token(NULL, ",");  // Skip to the next CSV field.
         // Parse hint_image_filename.
         if (hints[num_hints].hint_type == Hint::kHintTypeImage) {
-            strtok(NULL, "\"");          // Skip leading characters before first quote.
-            token = strtok(NULL, "\"");  // Get characters between quotes.
+            token = find_next_token(NULL, "\"");  // Skip leading characters before first quote.
+            token = find_next_token(NULL, "\"");  // Get characters between quotes.
             if (token != NULL) {
                 strncpy(hints[num_hints].hint_image_filename, token, Hint::kImageFilenameMaxLen - 1);
                 hints[num_hints].hint_text[Hint::kImageFilenameMaxLen - 1] = '\0';
@@ -234,13 +242,14 @@ bool ScavengerHunt::LoadHints() {
                 LogMessage("hints.txt line %d is missing an image filename.\n", lines_read);
                 return false;
             }
-            strtok(NULL, ",");  // Skip to the next CSV field.
-                                // TODO: Load image dimensions.
+            token = find_next_token(NULL, ",");  // Skip to the next CSV field.
+                                                 // TODO: Load image dimensions.
         } else {
-            strtok(NULL, ",");  // Ignore filename if hint is not an image.
+            token = find_next_token(NULL, ",");  // Ignore filename if hint is not an image.
         }
         // Parse completed_timestamp_utc.
-        token = strtok(NULL, ",");
+        token = find_next_token(NULL, "#");  // Line ends with a comment, or blank.
+
         hints[num_hints].completed_timestamp_utc = atoi(token);
 
         char hint_str[500];
@@ -259,11 +268,6 @@ bool ScavengerHunt::LoadHints() {
         LogMessage("f_close error: %s (%d)\n", FRESULT_str(fr), fr);
         return false;
     }
-
-    // printf("Contents of %s:\n", kHintsFilename);
-    // while (f_gets(line, sizeof(line), &hints_txt_file)) {
-    //     printf("%s", line);
-    // }
 
     return true;
 }

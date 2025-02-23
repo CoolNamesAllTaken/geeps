@@ -10,8 +10,8 @@ splash_image=""
 #	time_completed_utc = -1 if incomplete, otherwise UTC timestamp when hint was completed
 
 begin_hints
-37.293836215479985, -121.95702604016915, text, "Sandich.",, 102301 # Yummee
-37.292831841359124, -121.95613033646363, distance, "Labbbbbb.", home.bmp, 112341 # home
-37.29269754127092, -121.9415539039689, heading,"Delicious quesadillas.",, 125853 # Kelly's deli
-37.293194591569005, -121.93082369365152, image, "Hole foods.", foods.bmp, -1 # Whole Foods
+37.293836215479985, -121.95702604016915, text, "Sandich.", , 102301 # Yummee
+37.292831841359124, -121.95613033646363, distance, "Labbbbbb.", "home.bmp", 112341 # home
+37.29269754127092, -121.9415539039689, heading,"Delicious quesadillas.", , 125853 # Kelly's deli
+37.293194591569005, -121.93082369365152, image, "Hole foods.", "foods.bmp", -1 # Whole Foods
 end_hints
