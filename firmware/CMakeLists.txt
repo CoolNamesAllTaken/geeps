@@ -54,6 +54,8 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Test")
         hardware_clocks
     )
 
+    pico_set_linker_script(geeps ${CMAKE_CURRENT_SOURCE_DIR}/linker_scripts/core0_bigstack.ld)
+
 else()
     # Flag indicating that build is not for the embedded target. Used to toggle target_source calls.
     set(ON_HOST 1)

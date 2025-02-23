@@ -177,11 +177,12 @@ int main() {
     // Mimic SD card being plugged in.
     gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);
     // Block on initializing scavenger hunt from SD card.
-    uint32_t sd_card_plugin_timestamp_ms = to_ms_since_boot(get_absolute_time());
     while (gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX ||
            !pSD->mounted) {
         RefreshGPS();
     }
+
+    scavenger_hunt.LoadHints();
 
     while (true) {
         RefreshGPS();

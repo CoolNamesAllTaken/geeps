@@ -38,6 +38,7 @@ void GUITextBox::Draw(EPaperDisplay &display) {
                 if (col == width_chars - 1 && chars_printed + 1 < chars_to_print && text[chars_printed + 1] != ' ' &&
                     text[chars_printed + 1] != '\n') {
                     // Word continues beyond line width, go back to start of word
+                    row_chars[col - (chars_printed - word_start)] = '\0';  // Null terminate the string
                     chars_printed = word_start;
                     encountered_newline = true;
                     break;
@@ -49,6 +50,7 @@ void GUITextBox::Draw(EPaperDisplay &display) {
         row_chars[chars_printed] = '\0';  // Add null terminator.
 
         // Print the row of text.
+        // printf("Printing row %d: %s\n", row, row_chars);
         display.DrawText(pos_x, pos_y + row * kRowHeight, row_chars);
         memset(row_chars, '\0', kMaxNumCols);
     }
