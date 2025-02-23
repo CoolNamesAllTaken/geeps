@@ -23,6 +23,11 @@ void GUITextBox::Draw(EPaperDisplay &display) {
         bool encountered_newline = false;
         uint16_t word_start = chars_printed;
         for (uint16_t col = 0; col < width_chars && !encountered_newline && chars_printed < chars_to_print; col++) {
+            if (text[chars_printed] == '\r') {
+                chars_printed++;
+                col--;  // Don't advance the column for \r
+                continue;
+            }
             if (text[chars_printed] == '\n') {
                 encountered_newline = true;
             } else if (text[chars_printed] == ' ') {

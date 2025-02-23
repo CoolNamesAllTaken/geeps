@@ -1,4 +1,4 @@
-if(CROSS_COMPILED)
+if(ON_HOST)
 # Build for testing on host.
 target_sources(geeps_test PRIVATE
 

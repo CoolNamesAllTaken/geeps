@@ -1,5 +1,9 @@
 #include "sd_utils.hh"
 
+#include "scavenger_hunt.hh"
+
+extern ScavengerHunt scavenger_hunt;
+
 spi_t sd_card_spi = {.hw_inst = BSP::sd_card_spi_inst,
                      .miso_gpio = BSP::sd_card_miso_pin,
                      .mosi_gpio = BSP::sd_card_mosi_pin,
@@ -29,13 +33,15 @@ void card_detect_callback(uint gpio, uint32_t events) {
     if (busy) return;  // Avoid switch bounce
     busy = true;
     if (pSD->card_detect_gpio == gpio) {
-        if (pSD->mounted) {
+        if (pSD->mounted && events & GPIO_IRQ_EDGE_RISE) {
             printf("(Card Detect Interrupt: unmounting %s)\n", pSD->pcName);
-            FRESULT fr = f_unmount(pSD->pcName);
-            if (FR_OK == fr) {
+            if (scavenger_hunt.UnmountSDCard()) {
                 pSD->mounted = false;
-            } else {
-                printf("f_unmount error: %s (%d)\n", FRESULT_str(fr), fr);
+            }
+        } else if (!pSD->mounted && events & GPIO_IRQ_EDGE_FALL) {
+            printf("(Card Detect Interrupt: mounting %s)\n", pSD->pcName);
+            if (scavenger_hunt.MountSDCard()) {
+                pSD->mounted = true;
             }
         }
         sd_card_detect(pSD);

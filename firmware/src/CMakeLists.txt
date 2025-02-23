@@ -2,7 +2,7 @@ add_subdirectory(display)
 add_subdirectory(gps)
 add_subdirectory(app)
 
-if(CROSS_COMPILED)
+if(ON_HOST)
 # Build for testing on host.
 target_include_directories(geeps_test PRIVATE
     display

@@ -91,6 +91,9 @@ void gpio_irq_callback(uint gpio, uint32_t events) {
     }
 }
 
+/**
+ * Core 1 Main Function. Slow / blocking stuff happens here.
+ */
 void main_core1() {
     gui.AddElement(&status_bar);
     hint_box.width_chars = 25;
@@ -100,28 +103,39 @@ void main_core1() {
     gui.AddElement(&splash_screen);
 
     display.Init();
-
-    snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Waiting for GPS fix\n");
     gui.Draw();
 
-    uint32_t last_dot_ms = to_ms_since_boot(get_absolute_time());
-    while (gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX) {
+    char spinner_chars[] = {'|', '/', '-', '\\'};
+    uint16_t spinner_char_index = 0;
+
+    uint32_t last_spin_ms = to_ms_since_boot(get_absolute_time());
+    bool gps_fix_acquired = false;
+    bool sd_card_mounted = false;
+    while (!gps_fix_acquired || !sd_card_mounted) {
         uint32_t timestamp_ms = to_ms_since_boot(get_absolute_time());
-        if (timestamp_ms - last_dot_ms > 1000) {
-            strncat(hint_box.text, ".", 2);
-            last_dot_ms = timestamp_ms;
+        gps_fix_acquired =
+            gps.latest_gga_packet.GetPositionFixIndicator() == GGAPacket::PositionFixIndicator_t::GPS_FIX;
+        sd_card_mounted = pSD->mounted;
+
+        if (timestamp_ms - last_spin_ms > 1000) {
+            spinner_char_index++;
+            spinner_char_index %= sizeof(spinner_chars);
+            last_spin_ms = timestamp_ms;
+            snprintf(hint_box.text, Hint::kHintTextMaxLen, "Initializing... %c \n  SD CARD [%s]\n  GPS Fix [%s]",
+                     spinner_chars[spinner_char_index], sd_card_mounted ? "OK  " : "  NO",
+                     gps_fix_acquired ? "OK  " : "  NO");
             gui.Draw(true);
         }
 
         BlinkStatusLED(10);
     }
-    snprintf(hint_box.text, GUITextBox::kTextMaxLen, "GPS fix acquired!\n");
     gui.Draw(false);
 
     // Placeholder stuff
     status_bar.progress_frac = 0.75;
     status_bar.battery_charge_frac = 0.5;
 
+    // Main display and LED loop.
     uint32_t display_refresh_time_ms = 0;
     while (true) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
@@ -135,6 +149,9 @@ void main_core1() {
     }
 }
 
+/**
+ * Main function. Fast stuff happens here.
+ */
 int main() {
     stdio_init_all();
 
@@ -151,8 +168,20 @@ int main() {
     gpio_set_irq_enabled(BSP::button_middle_pin, GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(BSP::button_bottom_pin, GPIO_IRQ_EDGE_FALL, true);
     buttons.Init();
-    gpio_set_irq_enabled(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     scavenger_hunt.Init();
+    gpio_set_irq_enabled(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    // TODO: Plugging in the SD card when the MCU is already started causes the SPI peripheral to fail. There's an
+    // assert buried in the SD Card filesystem module that causes everything to lock up when this happens. Maybe just
+    // wrap the MountSDCard() function in a watchdog timer?
+
+    // Mimic SD card being plugged in.
+    gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);
+    // Block on initializing scavenger hunt from SD card.
+    uint32_t sd_card_plugin_timestamp_ms = to_ms_since_boot(get_absolute_time());
+    while (gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX ||
+           !pSD->mounted) {
+        RefreshGPS();
+    }
 
     while (true) {
         RefreshGPS();

@@ -117,7 +117,7 @@
                 "name": "Core0 Debug",
                 "type": "cortex-debug",
                 "cwd": "/geeps/firmware",
-                "executable": "/geeps/build/geeps.elf",
+                "executable": "/geeps/build/Debug/geeps.elf",
                 "request": "attach",
                 "servertype": "external",
                 // "gdbPath": "arm-none-eabi-gdb",

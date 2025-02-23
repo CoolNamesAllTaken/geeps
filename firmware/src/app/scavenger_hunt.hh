@@ -33,10 +33,16 @@ class ScavengerHunt {
     bool Init();
     bool Update(float lat_deg, float lon_deg, uint32_t timestamp_utc);
 
+    bool MountSDCard();
+    bool UnmountSDCard();
+
     Hint hints[kMaxHints];
     uint16_t num_hints;
 
     char status_text[Hint::kHintTextMaxLen] = {'\0'};
+
+   private:
+    void LogMessage(const char* fmt, ...);
 };
 
 extern ScavengerHunt scavenger_hunt;
