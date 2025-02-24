@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 class NMEAPacket {
-public:
+   public:
     static const uint16_t kMaxPacketLen = 200;
 
     static const uint16_t kMaxPacketFieldLen = 20;
@@ -15,11 +15,11 @@ public:
 
     typedef enum {
         UNKNOWN = 0,
-        GGA, // time, position, fix type data
-        GSA, // gps solution information
-        GSV, // satellite information
-        RMC, // minimum navigation information
-        VTG // course and speed info
+        GGA,  // time, position, fix type data
+        GSA,  // gps solution information
+        GSV,  // satellite information
+        RMC,  // minimum navigation information
+        VTG   // course and speed info
     } PacketType_t;
 
     NMEAPacket(char packet_str[kMaxPacketLen], uint16_t packet_str_len);
@@ -31,7 +31,8 @@ public:
     uint8_t CalculateChecksum();
     bool IsValid();
     PacketType_t GetPacketType();
-protected:
+
+   protected:
     char packet_str_[kMaxPacketLen];
     uint16_t packet_str_len_;
 
@@ -43,33 +44,31 @@ protected:
  * Packet containing time, position, and fix type data.
  */
 class GGAPacket : public NMEAPacket {
-public:
-    typedef enum {
-        FIX_NOT_AVAILABLE = 0,
-        GPS_FIX = 1,
-        DIFFERENTIAL_GPS_FIX = 2
-    } PositionFixIndicator_t;
+   public:
+    typedef enum { FIX_NOT_AVAILABLE = 0, GPS_FIX = 1, DIFFERENTIAL_GPS_FIX = 2 } PositionFixIndicator_t;
 
-    GGAPacket(char packet_str[kMaxPacketLen], uint16_t packet_str_len); // constructor
+    GGAPacket(char packet_str[kMaxPacketLen], uint16_t packet_str_len);  // constructor
 
-    void GetUTCTimeStr(char * str_buf);
-    void GetLatitudeStr(char * str_buf); // includes "N" or "S" suffix
-    void GetLongitudeStr(char * str_buf); // includes "E" ow "W" suffix
+    void GetUTCTimeStr(char* str_buf);
+    uint32_t GetUTCTimeUint() { return utc_time_; }
+    void GetLatitudeStr(char* str_buf);   // includes "N" or "S" suffix
+    void GetLongitudeStr(char* str_buf);  // includes "E" ow "W" suffix
     float GetLatitude();
     float GetLongitude();
     GGAPacket::PositionFixIndicator_t GetPositionFixIndicator();
     uint16_t GetSatellitesUsed();
     float GetHDOP();
-    float GetMSLAltitude(); // [meters]
+    float GetMSLAltitude();  // [meters]
     float GetGeoidalSeparation();
 
-private:
+   private:
     // uint16_t utc_time_hr_;
     // uint16_t utc_time_min_;
     // uint16_t utc_time_sec_;
     // uint16_t utc_time_ms_;
 
     char utc_time_str_[kMaxPacketFieldLen];
+    uint32_t utc_time_ = 0;
     char latitude_str_[kMaxPacketFieldLen];
     char longitude_str_[kMaxPacketFieldLen];
     float latitude_;

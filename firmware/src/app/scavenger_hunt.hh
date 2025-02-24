@@ -66,6 +66,21 @@ class ScavengerHunt {
     bool LoadHints();
     bool SaveHints();
 
+    inline void IncrementRenderedHint() {
+        if (rendered_hint_index < num_hints - 1) {
+            rendered_hint_index++;
+        }
+    }
+    inline void DecrementRenderedHint() {
+        if (rendered_hint_index > 0) {
+            rendered_hint_index--;
+        }
+    }
+
+    Hint* GetActiveHintPtr();
+    Hint* GetRenderedHintPtr();
+    void LogMessage(const char* fmt, ...);
+
     Hint hints[kMaxHints];
     uint16_t num_hints;
 
@@ -75,8 +90,12 @@ class ScavengerHunt {
     char title[kTitleMaxLen] = {'\0'};
     char splash_image_filename[Hint::kImageFilenameMaxLen] = {'\0'};
 
+    uint16_t active_hint_index = 0;    // The hint we are looking for.
+    uint16_t rendered_hint_index = 0;  // The hint we are displaying.
+
+    bool skip_initialization = false;
+
    private:
-    void LogMessage(const char* fmt, ...);
 };
 
 extern ScavengerHunt scavenger_hunt;

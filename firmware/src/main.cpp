@@ -3,6 +3,7 @@
 #include "buttons.hh"
 #include "epaper.hh"
 #include "geeps_gui.hh"
+#include "gps_utils.hh"  // For calculating distance to hints.
 #include "hardware/gpio.h"
 #include "pa1616s.hh"
 #include "pico/binary_info.h"
@@ -11,16 +12,6 @@
 #include "scavenger_hunt.hh"
 #include "sd_utils.hh"  // For accessing SD card GPIO IRQ callback.
 #include "string.h"
-// #include "gui_bitmaps.hh"
-
-// #define GPS_UART_ID uart1
-// #define GPS_UART_BAUD 9600
-// #define GPS_UART_DATA_BITS 8
-// #define GPS_UART_STOP_BITS 1
-// #define GPS_UART_PARITY UART_PARITY_NONE
-
-// #define GPS_UART_TX_PIN 4 // UART1 TX
-// #define GPS_UART_RX_PIN 5 // UART1 RX
 
 const uint16_t kGPSUpdateIntervalMs = 5;        // [ms]
 const uint16_t kDisplayUpdateIntervalMs = 500;  // [ms]
@@ -50,10 +41,14 @@ GUIBitMap splash_screen = GUIBitMap({});
 
 ScavengerHunt scavenger_hunt = ScavengerHunt();
 
-Buttons buttons = Buttons({
+void up_button_callback() { scavenger_hunt.IncrementRenderedHint(); }
+void down_button_callback() { scavenger_hunt.DecrementRenderedHint(); }
+
+Buttons::ButtonsConfig buttons_config = {
     .button_pins = {BSP::button_top_pin, BSP::button_middle_pin, BSP::button_bottom_pin},
-    .button_pressed_callbacks = {nullptr, nullptr, nullptr},
-});
+    .button_pressed_callbacks = {up_button_callback, nullptr, down_button_callback},
+};
+Buttons buttons = Buttons(buttons_config);
 
 void RefreshGPS() {
     gps.Update();
@@ -111,7 +106,17 @@ void main_core1() {
     uint32_t last_spin_ms = to_ms_since_boot(get_absolute_time());
     bool gps_fix_acquired = false;
     bool sd_card_mounted = false;
-    while (!gps_fix_acquired || !sd_card_mounted) {
+    uint32_t display_refresh_time_ms = 0;
+
+    // Initialization loop.
+    while (!scavenger_hunt.skip_initialization && (!gps_fix_acquired || !sd_card_mounted)) {
+        uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
+        if (!gpio_get(BSP::button_top_pin && gpio_get(BSP::button_bottom_pin))) {
+            // Skip initialization if both top and bottom buttons are held.
+            scavenger_hunt.skip_initialization = true;
+            scavenger_hunt.LogMessage("Skipped initialization.\n");
+        }
+
         uint32_t timestamp_ms = to_ms_since_boot(get_absolute_time());
         gps_fix_acquired =
             gps.latest_gga_packet.GetPositionFixIndicator() == GGAPacket::PositionFixIndicator_t::GPS_FIX;
@@ -121,24 +126,59 @@ void main_core1() {
             spinner_char_index++;
             spinner_char_index %= sizeof(spinner_chars);
             last_spin_ms = timestamp_ms;
-            snprintf(hint_box.text, Hint::kHintTextMaxLen, "Initializing... %c \n  SD CARD [%s]\n  GPS Fix [%s]",
-                     spinner_chars[spinner_char_index], sd_card_mounted ? "OK  " : "  NO",
-                     gps_fix_acquired ? "OK  " : "  NO");
-            gui.Draw(true);
         }
 
+        snprintf(hint_box.text, Hint::kHintTextMaxLen, "Initializing... %c \n  SD CARD [%s]\n  GPS Fix [%s]\n",
+                 spinner_chars[spinner_char_index], sd_card_mounted ? "OK  " : "  NO",
+                 gps_fix_acquired ? "OK  " : "  NO");
+        strcat(hint_box.text, scavenger_hunt.status_text);
+
         BlinkStatusLED(10);
+        if (curr_time_ms >= display_refresh_time_ms) {
+            // Refresh the display.
+            gui.Draw(true);
+            display_refresh_time_ms = curr_time_ms + kDisplayUpdateIntervalMs;
+        }
     }
-    gui.Draw(false);
 
     // Placeholder stuff
     status_bar.progress_frac = 0.75;
     status_bar.battery_charge_frac = 0.5;
 
     // Main display and LED loop.
-    uint32_t display_refresh_time_ms = 0;
     while (true) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
+
+        Hint& rendered_hint = scavenger_hunt.hints[scavenger_hunt.rendered_hint_index];
+        switch (rendered_hint.hint_type) {
+            case Hint::kHintTypeText: {
+                strncpy(hint_box.text, rendered_hint.hint_text, GUITextBox::kTextMaxLen);
+                break;
+            }
+            case Hint::kHintTypeImage: {
+                strncpy(hint_box.text, rendered_hint.hint_image_filename, GUITextBox::kTextMaxLen);
+                break;
+            }
+            case Hint::kHintTypeDistance: {
+                float distance_to_hint_m =
+                    CalculateGeoidalDistance(gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(),
+                                             rendered_hint.lat_deg, rendered_hint.lon_deg);
+                snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance to hint: %.2f m", distance_to_hint_m);
+                break;
+            }
+            case Hint::kHintTypeHeading: {
+                float heading_to_hint_deg = CalculateHeadingToWaypoint(gps.latest_gga_packet.GetLatitude(),
+                                                                       gps.latest_gga_packet.GetLongitude(),
+                                                                       rendered_hint.lat_deg, rendered_hint.lon_deg);
+                snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Heading to hint: %.2f deg", heading_to_hint_deg);
+                break;
+            }
+            default: {
+                strncpy(hint_box.text, "Invalid hint type.", GUITextBox::kTextMaxLen);
+                break;
+            }
+        }
+
         if (curr_time_ms >= display_refresh_time_ms) {
             // Refresh the display.
             gui.Draw(true);
@@ -177,16 +217,21 @@ int main() {
     // Mimic SD card being plugged in.
     gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);
     // Block on initializing scavenger hunt from SD card.
-    while (gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX ||
-           !pSD->mounted) {
+    while (!scavenger_hunt.skip_initialization && !pSD->mounted) {
+        // Wait for SD card to be mounted.
+    }
+    scavenger_hunt.LoadHints();
+    while (!scavenger_hunt.skip_initialization &&
+           gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX) {
+        // Wait for GPS fix.
         RefreshGPS();
     }
 
-    scavenger_hunt.LoadHints();
-
     while (true) {
         RefreshGPS();
-        strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
+        scavenger_hunt.Update(gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(),
+                              gps.latest_gga_packet.GetUTCTimeUint());
+        // strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
         buttons.Update();
         status_bar.button_up_pressed = buttons.pressed[0];
         status_bar.button_center_pressed = buttons.pressed[1];

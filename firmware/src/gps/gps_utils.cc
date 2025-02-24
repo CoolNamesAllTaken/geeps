@@ -1,11 +1,12 @@
 #include "gps_utils.hh"
+
 #include <math.h>
 
 #define SQ(a) ((a) * (a))
 
-const float kEarthEquatorialRadius = 6378137; // [m] Earth's equatorial radius.
-const float kEarthPolarRadius = 6356752; // [m] Earth's polar radius.
-const float kEarthMeanRadius = 6372797.560856f; // [m] Earth's quadratic mean radius for WS-84.
+const float kEarthEquatorialRadius = 6378137;    // [m] Earth's equatorial radius.
+const float kEarthPolarRadius = 6356752;         // [m] Earth's polar radius.
+const float kEarthMeanRadius = 6372797.560856f;  // [m] Earth's quadratic mean radius for WS-84.
 
 /**
  * @brief Returns the radius from the center of the earth to a point on the surface of the earth
@@ -15,16 +16,8 @@ const float kEarthMeanRadius = 6372797.560856f; // [m] Earth's quadratic mean ra
  */
 float EarthEllipsoidRadius(float lat) {
     // sqr((sq(kEarthEquatorialRadius*kEarthEquatorialRadius*cos(lat))+sq(b*b*sin(lat)))/(sq(kEarthEquatorialRadius*cos(lat))+sq(b*sin(lat))));
-    return sqrt(
-        (
-            SQ(SQ(kEarthEquatorialRadius) * cos(lat)) + 
-            SQ(SQ(kEarthPolarRadius) * sin(lat))
-        ) / 
-        (
-            SQ(kEarthEquatorialRadius*cos(lat)) + 
-            SQ(kEarthPolarRadius*sin(lat))
-        )
-    );
+    return sqrt((SQ(SQ(kEarthEquatorialRadius) * cos(lat)) + SQ(SQ(kEarthPolarRadius) * sin(lat))) /
+                (SQ(kEarthEquatorialRadius * cos(lat)) + SQ(kEarthPolarRadius * sin(lat))));
 }
 
 /**
@@ -32,9 +25,14 @@ float EarthEllipsoidRadius(float lat) {
  * @param[in] degrees Parameter to convert, in degrees.
  * @retval Result in radians.
  */
-float DegreesToRadians(float degrees) {
-    return degrees * M_PI / 180.0f;
-}
+float DegreesToRadians(float degrees) { return degrees * M_PI / 180.0f; }
+
+/**
+ * @brief Converts a value from radians to degrees.
+ * @param[in] radians Parameter to convert, in radians.
+ * @retval Result in degrees.
+ */
+float RadiansToDegrees(float radians) { return radians * 180.0f / M_PI; }
 
 /**
  * @brief Calculates the straight line distance through the earth for two lat/long coordinate sets.
@@ -62,7 +60,7 @@ float CalculateStraightLineDistance(float lat_a, float lon_a, float lat_b, float
     float y_b = radius_b * cos(lat_b_rad) * sin(lon_b_rad);
     float z_b = radius_b * sin(lat_b_rad);
 
-    return sqrt(SQ(x_a-x_b) + SQ(y_a-y_b) + SQ(z_a-z_b)); // TODO: make this return surface distance
+    return sqrt(SQ(x_a - x_b) + SQ(y_a - y_b) + SQ(z_a - z_b));  // TODO: make this return surface distance
 }
 
 /**
@@ -70,9 +68,7 @@ float CalculateStraightLineDistance(float lat_a, float lon_a, float lat_b, float
  * @param[in] theta Angle in radians.
  * @retval Haversine of theta.
  */
-float hav(float theta) {
-    return SQ(sin(theta * 0.5f));
-}
+float hav(float theta) { return SQ(sin(theta * 0.5f)); }
 
 /**
  * @brief Calculates the great circle distance along the surface of the earth between two lat/long coordinate sets.
@@ -88,11 +84,15 @@ float CalculateGeoidalDistance(float lat_a, float lon_a, float lat_b, float lon_
     float lat_b_rad = DegreesToRadians(lat_b);
     float lon_b_rad = DegreesToRadians(lon_b);
 
-    return 2*kEarthMeanRadius * 
-        asin(
-            sqrt(
-                hav(lat_b_rad-lat_a_rad) +
-                (1 - hav(lat_a_rad-lat_b_rad) - hav(lat_a_rad+lat_b_rad)) * hav(lon_b_rad - lon_a_rad)
-            )
-        );
+    return 2 * kEarthMeanRadius *
+           asin(sqrt(hav(lat_b_rad - lat_a_rad) +
+                     (1 - hav(lat_a_rad - lat_b_rad) - hav(lat_a_rad + lat_b_rad)) * hav(lon_b_rad - lon_a_rad)));
+}
+
+float CalculateHeadingToWaypoint(float lat_a, float lon_a, float lat_b, float lon_b) {
+    float delta_lon_rad = DegreesToRadians(lon_b - lon_a);
+    return RadiansToDegrees(
+        atan2(sin(delta_lon_rad) * cos(DegreesToRadians(lat_b)),
+              cos(DegreesToRadians(lat_a)) * sin(DegreesToRadians(lat_b)) -
+                  sin(DegreesToRadians(lat_a)) * cos(DegreesToRadians(lat_b)) * cos(delta_lon_rad)));
 }

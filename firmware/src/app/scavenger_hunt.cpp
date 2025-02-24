@@ -1,5 +1,6 @@
 #include "scavenger_hunt.hh"
 
+#include "gps_utils.hh"
 // #include "geeps_gui.hh"
 #include "sd_utils.hh"
 
@@ -40,7 +41,25 @@ bool ScavengerHunt::Init() {
     return true;
 }
 
-bool ScavengerHunt::Update(float lat_deg, float lon_deg, uint32_t timestamp_utc) { return true; }
+bool ScavengerHunt::Update(float lat_deg, float lon_deg, uint32_t timestamp_utc) {
+    for (uint16_t i = 0; i < num_hints; i++) {
+        if (hints[i].completed_timestamp_utc != -1) {
+            // Skip hints that have already been completed.
+            continue;
+        }
+        // Check if the user is within 10 meters of the hint location.
+        float distance_m = CalculateGeoidalDistance(lat_deg, lon_deg, hints[i].lat_deg, hints[i].lon_deg);
+        if (distance_m < 10.0f) {
+            hints[i].completed_timestamp_utc = timestamp_utc;
+            LogMessage("Hint %d completed at %d.\n", i, timestamp_utc);
+            rendered_hint_index = i + 1;  // Jump to rendering the next hint when it's found.
+            continue;
+        }
+        active_hint_index = i;
+        break;  // Don't bother checking hints after the currently active one.
+    }
+    return true;
+}
 
 bool ScavengerHunt::MountSDCard() {
     int ret = sd_init_card(pSD);
@@ -93,7 +112,7 @@ bool ScavengerHunt::UnmountSDCard() {
  * @return Pointer to the next token, or NULL if no more delimiters are found.
  */
 char *find_next_token(char *token_start, const char *delim) {
-    static char *line = "\0";
+    static char *line = (char *)"\0";
     token_start = token_start == NULL ? line : token_start;
     if (strlen(token_start) == 0) {
         // No more characters. Return NULL.
@@ -269,6 +288,7 @@ bool ScavengerHunt::LoadHints() {
         return false;
     }
 
+    LogMessage("Loaded %d hints from SD card.\n", num_hints);
     return true;
 }
 

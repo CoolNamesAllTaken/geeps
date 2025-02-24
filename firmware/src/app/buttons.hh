@@ -10,7 +10,7 @@ class Buttons {
 
     struct ButtonsConfig {
         uint16_t button_pins[kNumButtons];
-        void* button_pressed_callbacks[kNumButtons];
+        void (*button_pressed_callbacks[kNumButtons])() = {nullptr};
     };
 
     Buttons(ButtonsConfig config_in) : config_(config_in) {};
