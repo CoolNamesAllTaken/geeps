@@ -99,6 +99,9 @@ uint16_t EPaperDisplay::GetSizeY() { return size_y_; }
  */
 uint16_t EPaperDisplay::EPaperColorsToScreenColors(EPaper_Color_t color) {
     switch (color) {
+        case EPAPER_WHITE:
+            return myColours.white;
+            break;
         case EPAPER_RED:
             return myColours.red;
             break;
@@ -144,6 +147,36 @@ void EPaperDisplay::DrawRectangle(uint16_t pos_x, uint16_t pos_y, uint16_t size_
                                   EPaper_Color_t color, bool filled) {
     screen_->setPenSolid(filled);
     screen_->rectangle(pos_x, pos_y, pos_x + size_x, pos_y + size_y, EPaperColorsToScreenColors(color));
+}
+
+/**
+ * @brief Draws a circle on the display.
+ * @param[in] pos_x X-coordinate of center of circle.
+ * @param[in] pos_y Y-coordinate of center of circle.
+ * @param[in] radius Radius of circle.
+ * @param[in] color EPaper_Color_t of circle.
+ * @param[in] filled Flag indicating whether to make the circle solid or wireframe. True = solid, false = wireframe.
+ */
+void EPaperDisplay::DrawCircle(uint16_t pos_x, uint16_t pos_y, uint16_t radius, EPaper_Color_t color, bool filled) {
+    screen_->setPenSolid(filled);
+    screen_->circle(pos_x, pos_y, radius, EPaperColorsToScreenColors(color));
+}
+
+/**
+ * @brief Draws a triangle on the display.
+ * @param[in] pos_x1 X-coordinate of first point.
+ * @param[in] pos_y1 Y-coordinate of first point.
+ * @param[in] pos_x2 X-coordinate of second point.
+ * @param[in] pos_y2 Y-coordinate of second point.
+ * @param[in] pos_x3 X-coordinate of third point.
+ * @param[in] pos_y3 Y-coordinate of third point.
+ * @param[in] color EPaper_Color_t of triangle.
+ * @param[in] filled Flag indicating whether to make the triangle solid or wireframe. True = solid, false = wireframe.
+ */
+void EPaperDisplay::DrawTriangle(uint16_t pos_x1, uint16_t pos_y1, uint16_t pos_x2, uint16_t pos_y2, uint16_t pos_x3,
+                                 uint16_t pos_y3, EPaper_Color_t color, bool filled) {
+    screen_->setPenSolid(filled);
+    screen_->triangle(pos_x1, pos_y1, pos_x2, pos_y2, pos_x3, pos_y3, EPaperColorsToScreenColors(color));
 }
 
 /**

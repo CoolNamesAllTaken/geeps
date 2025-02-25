@@ -36,7 +36,7 @@ class EPaperDisplay {
         uint16_t panel_enable = BSP::epaper_power_enable_pin;  // Power enable pin.
     } EPaper_Config_t;
 
-    typedef enum { EPAPER_NONE = 0, EPAPER_BLACK, EPAPER_RED } EPaper_Color_t;
+    typedef enum { EPAPER_NONE = 0, EPAPER_WHITE, EPAPER_BLACK, EPAPER_RED } EPaper_Color_t;
 
     typedef enum {
         EPAPER_TERMINAL_6X8 = 0,
@@ -57,6 +57,9 @@ class EPaperDisplay {
     void DrawPoint(uint16_t pos_x, uint16_t pos_y, EPaper_Color_t color);
     void DrawRectangle(uint16_t pos_x, uint16_t pos_y, uint16_t size_x, uint16_t size_y, EPaper_Color_t color,
                        bool filled = false);
+    void DrawCircle(uint16_t pos_x, uint16_t pos_y, uint16_t radius, EPaper_Color_t color, bool filled = false);
+    void DrawTriangle(uint16_t pos_x1, uint16_t pos_y1, uint16_t pos_x2, uint16_t pos_y2, uint16_t pos_x3,
+                      uint16_t pos_y3, EPaper_Color_t color, bool filled = false);
     void DrawText(uint16_t pos_x, uint16_t pos_y,
                   char *text,  // Should probably be const except that we pass it unprotected to gText().
                   EPaper_Color_t text_color = EPAPER_BLACK, EPaper_Color_t background_color = EPAPER_NONE,

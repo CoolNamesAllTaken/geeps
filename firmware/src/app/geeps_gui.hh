@@ -123,4 +123,18 @@ class GUIStatusBar : public GeepsGUIElement {
     void Draw(EPaperDisplay &display);
 };
 
+class GUICompass : public GeepsGUIElement {
+   public:
+    static const uint16_t kTicksRadius = 20;  // [pixels]
+    static const uint16_t kTickMarkLength = 5;
+    static const uint16_t kNumTickMarks = 12;
+    static const uint16_t kHeadingBugRadius = 2;
+    static const uint16_t kNorthTriangleSideLength = 10;
+
+    GUICompass(GeepsGUIElementConfig config);  // constructor
+    void Draw(EPaperDisplay &display);
+
+    float heading_deg;
+};
+
 #endif /* _GEEPS_GUI_HH_ */

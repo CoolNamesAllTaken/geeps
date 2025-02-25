@@ -4,6 +4,7 @@
 #include <string.h>  // for c-string operations
 
 #include "gui_bitmaps.hh"
+#include "math.h"
 
 /* GUIBitMap */
 GUIBitMap::GUIBitMap(GeepsGUIElementConfig config_in) : GeepsGUIElement(config_in) {}
@@ -15,6 +16,9 @@ void GUIBitMap::Draw(EPaperDisplay &display) {
 GUITextBox::GUITextBox(GeepsGUIElementConfig config) : GeepsGUIElement(config) {}
 
 void GUITextBox::Draw(EPaperDisplay &display) {
+    if (!visible) {
+        return;
+    }
     uint16_t chars_to_print = MIN(strlen(text), kTextMaxLen);
     uint16_t chars_printed = 0;
     for (uint row = 0; row < kMaxNumRows && chars_printed < chars_to_print; row++) {
@@ -71,6 +75,9 @@ GUIStatusBar::GUIStatusBar(GeepsGUIElementConfig config)
  * @brief Draws a status bar in the specified y location (always takes full width of screen).
  */
 void GUIStatusBar::Draw(EPaperDisplay &display) {
+    if (!visible) {
+        return;
+    }
     // Draw battery icon and percentage.
     display.DrawBitMap(pos_x + 0, pos_y + 0, battery_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
     char battery_text[kNumberStringLength];  // this could be shorter
@@ -107,4 +114,38 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
     display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight + 50,
                        button_down_pressed ? arrow_down_solid_30x30 : arrow_down_30x30, 30, 30,
                        EPaperDisplay::EPAPER_BLACK);
+}
+
+/* GUICompass */
+GUICompass::GUICompass(GeepsGUIElementConfig config) : GeepsGUIElement(config) {}
+
+void GUICompass::Draw(EPaperDisplay &display) {
+    if (!visible) {
+        return;
+    }
+    // Draw a circle of tick marks separated by 30 degrees.
+    for (uint16_t i = 0; i < 12; i++) {
+        float angle = i * 360.0f / kNumTickMarks;
+        float angle_rad = angle * M_PI / 180.0f;
+        int32_t x_inner = pos_x + kTicksRadius * cos(angle_rad);
+        int32_t y_inner = pos_y - kTicksRadius * sin(angle_rad);
+        int32_t x_outer = pos_x + (kTicksRadius + kTickMarkLength) * cos(angle_rad);
+        int32_t y_outer = pos_y - (kTicksRadius + kTickMarkLength) * sin(angle_rad);
+        display.DrawLine(x_inner, y_inner, x_outer, y_outer, EPaperDisplay::EPAPER_BLACK);
+    }
+
+    // Draw a circle at heading degrees.
+    float heading_rad = heading_deg * M_PI / 180.0f;
+    int32_t x = pos_x + (kTicksRadius + kTickMarkLength / 2) * sin(heading_rad);
+    int32_t y = pos_y - (kTicksRadius + kTickMarkLength / 2) * cos(heading_rad);
+    display.DrawCircle(x, y, kHeadingBugRadius, EPaperDisplay::EPAPER_BLACK, true);
+
+    // Draw a triangle pointing upwards at 12 o'clock.
+    display.DrawTriangle(pos_x, pos_y - kTicksRadius - kTickMarkLength - kNorthTriangleSideLength - 2,
+                         pos_x - kNorthTriangleSideLength / 2, pos_y - kTicksRadius - kTickMarkLength - 2,
+                         pos_x + kNorthTriangleSideLength / 2, pos_y - kTicksRadius - kTickMarkLength - 2,
+                         EPaperDisplay::EPAPER_BLACK, true);
+    // Draw an N for north.
+    display.DrawText(pos_x - 3, pos_y - kTicksRadius - 12, (char *)"N", EPaperDisplay::EPAPER_WHITE,
+                     EPaperDisplay::EPAPER_BLACK);
 }

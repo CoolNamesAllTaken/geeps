@@ -38,6 +38,7 @@ GeepsGUI gui = GeepsGUI({.display = display});
 GUIStatusBar status_bar = GUIStatusBar({});
 GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = 30});
 GUIBitMap splash_screen = GUIBitMap({});
+GUICompass compass = GUICompass({.pos_x = 150, .pos_y = 75});
 
 ScavengerHunt scavenger_hunt = ScavengerHunt();
 
@@ -87,6 +88,48 @@ void gpio_irq_callback(uint gpio, uint32_t events) {
 }
 
 /**
+ * Manipulates GUI elements to display a given hint.
+ * @param hint Hint to render.
+ */
+void RenderHint(Hint& hint) {
+    // Default settings.
+    hint_box.width_chars = 25;
+    compass.visible = false;
+
+    switch (hint.hint_type) {
+        case Hint::kHintTypeText: {
+            strncpy(hint_box.text, hint.hint_text, GUITextBox::kTextMaxLen);
+            break;
+        }
+        case Hint::kHintTypeImage: {
+            strncpy(hint_box.text, hint.hint_image_filename, GUITextBox::kTextMaxLen);
+            break;
+        }
+        case Hint::kHintTypeDistance: {
+            float distance_to_hint_m = CalculateGeoidalDistance(
+                gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(), hint.lat_deg, hint.lon_deg);
+            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance: %.2f m\n\n%s", distance_to_hint_m,
+                     hint.hint_text);
+            break;
+        }
+        case Hint::kHintTypeHeading: {
+            float heading_to_hint_deg = CalculateHeadingToWaypoint(
+                gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(), hint.lat_deg, hint.lon_deg);
+            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Heading: %.2f deg\n\n%s", heading_to_hint_deg,
+                     hint.hint_text);
+            hint_box.width_chars = 10;
+            compass.visible = true;
+            compass.heading_deg = heading_to_hint_deg;
+            break;
+        }
+        default: {
+            strncpy(hint_box.text, "Invalid hint type.", GUITextBox::kTextMaxLen);
+            break;
+        }
+    }
+}
+
+/**
  * Core 1 Main Function. Slow / blocking stuff happens here.
  */
 void main_core1() {
@@ -96,6 +139,9 @@ void main_core1() {
     hint_box.pos_y = GUIStatusBar::kStatusBarHeight + 10;
     gui.AddElement(&hint_box);
     gui.AddElement(&splash_screen);
+    gui.AddElement(&compass);
+
+    compass.visible = false;
 
     display.Init();
     gui.Draw();
@@ -150,34 +196,7 @@ void main_core1() {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
 
         Hint& rendered_hint = scavenger_hunt.hints[scavenger_hunt.rendered_hint_index];
-        switch (rendered_hint.hint_type) {
-            case Hint::kHintTypeText: {
-                strncpy(hint_box.text, rendered_hint.hint_text, GUITextBox::kTextMaxLen);
-                break;
-            }
-            case Hint::kHintTypeImage: {
-                strncpy(hint_box.text, rendered_hint.hint_image_filename, GUITextBox::kTextMaxLen);
-                break;
-            }
-            case Hint::kHintTypeDistance: {
-                float distance_to_hint_m =
-                    CalculateGeoidalDistance(gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(),
-                                             rendered_hint.lat_deg, rendered_hint.lon_deg);
-                snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance to hint: %.2f m", distance_to_hint_m);
-                break;
-            }
-            case Hint::kHintTypeHeading: {
-                float heading_to_hint_deg = CalculateHeadingToWaypoint(gps.latest_gga_packet.GetLatitude(),
-                                                                       gps.latest_gga_packet.GetLongitude(),
-                                                                       rendered_hint.lat_deg, rendered_hint.lon_deg);
-                snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Heading to hint: %.2f deg", heading_to_hint_deg);
-                break;
-            }
-            default: {
-                strncpy(hint_box.text, "Invalid hint type.", GUITextBox::kTextMaxLen);
-                break;
-            }
-        }
+        RenderHint(rendered_hint);
 
         if (curr_time_ms >= display_refresh_time_ms) {
             // Refresh the display.

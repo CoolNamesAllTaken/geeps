@@ -5,15 +5,20 @@
 #include "bsp.hh"
 #include "hardware/gpio.h"
 #include "hardware/sync.h"
-// #include "math.h"
 #include "pico/stdlib.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 
-#define max(a, b)                                ((a) > (b) ? (a) : (b))
-#define min(a, b)                                ((a) < (b) ? (a) : (b))
-// #include <map>
+// Use std math functions instead of custom macros to avoid conflicts.
+#include "math.h"
+using namespace std;
+// #ifndef max
+// #define max(a, b) ((a) > (b) ? (a) : (b))
+// #endif
+// #ifndef min
+// #define min(a, b) ((a) < (b) ? (a) : (b))
+// #endif
 #define map(x, in_min, in_max, out_min, out_max) ((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
 
 // GPIO Defines
