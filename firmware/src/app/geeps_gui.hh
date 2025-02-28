@@ -137,4 +137,47 @@ class GUICompass : public GeepsGUIElement {
     float heading_deg;
 };
 
+class GUIMenu : public GeepsGUIElement {
+   public:
+    static const uint16_t kRowHeight = 10;  // [pixels]
+    static const uint16_t kMaxNumRows = 10;
+    static const uint16_t kMaxNumCols = 30;
+
+    GUIMenu(GeepsGUIElementConfig config);  // constructor
+    void Draw(EPaperDisplay &display);
+
+    inline void ScrollNext() {
+        if (selected_row < num_rows - 1) {
+            selected_row++;
+        }
+    }
+    inline void ScrollPrev() {
+        if (selected_row > 0) {
+            selected_row--;
+        }
+    }
+    inline void Select() {
+        printf("GUIMenu::Select: selected_row = %d\r\n", selected_row);
+        if (callbacks[selected_row] != nullptr) {
+            callbacks[selected_row]();
+        }
+    }
+
+    inline void AddRow(char row[kMaxNumCols], void (*callback)()) {
+        if (num_rows < kMaxNumRows) {
+            strcpy(rows[num_rows], row);
+            num_rows++;
+        }
+        if (callback != nullptr) {
+            callbacks[num_rows - 1] = callback;
+        }
+    }
+
+    char rows[kMaxNumRows][kMaxNumCols];
+    void (*callbacks[kMaxNumRows])();
+    uint16_t num_rows;
+    uint16_t selected_row;
+    uint16_t width = kMaxNumCols * 5;
+};
+
 #endif /* _GEEPS_GUI_HH_ */

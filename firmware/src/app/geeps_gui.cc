@@ -149,3 +149,23 @@ void GUICompass::Draw(EPaperDisplay &display) {
     display.DrawText(pos_x - 3, pos_y - kTicksRadius - 12, (char *)"N", EPaperDisplay::EPAPER_WHITE,
                      EPaperDisplay::EPAPER_BLACK);
 }
+
+GUIMenu::GUIMenu(GeepsGUIElementConfig config) : GeepsGUIElement(config) {}
+
+void GUIMenu::Draw(EPaperDisplay &display) {
+    if (!visible) {
+        return;
+    }
+    // Draw a rectangle for each menu item.
+    for (uint16_t i = 0; i < num_rows; i++) {
+        if (i == selected_row) {
+            // If row is selected, draw filled rectangle as background and use white text.
+            display.DrawRectangle(pos_x, pos_y + i * kRowHeight - 2, width, kRowHeight, EPaperDisplay::EPAPER_BLACK,
+                                  true);
+            display.DrawText(pos_x + 5, pos_y + i * kRowHeight, rows[i], EPaperDisplay::EPAPER_WHITE);
+        } else {
+            // If row is not selected, draw regular text.
+            display.DrawText(pos_x + 5, pos_y + i * kRowHeight + 5, rows[i], EPaperDisplay::EPAPER_BLACK);
+        }
+    }
+}

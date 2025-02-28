@@ -52,6 +52,8 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Test")
         hardware_gpio
         hardware_irq
         hardware_clocks
+        hardware_pwm # for servo
+        hardware_adc # for battery voltage
     )
 
     pico_set_linker_script(geeps ${CMAKE_CURRENT_SOURCE_DIR}/linker_scripts/core0_bigstack.ld)

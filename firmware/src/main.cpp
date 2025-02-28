@@ -4,6 +4,7 @@
 #include "epaper.hh"
 #include "geeps_gui.hh"
 #include "gps_utils.hh"  // For calculating distance to hints.
+#include "hardware/adc.h"
 #include "hardware/gpio.h"
 #include "pa1616s.hh"
 #include "pico/binary_info.h"
@@ -11,6 +12,7 @@
 #include "pico/stdlib.h"
 #include "scavenger_hunt.hh"
 #include "sd_utils.hh"  // For accessing SD card GPIO IRQ callback.
+#include "servo.hh"
 #include "string.h"
 
 const uint16_t kGPSUpdateIntervalMs = 5;        // [ms]
@@ -34,20 +36,39 @@ PA1616S gps = PA1616S({
 });
 EPaperDisplay display = EPaperDisplay({});
 GeepsGUI gui = GeepsGUI({.display = display});
+Servo servo = Servo({.pwm_pin = BSP::servo_pwm_pin, .enable_pin = BSP::servo_enable_pin});
 
 GUIStatusBar status_bar = GUIStatusBar({});
 GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = 30});
 GUIBitMap splash_screen = GUIBitMap({});
 GUICompass compass = GUICompass({.pos_x = 150, .pos_y = 75});
+GUIMenu menu = GUIMenu({.pos_x = 10, .pos_y = 40});
 
 ScavengerHunt scavenger_hunt = ScavengerHunt();
 
-void up_button_callback() { scavenger_hunt.IncrementRenderedHint(); }
-void down_button_callback() { scavenger_hunt.DecrementRenderedHint(); }
+void up_button_callback() {
+    if (menu.visible) {
+        menu.ScrollPrev();
+    } else {
+        scavenger_hunt.IncrementRenderedHint();
+    }
+}
+void center_button_callback() {
+    if (menu.visible) {
+        menu.Select();
+    }
+}
+void down_button_callback() {
+    if (menu.visible) {
+        menu.ScrollNext();
+    } else {
+        scavenger_hunt.DecrementRenderedHint();
+    }
+}
 
 Buttons::ButtonsConfig buttons_config = {
     .button_pins = {BSP::button_top_pin, BSP::button_middle_pin, BSP::button_bottom_pin},
-    .button_pressed_callbacks = {up_button_callback, nullptr, down_button_callback},
+    .button_pressed_callbacks = {up_button_callback, center_button_callback, down_button_callback},
 };
 Buttons buttons = Buttons(buttons_config);
 
@@ -61,16 +82,15 @@ void RefreshGPS() {
     status_bar.num_satellites = gps.latest_gga_packet.GetSatellitesUsed();
 }
 
-void BlinkStatusLED(uint16_t blink_rate_hz) {
+void BlinkStatusLED(uint16_t blink_period_ms, float duty_cycle = 0.5f) {
     static uint32_t last_on_timestamp_ms;
 
-    uint32_t blink_interval_ms = kMsPerSec / blink_rate_hz;
     uint32_t timestamp_ms = to_ms_since_boot(get_absolute_time());
-    if (timestamp_ms - last_on_timestamp_ms > blink_interval_ms) {
-        // TIme to turn on the LED and start a blink interval.
+    if (timestamp_ms - last_on_timestamp_ms > blink_period_ms) {
+        // Time to turn on the LED and start a blink interval.
         gpio_put(kStatusLEDPin, 1);
         last_on_timestamp_ms = timestamp_ms;
-    } else if (timestamp_ms - last_on_timestamp_ms > blink_interval_ms / 2) {
+    } else if (timestamp_ms - last_on_timestamp_ms > blink_period_ms * duty_cycle) {
         // Time to turn off the LED to enforce 50% duty cycle.
         gpio_put(kStatusLEDPin, 0);
     }
@@ -95,6 +115,7 @@ void RenderHint(Hint& hint) {
     // Default settings.
     hint_box.width_chars = 25;
     compass.visible = false;
+    menu.visible = true;
 
     switch (hint.hint_type) {
         case Hint::kHintTypeText: {
@@ -129,6 +150,20 @@ void RenderHint(Hint& hint) {
     }
 }
 
+float ReadBatteryVoltage() {
+    static constexpr float kADCCountsToVolts = 1.96f * 3.3f / 4095.0f;
+    // Enable battery voltage sense.
+    gpio_put(BSP::batt_vsense_enable_pin, 1);
+    // Read analog voltage from batt_vsense pin
+    adc_select_input(0);
+    uint16_t adc_counts = adc_read();
+    // Disable battery voltage sense.
+    gpio_put(BSP::batt_vsense_enable_pin, 0);
+    // Convert ADC counts to voltage.
+    float voltage = adc_counts * kADCCountsToVolts;
+    return voltage;
+}
+
 /**
  * Core 1 Main Function. Slow / blocking stuff happens here.
  */
@@ -140,6 +175,28 @@ void main_core1() {
     gui.AddElement(&hint_box);
     gui.AddElement(&splash_screen);
     gui.AddElement(&compass);
+
+    servo.Init();
+    menu.AddRow((char*)"Open access hatch.", []() {
+        servo.Enable();
+        servo.SetAngle(0.0f);
+        delay_ms(1000);
+        servo.Disable();
+    });
+    menu.AddRow((char*)"Close access hatch.", []() {
+        servo.Enable();
+        servo.SetAngle(180.0f);
+        delay_ms(1000);
+        servo.Disable();
+    });
+    menu.AddRow((char*)"Power off.", []() {
+        // Power off the system.
+        gpio_init(BSP::poho_ctrl_pin);
+        gpio_set_dir(BSP::poho_ctrl_pin, GPIO_OUT);
+        gpio_put(BSP::poho_ctrl_pin, 1);
+    });
+    menu.visible = true;
+    gui.AddElement(&menu);
 
     compass.visible = false;
 
@@ -204,7 +261,7 @@ void main_core1() {
             display_refresh_time_ms = curr_time_ms + kDisplayUpdateIntervalMs;
         }
 
-        BlinkStatusLED(2);
+        BlinkStatusLED(1000, 0.5);
     }
 }
 
@@ -216,6 +273,13 @@ int main() {
 
     gpio_init(kStatusLEDPin);
     gpio_set_dir(kStatusLEDPin, GPIO_OUT);
+
+    // Enable battery voltage reading GPIO.
+    gpio_init(BSP::batt_vsense_enable_pin);
+    gpio_set_dir(BSP::batt_vsense_enable_pin, GPIO_OUT);
+    gpio_put(BSP::batt_vsense_enable_pin, 0);  // Disable battery voltage sense by default.
+    adc_init();
+    adc_gpio_init(BSP::batt_vsense_pin);
 
     multicore_reset_core1();
     multicore_launch_core1(main_core1);
@@ -230,8 +294,8 @@ int main() {
     scavenger_hunt.Init();
     gpio_set_irq_enabled(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     // TODO: Plugging in the SD card when the MCU is already started causes the SPI peripheral to fail. There's an
-    // assert buried in the SD Card filesystem module that causes everything to lock up when this happens. Maybe just
-    // wrap the MountSDCard() function in a watchdog timer?
+    // assert buried in the SD Card filesystem module that causes everything to lock up when this happens. Maybe
+    // just wrap the MountSDCard() function in a watchdog timer?
 
     // Mimic SD card being plugged in.
     gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);

@@ -37,6 +37,14 @@ class BSP {
     static const uint16_t gps_tx_pin = 4;
     static const uint16_t gps_rx_pin = 5;
     static const uint16_t gps_reset_pin = 6;
+
+    static const uint16_t servo_pwm_pin = 14;
+    static const uint16_t servo_enable_pin = 13;
+
+    static const uint16_t poho_ctrl_pin = 24;
+
+    static const uint16_t batt_vsense_enable_pin = 25;
+    static const uint16_t batt_vsense_pin = 26;
 };
 
 inline spi_inst_t *BSP::epaper_spi_inst = spi1;
