@@ -10,3 +10,6 @@
 [submodule "modules/no-OS-FatFS-SD-SPI-RPi-Pico"]
 	path = modules/no-OS-FatFS-SD-SPI-RPi-Pico
 	url = git@github.com:carlk3/no-OS-FatFS-SD-SPI-RPi-Pico.git
+[submodule "modules/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico"]
+	path = modules/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
+	url = git@github.com:carlk3/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico.git
