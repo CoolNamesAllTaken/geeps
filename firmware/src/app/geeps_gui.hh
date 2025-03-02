@@ -104,6 +104,7 @@ class GUIStatusBar : public GeepsGUIElement {
    public:
     static const uint16_t kStatusBarHeight = 30;
     static const uint16_t kNumberStringLength = 10;
+    static const uint32_t kButtonClickHighlightIntervalMs = 500;
 
     float battery_charge_frac;
     GGAPacket::PositionFixIndicator_t position_fix;
@@ -115,9 +116,9 @@ class GUIStatusBar : public GeepsGUIElement {
 
     float progress_frac = 0.0f;
 
-    bool button_up_pressed = false;
-    bool button_center_pressed = false;
-    bool button_down_pressed = false;
+    uint32_t button_up_clicked_timestamp = 0;
+    uint32_t button_center_clicked_timestamp = 0;
+    uint32_t button_down_clicked_timestamp = 0;
 
     GUIStatusBar(GeepsGUIElementConfig config);  // constructor
     void Draw(EPaperDisplay &display);

@@ -88,8 +88,8 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
     // Draw satellite icon and number of satellites visible.
     char satellites_str[kNumberStringLength];
     sprintf(satellites_str, "%d", num_satellites);
-    display.DrawBitMap(pos_x + 41, pos_y + 0, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
-    display.DrawText(pos_x + 58, pos_y + 5, satellites_str, EPaperDisplay::EPAPER_BLACK);
+    display.DrawBitMap(pos_x + 43, pos_y + 0, satellite_icon_15x15, 15, 15, EPaperDisplay::EPAPER_BLACK);
+    display.DrawText(pos_x + 60, pos_y + 5, satellites_str, EPaperDisplay::EPAPER_BLACK);
 
     // Draw progress bar.
     display.DrawRectangle(pos_x + 75, pos_y + 0, 135, 15, EPaperDisplay::EPAPER_BLACK, false);
@@ -107,13 +107,19 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
                      EPaperDisplay::EPAPER_BLACK);
 
     // Draw up and down arrows on the sidebar.
-    display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight, button_up_pressed ? arrow_up_solid_30x30 : arrow_up_30x30,
+    uint32_t timestamp_ms = to_ms_since_boot(get_absolute_time());
+    display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight,
+                       timestamp_ms - button_up_clicked_timestamp < kButtonClickHighlightIntervalMs
+                           ? arrow_up_solid_30x30
+                           : arrow_up_30x30,
                        30, 30, EPaperDisplay::EPAPER_BLACK);
     display.DrawRectangle(pos_x + 180, pos_y + kStatusBarHeight + 30, 30, 20, EPaperDisplay::EPAPER_BLACK,
-                          button_center_pressed);
+                          timestamp_ms - button_center_clicked_timestamp < kButtonClickHighlightIntervalMs);
     display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight + 50,
-                       button_down_pressed ? arrow_down_solid_30x30 : arrow_down_30x30, 30, 30,
-                       EPaperDisplay::EPAPER_BLACK);
+                       timestamp_ms - button_down_clicked_timestamp < kButtonClickHighlightIntervalMs
+                           ? arrow_down_solid_30x30
+                           : arrow_down_30x30,
+                       30, 30, EPaperDisplay::EPAPER_BLACK);
 }
 
 /* GUICompass */
@@ -156,6 +162,7 @@ void GUIMenu::Draw(EPaperDisplay &display) {
     if (!visible) {
         return;
     }
+    display.DrawRectangle(pos_x, pos_y, width, num_rows * kRowHeight, EPaperDisplay::EPAPER_WHITE, true);
     // Draw a rectangle for each menu item.
     for (uint16_t i = 0; i < num_rows; i++) {
         if (i == selected_row) {
@@ -165,7 +172,7 @@ void GUIMenu::Draw(EPaperDisplay &display) {
             display.DrawText(pos_x + 5, pos_y + i * kRowHeight, rows[i], EPaperDisplay::EPAPER_WHITE);
         } else {
             // If row is not selected, draw regular text.
-            display.DrawText(pos_x + 5, pos_y + i * kRowHeight + 5, rows[i], EPaperDisplay::EPAPER_BLACK);
+            display.DrawText(pos_x + 5, pos_y + i * kRowHeight, rows[i], EPaperDisplay::EPAPER_BLACK);
         }
     }
 }

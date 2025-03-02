@@ -47,6 +47,7 @@ GUIMenu menu = GUIMenu({.pos_x = 10, .pos_y = 40});
 ScavengerHunt scavenger_hunt = ScavengerHunt();
 
 void up_button_callback() {
+    status_bar.button_up_clicked_timestamp = to_ms_since_boot(get_absolute_time());
     if (menu.visible) {
         menu.ScrollPrev();
     } else {
@@ -54,11 +55,13 @@ void up_button_callback() {
     }
 }
 void center_button_callback() {
+    status_bar.button_center_clicked_timestamp = to_ms_since_boot(get_absolute_time());
     if (menu.visible) {
         menu.Select();
     }
 }
 void down_button_callback() {
+    status_bar.button_down_clicked_timestamp = to_ms_since_boot(get_absolute_time());
     if (menu.visible) {
         menu.ScrollNext();
     } else {
@@ -150,8 +153,10 @@ void RenderHint(Hint& hint) {
     }
 }
 
-float ReadBatteryVoltage() {
-    static constexpr float kADCCountsToVolts = 1.96f * 3.3f / 4095.0f;
+void RefreshBatteryVoltage() {
+    static constexpr float kADCCountsToVolts = 1.51f * 3.3f / 4095.0f;
+    static constexpr float kADCLpFilterWeight = 0.5f;
+    static float voltage = 0.0f;
     // Enable battery voltage sense.
     gpio_put(BSP::batt_vsense_enable_pin, 1);
     // Read analog voltage from batt_vsense pin
@@ -159,9 +164,13 @@ float ReadBatteryVoltage() {
     uint16_t adc_counts = adc_read();
     // Disable battery voltage sense.
     gpio_put(BSP::batt_vsense_enable_pin, 0);
-    // Convert ADC counts to voltage.
-    float voltage = adc_counts * kADCCountsToVolts;
-    return voltage;
+    // Convert ADC counts to voltage and low pass filter it.
+    voltage = (1.0f - kADCLpFilterWeight) * (adc_counts * kADCCountsToVolts) + kADCLpFilterWeight * voltage;
+    // Battery % is linear representation of voltage between fully charged and nominal voltage (not actual good
+    // representtion of capacity).
+    status_bar.battery_charge_frac = max(min(1.0f, (voltage - 3.7f) / (4.2f - 3.7f)), 0.0f);
+    printf("UpdateBatteryVoltage: ADC Counts: %d, Voltage: %.2f V, Percent: %.2f%%\n", adc_counts, voltage,
+           status_bar.battery_charge_frac * 100);
 }
 
 /**
@@ -189,13 +198,14 @@ void main_core1() {
         delay_ms(1000);
         servo.Disable();
     });
-    menu.AddRow((char*)"Power off.", []() {
+    menu.AddRow((char*)"Reset scavenger hunt.", []() { scavenger_hunt.Reset(); });
+    menu.AddRow((char*)"Power off (batt only).", []() {
         // Power off the system.
         gpio_init(BSP::poho_ctrl_pin);
         gpio_set_dir(BSP::poho_ctrl_pin, GPIO_OUT);
         gpio_put(BSP::poho_ctrl_pin, 1);
     });
-    menu.visible = true;
+    menu.visible = false;
     gui.AddElement(&menu);
 
     compass.visible = false;
@@ -214,10 +224,15 @@ void main_core1() {
     // Initialization loop.
     while (!scavenger_hunt.skip_initialization && (!gps_fix_acquired || !sd_card_mounted)) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
-        if (!gpio_get(BSP::button_top_pin && gpio_get(BSP::button_bottom_pin))) {
-            // Skip initialization if both top and bottom buttons are held.
-            scavenger_hunt.skip_initialization = true;
-            scavenger_hunt.LogMessage("Skipped initialization.\n");
+        if (!gpio_get(BSP::button_top_pin) && !gpio_get(BSP::button_bottom_pin)) {
+            if (!gpio_get(BSP::button_middle_pin)) {
+                // Open admin menu if all three buttons are held on bootup.
+                menu.visible = true;
+            } else {
+                // Skip initialization if both top and bottom buttons are held on bootup.
+                scavenger_hunt.skip_initialization = true;
+                scavenger_hunt.LogMessage("Skipped initialization.\n");
+            }
         }
 
         uint32_t timestamp_ms = to_ms_since_boot(get_absolute_time());
@@ -243,10 +258,6 @@ void main_core1() {
             display_refresh_time_ms = curr_time_ms + kDisplayUpdateIntervalMs;
         }
     }
-
-    // Placeholder stuff
-    status_bar.progress_frac = 0.75;
-    status_bar.battery_charge_frac = 0.5;
 
     // Main display and LED loop.
     while (true) {
@@ -280,6 +291,7 @@ int main() {
     gpio_put(BSP::batt_vsense_enable_pin, 0);  // Disable battery voltage sense by default.
     adc_init();
     adc_gpio_init(BSP::batt_vsense_pin);
+    RefreshBatteryVoltage();
 
     multicore_reset_core1();
     multicore_launch_core1(main_core1);
@@ -308,16 +320,15 @@ int main() {
            gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX) {
         // Wait for GPS fix.
         RefreshGPS();
+        RefreshBatteryVoltage();
     }
 
     while (true) {
         RefreshGPS();
+        RefreshBatteryVoltage();
         scavenger_hunt.Update(gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(),
                               gps.latest_gga_packet.GetUTCTimeUint());
         // strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
         buttons.Update();
-        status_bar.button_up_pressed = buttons.pressed[0];
-        status_bar.button_center_pressed = buttons.pressed[1];
-        status_bar.button_down_pressed = buttons.pressed[2];
     }
 }

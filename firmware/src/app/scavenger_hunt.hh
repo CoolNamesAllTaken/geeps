@@ -66,6 +66,12 @@ class ScavengerHunt {
     bool LoadHints();
     bool SaveHints();
 
+    /**
+     * Reset the scavenger hunt to the first hint.
+     * @return True if successful.
+     */
+    bool Reset();
+
     inline void IncrementRenderedHint() {
         if (rendered_hint_index < num_hints - 1) {
             rendered_hint_index++;
