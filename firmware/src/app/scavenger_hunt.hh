@@ -60,9 +60,6 @@ class ScavengerHunt {
     bool Init();
     bool Update(float lat_deg, float lon_deg, uint32_t timestamp_utc);
 
-    bool MountSDCard();
-    bool UnmountSDCard();
-
     bool LoadHints();
     bool SaveHints();
 

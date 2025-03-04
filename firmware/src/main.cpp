@@ -23,6 +23,7 @@ static const uint32_t kButtonDebounceIntervalMs = 10;
 
 const uint16_t kStatusLEDPin = 15;
 
+SDUtil sd_util = SDUtil();
 PA1616S gps = PA1616S({
     .uart_id = BSP::gps_uart_inst,
     .uart_baud = BSP::gps_uart_baud,
@@ -100,14 +101,14 @@ void BlinkStatusLED(uint16_t blink_period_ms, float duty_cycle = 0.5f) {
 }
 
 void gpio_irq_callback(uint gpio, uint32_t events) {
-    if (gpio == BSP::sd_card_detect_pin) {
-        // IRQ is from SD card.
-        card_detect_callback(gpio, events);
-        sprintf(scavenger_hunt.status_text, "SD card %s.", pSD->mounted ? "mounted" : "unmounted");
-    } else {
-        // IRQ is from buttons.
-        buttons.GPIOIRQCallback(gpio, events);
-    }
+    // if (gpio == BSP::sd_card_detect_pin) {
+    //     // IRQ is from SD card.
+    //     card_detect_callback(gpio, events);
+    //     sprintf(scavenger_hunt.status_text, "SD card %s.", pSD->mounted ? "mounted" : "unmounted");
+    // } else {
+    //     // IRQ is from buttons.
+    buttons.GPIOIRQCallback(gpio, events);
+    // }
 }
 
 /**
@@ -153,6 +154,15 @@ void RenderHint(Hint& hint) {
     }
 }
 
+/**
+ * Power off the system via the POHO control pin. Only works while on battery power.
+ */
+void PowerOff() {
+    gpio_init(BSP::poho_ctrl_pin);
+    gpio_set_dir(BSP::poho_ctrl_pin, GPIO_OUT);
+    gpio_put(BSP::poho_ctrl_pin, 1);
+}
+
 void RefreshBatteryVoltage() {
     static constexpr float kADCCountsToVolts = 1.51f * 3.3f / 4095.0f;
     static constexpr float kADCLpFilterWeight = 0.5f;
@@ -169,8 +179,14 @@ void RefreshBatteryVoltage() {
     // Battery % is linear representation of voltage between fully charged and nominal voltage (not actual good
     // representtion of capacity).
     status_bar.battery_charge_frac = max(min(1.0f, (voltage - 3.7f) / (4.2f - 3.7f)), 0.0f);
-    printf("UpdateBatteryVoltage: ADC Counts: %d, Voltage: %.2f V, Percent: %.2f%%\n", adc_counts, voltage,
-           status_bar.battery_charge_frac * 100);
+    // printf("UpdateBatteryVoltage: ADC Counts: %d, Voltage: %.2f V, Percent: %.2f%%\n", adc_counts, voltage,
+    //    status_bar.battery_charge_frac * 100);
+
+    if (status_bar.battery_charge_frac < 0.05f) {
+        scavenger_hunt.LogMessage("Battery critically low. Powering off.\n");
+        delay_ms(2000);  // Allow display to update.
+        PowerOff();
+    }
 }
 
 /**
@@ -201,9 +217,7 @@ void main_core1() {
     menu.AddRow((char*)"Reset scavenger hunt.", []() { scavenger_hunt.Reset(); });
     menu.AddRow((char*)"Power off (batt only).", []() {
         // Power off the system.
-        gpio_init(BSP::poho_ctrl_pin);
-        gpio_set_dir(BSP::poho_ctrl_pin, GPIO_OUT);
-        gpio_put(BSP::poho_ctrl_pin, 1);
+        PowerOff();
     });
     menu.visible = false;
     gui.AddElement(&menu);
@@ -218,11 +232,10 @@ void main_core1() {
 
     uint32_t last_spin_ms = to_ms_since_boot(get_absolute_time());
     bool gps_fix_acquired = false;
-    bool sd_card_mounted = false;
     uint32_t display_refresh_time_ms = 0;
 
     // Initialization loop.
-    while (!scavenger_hunt.skip_initialization && (!gps_fix_acquired || !sd_card_mounted)) {
+    while (!scavenger_hunt.skip_initialization && (!gps_fix_acquired || !sd_util.sd_card_mounted)) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
         if (!gpio_get(BSP::button_top_pin) && !gpio_get(BSP::button_bottom_pin)) {
             if (!gpio_get(BSP::button_middle_pin)) {
@@ -238,7 +251,10 @@ void main_core1() {
         uint32_t timestamp_ms = to_ms_since_boot(get_absolute_time());
         gps_fix_acquired =
             gps.latest_gga_packet.GetPositionFixIndicator() == GGAPacket::PositionFixIndicator_t::GPS_FIX;
-        sd_card_mounted = pSD->mounted;
+        if (!sd_util.sd_card_mounted) {
+            // Try mounting the SD card if it hasn't yet been mounted.
+            sd_util.Mount();
+        }
 
         if (timestamp_ms - last_spin_ms > 1000) {
             spinner_char_index++;
@@ -247,7 +263,7 @@ void main_core1() {
         }
 
         snprintf(hint_box.text, Hint::kHintTextMaxLen, "Initializing... %c \n  SD CARD [%s]\n  GPS Fix [%s]\n",
-                 spinner_chars[spinner_char_index], sd_card_mounted ? "OK  " : "  NO",
+                 spinner_chars[spinner_char_index], sd_util.sd_card_mounted ? "OK  " : "  NO",
                  gps_fix_acquired ? "OK  " : "  NO");
         strcat(hint_box.text, scavenger_hunt.status_text);
 
@@ -304,7 +320,7 @@ int main() {
     gpio_set_irq_enabled(BSP::button_bottom_pin, GPIO_IRQ_EDGE_FALL, true);
     buttons.Init();
     scavenger_hunt.Init();
-    gpio_set_irq_enabled(pSD->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+    // gpio_set_irq_enabled(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     // TODO: Plugging in the SD card when the MCU is already started causes the SPI peripheral to fail. There's an
     // assert buried in the SD Card filesystem module that causes everything to lock up when this happens. Maybe
     // just wrap the MountSDCard() function in a watchdog timer?
@@ -312,7 +328,7 @@ int main() {
     // Mimic SD card being plugged in.
     gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);
     // Block on initializing scavenger hunt from SD card.
-    while (!scavenger_hunt.skip_initialization && !pSD->mounted) {
+    while (!scavenger_hunt.skip_initialization && !sd_util.sd_card_mounted) {
         // Wait for SD card to be mounted.
     }
     scavenger_hunt.LoadHints();

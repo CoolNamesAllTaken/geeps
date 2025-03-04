@@ -27,10 +27,13 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Test")
     add_executable(geeps "")
 
     add_subdirectory(src)
-    add_subdirectory(../modules/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
+    # add_subdirectory(../modules/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
+    
 
     # In case there are files directly in src and inc
+    add_subdirectory(../modules/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
     target_include_directories(geeps PRIVATE 
+        ../modules/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/include
         src
         inc
     )
@@ -43,7 +46,7 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Test")
     # Firmware: Pull in Pico library
     target_link_libraries(geeps 
         pico_stdlib
-        FatFs_SPI
+        # FatFs_SPI
         pico_float # for math functions
         pico_multicore
         hardware_spi
@@ -54,6 +57,7 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Test")
         hardware_clocks
         hardware_pwm # for servo
         hardware_adc # for battery voltage
+        no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
     )
 
     pico_set_linker_script(geeps ${CMAKE_CURRENT_SOURCE_DIR}/linker_scripts/core0_bigstack.ld)

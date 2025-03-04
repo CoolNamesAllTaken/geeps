@@ -6,7 +6,10 @@
 
 // extern GUITextBox hint_box;
 
+// This is the name given to a hints file used to configure a scavenger hunt.
 static constexpr char kHintsFilename[] = "hints.txt";
+// This is the name given to a copy of the hints file that is being actively used by a scavenger hunt.
+static constexpr char kHintsInUseFilename[] = "~hints.txt";
 static constexpr char kBeginHintsSectionDelimiter[] = "begin_hints";
 static constexpr char kEndHintsSectionDelimiter[] = "end_hints";
 
@@ -61,50 +64,6 @@ bool ScavengerHunt::Update(float lat_deg, float lon_deg, uint32_t timestamp_utc)
     return true;
 }
 
-bool ScavengerHunt::MountSDCard() {
-    int ret = sd_init_card(pSD);
-    if (ret != 0) {
-        char fail_reason[100] = {'\0'};
-        sprintf(fail_reason, "Failed to initialize SD card: ");
-        if (ret & STA_NOINIT) {
-            strcat(fail_reason, "STA_NOINIT ");
-        }
-        if (ret & STA_NODISK) {
-            strcat(fail_reason, "STA_NODISK ");
-        }
-        if (ret & STA_PROTECT) {
-            strcat(fail_reason, "STA_PROTECT ");
-        }
-
-        LogMessage("%s\r\n", fail_reason);
-        // Maybe add a mutex exit here.
-        UnmountSDCard();
-        return false;
-    } else {
-        LogMessage("Initialized SD card.\r\n");
-    }
-    LogMessage("SD card initialized.\r\n");
-
-    // Mount the SD card.
-    FRESULT fr = f_mount(&pSD->fatfs, pSD->pcName, 1);
-    if (FR_OK != fr) {
-        LogMessage("f_mount error: %s (%d)\r\n", FRESULT_str(fr), fr);
-        return false;
-    }
-    return true;
-}
-
-bool ScavengerHunt::UnmountSDCard() {
-    FRESULT fr = f_unmount(pSD->pcName);
-    if (fr == FR_OK) {
-        LogMessage("Unmounted SD card.\r\n");
-        return true;
-    } else {
-        LogMessage("Failed to unmount SD card: %s (%d)\r\n", FRESULT_str(fr), fr);
-        return false;
-    }
-}
-
 /**
  * Find the next token in a string. Mimicks strtok but accepts delimiters that are not separated.
  * @param token_start Pointer to the start of the token.
@@ -132,15 +91,23 @@ char *find_next_token(char *token_start, const char *delim) {
 }
 
 bool ScavengerHunt::LoadHints() {
-    FRESULT fr;
+    // ListFiles();
 
-    ListFiles();
+    FRESULT fr;
+    FIL hints_txt_file;
+
+    bool hints_in_use = f_stat(kHintsInUseFilename, NULL) == FR_OK;
+    if (hints_in_use) {
+        LogMessage("Scavenger hunt in progress: using hints in %s.\n", kHintsInUseFilename);
+    } else {
+        LogMessage("No active scavenger hunt: using hints in %s.\n", kHintsFilename);
+    }
 
     // Open the hints.txt file.
-    FIL hints_txt_file;
-    fr = f_open(&hints_txt_file, kHintsFilename, FA_OPEN_EXISTING | FA_READ);
+    fr = f_open(&hints_txt_file, hints_in_use ? kHintsInUseFilename : kHintsFilename, FA_OPEN_EXISTING | FA_READ);
     if (FR_OK != fr && FR_EXIST != fr) {
-        LogMessage("f_open(%s) error: %s (%d)\n", kHintsFilename, FRESULT_str(fr), fr);
+        LogMessage("f_open(%s) error: %s (%d)\n", hints_in_use ? kHintsInUseFilename : kHintsFilename, FRESULT_str(fr),
+                   fr);
         return false;
     }
     uint32_t hints_txt_size_bytes = f_size(&hints_txt_file);
@@ -289,6 +256,95 @@ bool ScavengerHunt::LoadHints() {
     }
 
     LogMessage("Loaded %d hints from SD card.\n", num_hints);
+
+    if (!hints_in_use) {
+        SaveHints();  // Save the hints to the ~hints.txt file.
+    }
+
+    return true;
+}
+
+bool ScavengerHunt::SaveHints() {
+    // Create a temporary hints file
+    FRESULT fr;
+    FIL hints_txt_file;
+    fr = f_open(&hints_txt_file, kHintsInUseFilename, FA_CREATE_ALWAYS | FA_WRITE);
+    if (FR_OK != fr) {
+        LogMessage("Failed to create %s: %s (%d)\n", kHintsInUseFilename, FRESULT_str(fr), fr);
+        return false;
+    }
+
+    // Write title if it exists
+    if (strlen(title) > 0) {
+        f_printf(&hints_txt_file, "title=\"%s\"\n", title);
+    }
+
+    // Write splash image if it exists
+    if (strlen(splash_image_filename) > 0) {
+        f_printf(&hints_txt_file, "splash_image=\"%s\"\n", splash_image_filename);
+    }
+
+    // Write hints section
+    f_printf(&hints_txt_file, "%s\n", kBeginHintsSectionDelimiter);
+
+    for (uint16_t i = 0; i < num_hints; i++) {
+        const char *hint_type_str;
+        switch (hints[i].hint_type) {
+            case Hint::kHintTypeText:
+                hint_type_str = "text";
+                break;
+            case Hint::kHintTypeImage:
+                hint_type_str = "image";
+                break;
+            case Hint::kHintTypeDistance:
+                hint_type_str = "distance";
+                break;
+            case Hint::kHintTypeHeading:
+                hint_type_str = "heading";
+                break;
+            default:
+                continue;  // Skip invalid hint types
+        }
+        printf("%.6f,%.6f,%s,\"%s\"", hints[i].lat_deg, hints[i].lon_deg, hint_type_str, hints[i].hint_text);
+        f_printf(&hints_txt_file, "%.6f,%.6f,%s,\"%s\"", hints[i].lat_deg, hints[i].lon_deg, hint_type_str,
+                 hints[i].hint_text);
+
+        if (hints[i].hint_type == Hint::kHintTypeImage) {
+            f_printf(&hints_txt_file, ",\"%s\"", hints[i].hint_image_filename);
+        } else {
+            f_printf(&hints_txt_file, ",");
+        }
+
+        f_printf(&hints_txt_file, ",%d\n", hints[i].completed_timestamp_utc);
+    }
+
+    f_printf(&hints_txt_file, "%s\n", kEndHintsSectionDelimiter);
+
+    // Close the file
+    fr = f_close(&hints_txt_file);
+    if (FR_OK != fr) {
+        LogMessage("Failed to close %s: %s (%d)\n", kHintsInUseFilename, FRESULT_str(fr), fr);
+        return false;
+    }
+
+    return true;
+}
+
+bool ScavengerHunt::Reset() {
+    // Find a ~hints.txt file and delete it if it exists.
+    FRESULT fr;
+    FIL hints_txt_file;
+    fr = f_stat(kHintsInUseFilename, NULL);
+    if (fr == FR_OK) {
+        // File exists, try to delete it
+        fr = f_unlink(kHintsInUseFilename);
+        if (fr != FR_OK) {
+            LogMessage("Failed to delete %s: %s (%d)\n", kHintsInUseFilename, FRESULT_str(fr), fr);
+            return false;
+        }
+        LogMessage("Deleted %s.\n", kHintsInUseFilename);
+    }
+
     return true;
 }
 
