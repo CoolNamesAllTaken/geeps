@@ -207,8 +207,13 @@ bool ScavengerHunt::LoadHints() {
             char *splash_image_filename_end = strchr(splash_image_filename_start, '"');
             if (splash_image_filename_end) {
                 *splash_image_filename_end = '\0';  // Null terminate the filename
-                printf("Found splash image filename: %s\n", splash_image_filename_start);
-                strcpy(splash_image_filename, splash_image_filename_start);
+                if (f_stat(splash_image_filename_start, NULL) == FR_OK) {
+                    printf("Found splash image filename: %s\n", splash_image_filename_start);
+                    strcpy(splash_image_filename, splash_image_filename_start);
+                } else {
+                    LogMessage("Splash image file not found: %s.", splash_image_filename_start);
+                    return false;
+                }
             }
         } else if (strncasecmp(line, kBeginHintsSectionDelimiter, strlen(kBeginHintsSectionDelimiter)) == 0) {
             in_hints_section = true;
@@ -283,7 +288,12 @@ bool ScavengerHunt::LoadHints() {
             token = find_next_token(NULL, "\"");  // Get characters between quotes.
             if (token != NULL) {
                 strncpy(hints[num_hints].hint_image_filename, token, Hint::kImageFilenameMaxLen - 1);
-                hints[num_hints].hint_text[Hint::kImageFilenameMaxLen - 1] = '\0';
+                hints[num_hints].hint_image_filename[Hint::kImageFilenameMaxLen - 1] = '\0';
+                if (f_stat(hints[num_hints].hint_image_filename, NULL) != FR_OK) {
+                    LogMessage("hints.txt line %d image file not found: %s.", lines_read,
+                               hints[num_hints].hint_image_filename);
+                    return false;
+                }
             } else {
                 LogMessage("hints.txt line %d is missing an image filename.", lines_read);
                 return false;

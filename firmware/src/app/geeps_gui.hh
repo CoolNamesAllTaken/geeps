@@ -78,11 +78,13 @@ class GeepsGUI {
 
 class GUIBitMap : public GeepsGUIElement {
    public:
+    static const uint16_t kFilenameMaxLen = 100;
     GUIBitMap(GeepsGUIElementConfig config_in);
     void Draw(EPaperDisplay &display);
 
     uint16_t size_x, size_y;
-    uint8_t *bitmap;
+    uint8_t *bitmap = nullptr;
+    char filename[kFilenameMaxLen + 1] = {'\0'};
 
    private:
 };

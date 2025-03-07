@@ -146,6 +146,7 @@ void RefreshBatteryVoltage() {
 void main_core1() {
     gui.AddElement(&status_bar);
     gui.AddElement(&hint_box);
+    splash_screen.visible = false;
     gui.AddElement(&splash_screen);
     gui.AddElement(&compass);
 
@@ -226,6 +227,13 @@ void main_core1() {
         }
     }
 
+    // Display splash screen for 2 seconds.
+    strncpy(splash_screen.filename, scavenger_hunt_p->splash_image_filename, GUIBitMap::kFilenameMaxLen);
+    splash_screen.visible = true;
+    gui.Draw(true);
+    delay_ms(10000);
+    // splash_screen.visible = false;
+
     // Main display and LED loop.
     while (true) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
@@ -289,6 +297,11 @@ int main() {
         RefreshGPS();
         RefreshBatteryVoltage();
     }
+
+    // Display splash screen for 2 seconds.
+    // strncpy(splash_screen.filename, scavenger_hunt_p->splash_image_filename, GUIBitMap::kFilenameMaxLen);
+    // gui.Draw(true);
+    // delay_ms(2000);
 
     while (true) {
         RefreshGPS();

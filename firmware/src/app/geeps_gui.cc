@@ -3,13 +3,53 @@
 #include <stdio.h>   // for printf
 #include <string.h>  // for c-string operations
 
+// #include "bmp.hh"
+#include "bmp_utils.hh"
 #include "gui_bitmaps.hh"
 #include "math.h"
+#include "sd_utils.hh"
 
 /* GUIBitMap */
+
 GUIBitMap::GUIBitMap(GeepsGUIElementConfig config_in) : GeepsGUIElement(config_in) {}
 void GUIBitMap::Draw(EPaperDisplay &display) {
-    display.DrawBitMap(pos_x, pos_y, bitmap, size_x, size_y, EPaperDisplay::EPaper_Color_t::EPAPER_BLACK);
+    if (!visible) {
+        return;
+    }
+    if (strlen(filename) > 0) {
+        if (f_stat(filename, NULL) != FR_OK) {
+            goto bitmap_not_found;
+        }
+
+        uint16_t bmp_width, bmp_height;
+        if (!ReadBMPDimensions(filename, bmp_width, bmp_height)) {
+            goto bitmap_not_found;
+        }
+        printf("GUIBitMap::Draw: Reading BMP file %s (%dx%d)\n", filename, bmp_width, bmp_height);
+        uint16_t bmp_data_size_bytes =
+            (bmp_width + (kBitsPerByte - bmp_width % kBitsPerByte) % kBitsPerByte) * bmp_height / kBitsPerByte;
+        printf("GUIBitMap::Draw: Allocated %d Bytes for BMP data\n", bmp_data_size_bytes);
+        uint8_t *bmp_data = (uint8_t *)malloc(bmp_data_size_bytes);  // 1-bit depth.
+
+        if (!ReadBMPToBuffer(filename, bmp_data, bmp_data_size_bytes, bmp_width, bmp_height)) {
+            free(bmp_data);
+            goto bitmap_not_found;
+        }
+        printf("GUIBitMap::Draw: Read BMP file successfully.\n");
+        display.DrawBitMap(pos_x, pos_y, bmp_data, bmp_width, bmp_height, EPaperDisplay::EPAPER_BLACK);
+        free(bmp_data);
+        // display.DrawBitMap(pos_x, pos_y, bmp.getPixelData(), bmp.width(), bmp.height(), EPaperDisplay::EPAPER_BLACK);
+        return;
+
+    } else if (bitmap != nullptr) {
+        display.DrawBitMap(pos_x, pos_y, bitmap, size_x, size_y, EPaperDisplay::EPaper_Color_t::EPAPER_BLACK);
+        return;
+    }
+bitmap_not_found:
+    printf("GUIBitMap::Draw: File not found: %s\n", filename);
+    // Draw an empty rectangle with the bitmap dimensions and a question mark in the middle.
+    display.DrawRectangle(pos_x, pos_y, size_x, size_y, EPaperDisplay::EPAPER_BLACK, false);
+    display.DrawText(pos_x + size_x / 2 - 5, pos_y + size_y / 2 - 5, "?");
 }
 
 /* GUITextBox */
@@ -21,7 +61,7 @@ void GUITextBox::Draw(EPaperDisplay &display) {
     }
     uint16_t chars_to_print = MIN(strlen(text), kTextMaxLen);
     uint16_t chars_printed = 0;
-    printf("GUITextBox::Draw: Printing \"%s\" (%d chars, %d wrap)\n", text, chars_to_print, width_chars);
+    // printf("GUITextBox::Draw: Printing \"%s\" (%d chars, %d wrap)\n", text, chars_to_print, width_chars);
     for (uint row = 0; row < kMaxNumRows && chars_printed < chars_to_print; row++) {
         // Copy characters to the line of text on each row one by one.
         char row_chars[kMaxNumCols];
@@ -56,8 +96,8 @@ void GUITextBox::Draw(EPaperDisplay &display) {
         row_chars[col] = '\0';  // Add null terminator.
 
         // Print the row of text.
-        printf("GUITextBox::Draw: Printing row %d: %s (%d chars, %d/%d)\n", row, row_chars, col, chars_printed,
-               chars_to_print);
+        // printf("GUITextBox::Draw: Printing row %d: %s (%d chars, %d/%d)\n", row, row_chars, col, chars_printed,
+        //        chars_to_print);
         display.DrawText(pos_x, pos_y + row * kRowHeight, row_chars);
         memset(row_chars, '\0', kMaxNumCols);
     }

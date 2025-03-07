@@ -130,10 +130,10 @@ class ScavengerHunt {
 
     bool skip_initialization = false;
 
-    GUINotification& notification;
     GUIStatusBar& status_bar;
     GUITextBox& hint_box;
     GUICompass& compass;
+    GUINotification& notification;
 
    private:
 };
