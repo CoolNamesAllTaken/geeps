@@ -21,6 +21,8 @@ class GeepsGUIElement {
     };  // constructor
 
     virtual void Draw(EPaperDisplay &display) = 0;  // pure virtual function; no base class implementation
+    void DisplayWrappedText(EPaperDisplay &display, const char *text, uint16_t x, uint16_t y, uint16_t width,
+                            uint16_t height, uint16_t font_size, uint16_t line_spacing);
 
     uint16_t pos_x, pos_y;
     bool visible;
@@ -96,7 +98,7 @@ class GUITextBox : public GeepsGUIElement {
     GUITextBox(GeepsGUIElementConfig config);  // constructor
     void Draw(EPaperDisplay &display);
 
-    char text[kTextMaxLen];
+    char text[kTextMaxLen + 1];
     uint16_t width_chars = kMaxNumCols;
 };
 
@@ -105,6 +107,7 @@ class GUIStatusBar : public GeepsGUIElement {
     static const uint16_t kStatusBarHeight = 30;
     static const uint16_t kNumberStringLength = 10;
     static const uint32_t kButtonClickHighlightIntervalMs = 500;
+    static const uint16_t kCenterButtonLabelLen = 5;
 
     float battery_charge_frac;
     GGAPacket::PositionFixIndicator_t position_fix;
@@ -115,10 +118,12 @@ class GUIStatusBar : public GeepsGUIElement {
     char longitude_string[NMEAPacket::kMaxPacketFieldLen];
 
     float progress_frac = 0.0f;
+    float rendered_hint_frac = 0.0f;
 
     uint32_t button_up_clicked_timestamp = 0;
     uint32_t button_center_clicked_timestamp = 0;
     uint32_t button_down_clicked_timestamp = 0;
+    char center_button_label[kCenterButtonLabelLen + 1] = "";
 
     GUIStatusBar(GeepsGUIElementConfig config);  // constructor
     void Draw(EPaperDisplay &display);
@@ -179,6 +184,21 @@ class GUIMenu : public GeepsGUIElement {
     uint16_t num_rows;
     uint16_t selected_row;
     uint16_t width = kMaxNumCols * 5;
+};
+
+class GUINotification : public GeepsGUIElement {
+   public:
+    static const uint16_t kNotificationHeight = 50;
+    static const uint16_t kNotificationWidth = 150;
+    static const uint16_t kTextBoxMargin = 10;
+    static const uint16_t kNotificationMaxNumChars = GUITextBox::kTextMaxLen;
+
+    GUINotification(GeepsGUIElementConfig config);  // constructor
+    void Draw(EPaperDisplay &display) override;
+    void DisplayNotification(char *text_in, uint16_t duration_ms = 2000);
+
+    uint32_t display_until_ms = 0;
+    GUITextBox text_box;
 };
 
 #endif /* _GEEPS_GUI_HH_ */

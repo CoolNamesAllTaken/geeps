@@ -13,7 +13,7 @@ void GUIBitMap::Draw(EPaperDisplay &display) {
 }
 
 /* GUITextBox */
-GUITextBox::GUITextBox(GeepsGUIElementConfig config) : GeepsGUIElement(config) {}
+GUITextBox::GUITextBox(GeepsGUIElementConfig config) : GeepsGUIElement(config) { memset(text, '\0', kTextMaxLen); }
 
 void GUITextBox::Draw(EPaperDisplay &display) {
     if (!visible) {
@@ -21,12 +21,14 @@ void GUITextBox::Draw(EPaperDisplay &display) {
     }
     uint16_t chars_to_print = MIN(strlen(text), kTextMaxLen);
     uint16_t chars_printed = 0;
+    printf("GUITextBox::Draw: Printing \"%s\" (%d chars, %d wrap)\n", text, chars_to_print, width_chars);
     for (uint row = 0; row < kMaxNumRows && chars_printed < chars_to_print; row++) {
         // Copy characters to the line of text on each row one by one.
         char row_chars[kMaxNumCols];
         bool encountered_newline = false;
         uint16_t word_start = chars_printed;
-        for (uint16_t col = 0; col < width_chars && !encountered_newline && chars_printed < chars_to_print; col++) {
+        uint16_t col = 0;
+        for (; col < width_chars && !encountered_newline && chars_printed < chars_to_print; col++) {
             if (text[chars_printed] == '\r') {
                 chars_printed++;
                 col--;  // Don't advance the column for \r
@@ -51,10 +53,11 @@ void GUITextBox::Draw(EPaperDisplay &display) {
             }
             chars_printed++;
         }
-        row_chars[chars_printed] = '\0';  // Add null terminator.
+        row_chars[col] = '\0';  // Add null terminator.
 
         // Print the row of text.
-        // printf("Printing row %d: %s\n", row, row_chars);
+        printf("GUITextBox::Draw: Printing row %d: %s (%d chars, %d/%d)\n", row, row_chars, col, chars_printed,
+               chars_to_print);
         display.DrawText(pos_x, pos_y + row * kRowHeight, row_chars);
         memset(row_chars, '\0', kMaxNumCols);
     }
@@ -94,6 +97,9 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
     // Draw progress bar.
     display.DrawRectangle(pos_x + 75, pos_y + 0, 135, 15, EPaperDisplay::EPAPER_BLACK, false);
     display.DrawRectangle(pos_x + 75, pos_y + 0, progress_frac * 135, 15, EPaperDisplay::EPAPER_BLACK, true);
+    // Draw current hint dot: white background circle, black border.
+    display.DrawCircle(pos_x + 75 + rendered_hint_frac * 135, pos_y + 7, 3, EPaperDisplay::EPAPER_WHITE, true);
+    display.DrawCircle(pos_x + 75 + rendered_hint_frac * 135, pos_y + 7, 3, EPaperDisplay::EPAPER_BLACK, false);
 
     // Draw latitude and longitude string below the satellite and battery icons.
     display.DrawText(pos_x + 0, pos_y + 20, latitude_string);
@@ -113,13 +119,18 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
                            ? arrow_up_solid_30x30
                            : arrow_up_30x30,
                        30, 30, EPaperDisplay::EPAPER_BLACK);
-    display.DrawRectangle(pos_x + 180, pos_y + kStatusBarHeight + 30, 30, 20, EPaperDisplay::EPAPER_BLACK,
-                          timestamp_ms - button_center_clicked_timestamp < kButtonClickHighlightIntervalMs);
     display.DrawBitMap(pos_x + 180, pos_y + kStatusBarHeight + 50,
                        timestamp_ms - button_down_clicked_timestamp < kButtonClickHighlightIntervalMs
                            ? arrow_down_solid_30x30
                            : arrow_down_30x30,
                        30, 30, EPaperDisplay::EPAPER_BLACK);
+
+    // Draw center button with text.
+    bool center_button_clicked = timestamp_ms - button_center_clicked_timestamp < kButtonClickHighlightIntervalMs;
+    display.DrawRectangle(pos_x + 180, pos_y + kStatusBarHeight + 30, 30, 20, EPaperDisplay::EPAPER_BLACK,
+                          center_button_clicked);
+    display.DrawText(pos_x + 185, pos_y + kStatusBarHeight + 35, center_button_label,
+                     center_button_clicked ? EPaperDisplay::EPAPER_WHITE : EPaperDisplay::EPAPER_BLACK);
 }
 
 /* GUICompass */
@@ -175,4 +186,30 @@ void GUIMenu::Draw(EPaperDisplay &display) {
             display.DrawText(pos_x + 5, pos_y + i * kRowHeight, rows[i], EPaperDisplay::EPAPER_BLACK);
         }
     }
+}
+
+GUINotification::GUINotification(GeepsGUIElementConfig config)
+    : GeepsGUIElement(config),
+      text_box({(uint16_t)(config.pos_x + kTextBoxMargin), (uint16_t)(config.pos_y + kTextBoxMargin)}) {
+    text_box.width_chars = (kNotificationWidth - (2 * kTextBoxMargin)) / 6;
+    text_box.visible = true;
+}
+
+void GUINotification::DisplayNotification(char *text_in, uint16_t duration_ms) {
+    strncpy(text_box.text, text_in, kNotificationMaxNumChars);
+    text_box.text[kNotificationMaxNumChars] = '\0';
+    printf("Notification: %s\n", text_box.text);
+    visible = true;
+    display_until_ms = to_ms_since_boot(get_absolute_time()) + duration_ms;
+}
+
+void GUINotification::Draw(EPaperDisplay &display) {
+    if (display_until_ms < to_ms_since_boot(get_absolute_time())) {
+        visible = false;
+        return;
+    }
+    // Draw a blanking background and border.
+    display.DrawRectangle(pos_x, pos_y, kNotificationWidth, kNotificationHeight, EPaperDisplay::EPAPER_WHITE, true);
+    display.DrawRectangle(pos_x, pos_y, kNotificationWidth, kNotificationHeight, EPaperDisplay::EPAPER_BLACK, false);
+    text_box.Draw(display);
 }

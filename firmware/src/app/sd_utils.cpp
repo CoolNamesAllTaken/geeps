@@ -3,7 +3,6 @@
 #include "hw_config.h"
 #include "scavenger_hunt.hh"
 
-extern ScavengerHunt scavenger_hunt;
 std::vector<FatFsNs::SdCard> FatFsNs::FatFs::SdCards;
 
 const char SDUtil::kErrNames[][kErrNameMaxLen] = {
@@ -60,30 +59,6 @@ void SDUtil::Init() {
     sd_init_driver();
 }
 
-// void sd_card_spi_dma_isr() { spi_irq_handler(sd_util.card_p.spi); }
-
-// If the card is physically removed, unmount the filesystem:
-// void card_detect_callback(uint gpio, uint32_t events) {
-//     static bool busy;
-//     if (busy) return;  // Avoid switch bounce
-//     busy = true;
-//     if (pSD->card_detect_gpio == gpio) {
-//         if (pSD->mounted && events & GPIO_IRQ_EDGE_RISE) {
-//             printf("(Card Detect Interrupt: unmounting %s)\n", pSD->pcName);
-//             if (scavenger_hunt.UnmountSDCard()) {
-//                 pSD->mounted = false;
-//             }
-//         } else if (!pSD->mounted && events & GPIO_IRQ_EDGE_FALL) {
-//             printf("(Card Detect Interrupt: mounting %s)\n", pSD->pcName);
-//             if (scavenger_hunt.MountSDCard()) {
-//                 pSD->mounted = true;
-//             }
-//         }
-//         sd_card_detect(pSD);
-//     }
-//     busy = false;
-// }
-
 // hw_config.h functions with C linkage.
 #ifdef __cplusplus
 extern "C" {
@@ -98,15 +73,6 @@ sd_card_t *sd_get_by_num(size_t num) {
         return NULL;
     }
 }
-
-// size_t spi_get_num() { return SDUtil::kNumSPIs; }
-// spi_t *spi_get_by_num(size_t num) {
-//     if (num == 0) {
-//         return pSPI;
-//     } else {
-//         return NULL;
-//     }
-// }
 
 #ifdef __cplusplus
 }

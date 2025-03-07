@@ -4,8 +4,6 @@
 // #include "geeps_gui.hh"
 #include "sd_utils.hh"
 
-// extern GUITextBox hint_box;
-
 // This is the name given to a hints file used to configure a scavenger hunt.
 static constexpr char kHintsFilename[] = "hints.txt";
 // This is the name given to a copy of the hints file that is being actively used by a scavenger hunt.
@@ -44,23 +42,85 @@ bool ScavengerHunt::Init() {
     return true;
 }
 
+bool ScavengerHunt::TryHint(uint16_t hint_index) {
+    if (hint_index > num_hints) {
+        return false;
+    }
+    if (hints[hint_index].completed_timestamp_utc != -1) {
+        LogMessage("Hint %d has already been completed.", hint_index);
+        return false;
+    }
+    if (GetDistanceToHint(hint_index) < kHintCompleteRadiusM) {
+        hints[hint_index].completed_timestamp_utc = last_update_timestamp_utc;
+        LogMessage("Hint %d completed at %lu. Yay!", hint_index, hints[hint_index].completed_timestamp_utc);
+        return true;
+    }
+    LogMessage("Not within %.0fm of hint %d.\n", kHintCompleteRadiusM, hint_index);
+    return false;
+}
+
+float ScavengerHunt::GetDistanceToHint(Hint &hint) {
+    return CalculateGeoidalDistance(last_update_lat_deg, last_update_lon_deg, hint.lat_deg, hint.lon_deg);
+}
+
+float ScavengerHunt::GetHeadingToHint(Hint &hint) {
+    return CalculateHeadingToWaypoint(last_update_lat_deg, last_update_lon_deg, hint.lat_deg, hint.lon_deg);
+}
+
+void ScavengerHunt::Render() {
+    Hint &hint = hints[rendered_hint_index];
+    // Default settings.
+    hint_box.width_chars = 25;
+    compass.visible = false;
+    strncpy(status_bar.center_button_label, "TRY", GUIStatusBar::kCenterButtonLabelLen);
+
+    switch (hint.hint_type) {
+        case Hint::kHintTypeText: {
+            strncpy(hint_box.text, hint.hint_text, GUITextBox::kTextMaxLen);
+            break;
+        }
+        case Hint::kHintTypeImage: {
+            strncpy(hint_box.text, hint.hint_image_filename, GUITextBox::kTextMaxLen);
+            break;
+        }
+        case Hint::kHintTypeDistance: {
+            float distance_to_hint_m = GetDistanceToHint(hint);
+            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance: %.2f m\n\n%s", distance_to_hint_m,
+                     hint.hint_text);
+            break;
+        }
+        case Hint::kHintTypeHeading: {
+            float heading_to_hint_deg = GetHeadingToHint(hint);
+            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Heading: %.2f deg\n\n%s", heading_to_hint_deg,
+                     hint.hint_text);
+            hint_box.width_chars = 10;
+            compass.visible = true;
+            compass.heading_deg = heading_to_hint_deg;
+            break;
+        }
+        default: {
+            strncpy(hint_box.text, "Invalid hint type.", GUITextBox::kTextMaxLen);
+            break;
+        }
+    }
+}
+
 bool ScavengerHunt::Update(float lat_deg, float lon_deg, uint32_t timestamp_utc) {
+    last_update_lat_deg = lat_deg;
+    last_update_lon_deg = lon_deg;
+    last_update_timestamp_utc = timestamp_utc;
+
     for (uint16_t i = 0; i < num_hints; i++) {
         if (hints[i].completed_timestamp_utc != -1) {
             // Skip hints that have already been completed.
             continue;
         }
-        // Check if the user is within 10 meters of the hint location.
-        float distance_m = CalculateGeoidalDistance(lat_deg, lon_deg, hints[i].lat_deg, hints[i].lon_deg);
-        if (distance_m < 10.0f) {
-            hints[i].completed_timestamp_utc = timestamp_utc;
-            LogMessage("Hint %d completed at %d.\n", i, timestamp_utc);
-            rendered_hint_index = i + 1;  // Jump to rendering the next hint when it's found.
-            continue;
-        }
         active_hint_index = i;
-        break;  // Don't bother checking hints after the currently active one.
     }
+
+    // Update the current hint dot on the display.
+    status_bar.rendered_hint_frac = (float)(rendered_hint_index + 1) / num_hints;
+    status_bar.progress_frac = (float)(active_hint_index + 1) / num_hints;
     return true;
 }
 
@@ -98,15 +158,15 @@ bool ScavengerHunt::LoadHints() {
 
     bool hints_in_use = f_stat(kHintsInUseFilename, NULL) == FR_OK;
     if (hints_in_use) {
-        LogMessage("Scavenger hunt in progress: using hints in %s.\n", kHintsInUseFilename);
+        LogMessage("Scavenger hunt in progress: using hints in %s.", kHintsInUseFilename);
     } else {
-        LogMessage("No active scavenger hunt: using hints in %s.\n", kHintsFilename);
+        LogMessage("No active scavenger hunt: using hints in %s.", kHintsFilename);
     }
 
     // Open the hints.txt file.
     fr = f_open(&hints_txt_file, hints_in_use ? kHintsInUseFilename : kHintsFilename, FA_OPEN_EXISTING | FA_READ);
     if (FR_OK != fr && FR_EXIST != fr) {
-        LogMessage("f_open(%s) error: %s (%d)\n", hints_in_use ? kHintsInUseFilename : kHintsFilename, FRESULT_str(fr),
+        LogMessage("f_open(%s) error: %s (%d)", hints_in_use ? kHintsInUseFilename : kHintsFilename, FRESULT_str(fr),
                    fr);
         return false;
     }
@@ -124,7 +184,7 @@ bool ScavengerHunt::LoadHints() {
         lines_read++;
         bytes_read += strlen(line);  // Do this before strtok, since strtok modifies the string.
         if (buf == 0) {
-            LogMessage("f_gets error.\n");
+            LogMessage("f_gets error.");
             return false;
         }
         printf("Read line: %s", line);
@@ -168,7 +228,7 @@ bool ScavengerHunt::LoadHints() {
         // Parse latitude.
         token = find_next_token(line, ",");
         if (!token || *token == '\0') {
-            LogMessage("hints.txt line %d is missing latitude.\n", lines_read);
+            LogMessage("hints.txt line %d is missing latitude.", lines_read);
             return false;
         }
         hints[num_hints].lat_deg = atof(token);
@@ -176,7 +236,7 @@ bool ScavengerHunt::LoadHints() {
         // Parse longitude.
         token = find_next_token(NULL, ",");
         if (!token || *token == '\0') {
-            LogMessage("hints.txt line %d is missing longitude.\n", lines_read);
+            LogMessage("hints.txt line %d is missing longitude.", lines_read);
             return false;
         }
         hints[num_hints].lon_deg = atof(token);
@@ -184,7 +244,7 @@ bool ScavengerHunt::LoadHints() {
         // Parse hint_type.
         token = find_next_token(NULL, ",");
         if (!token || *token == '\0') {
-            LogMessage("hints.txt line %d is missing hint type.\n", lines_read);
+            LogMessage("hints.txt line %d is missing hint type.", lines_read);
             return false;
         }
         // Strip leading and trailing whitespace
@@ -203,7 +263,7 @@ bool ScavengerHunt::LoadHints() {
         } else if (strcasecmp(token, "heading") == 0) {
             hints[num_hints].hint_type = Hint::kHintTypeHeading;
         } else {
-            LogMessage("hints.txt line %d has unknown hint type: %s.\n", lines_read, token);
+            LogMessage("hints.txt line %d has unknown hint type: %s.", lines_read, token);
             return false;
         }
         // Parse hint_text.
@@ -213,7 +273,7 @@ bool ScavengerHunt::LoadHints() {
             strncpy(hints[num_hints].hint_text, token, Hint::kHintTextMaxLen - 1);
             hints[num_hints].hint_text[Hint::kHintTextMaxLen - 1] = '\0';
         } else {
-            LogMessage("hints.txt line %d is missing hint text.\n", lines_read);
+            LogMessage("hints.txt line %d is missing hint text.", lines_read);
             return false;
         }
         token = find_next_token(NULL, ",");  // Skip to the next CSV field.
@@ -225,7 +285,7 @@ bool ScavengerHunt::LoadHints() {
                 strncpy(hints[num_hints].hint_image_filename, token, Hint::kImageFilenameMaxLen - 1);
                 hints[num_hints].hint_text[Hint::kImageFilenameMaxLen - 1] = '\0';
             } else {
-                LogMessage("hints.txt line %d is missing an image filename.\n", lines_read);
+                LogMessage("hints.txt line %d is missing an image filename.", lines_read);
                 return false;
             }
             token = find_next_token(NULL, ",");  // Skip to the next CSV field.
@@ -245,17 +305,17 @@ bool ScavengerHunt::LoadHints() {
     }
 
     if (bytes_read != hints_txt_size_bytes) {
-        LogMessage("f_read error: read %lu bytes, expected %lu bytes\n", bytes_read, hints_txt_size_bytes);
+        LogMessage("f_read error: read %lu bytes, expected %lu bytes", bytes_read, hints_txt_size_bytes);
         return false;
     }
 
     fr = f_close(&hints_txt_file);
     if (FR_OK != fr) {
-        LogMessage("f_close error: %s (%d)\n", FRESULT_str(fr), fr);
+        LogMessage("f_close error: %s (%d)", FRESULT_str(fr), fr);
         return false;
     }
 
-    LogMessage("Loaded %d hints from SD card.\n", num_hints);
+    LogMessage("Loaded %d hints from SD card.", num_hints);
 
     if (!hints_in_use) {
         SaveHints();  // Save the hints to the ~hints.txt file.
@@ -270,7 +330,7 @@ bool ScavengerHunt::SaveHints() {
     FIL hints_txt_file;
     fr = f_open(&hints_txt_file, kHintsInUseFilename, FA_CREATE_ALWAYS | FA_WRITE);
     if (FR_OK != fr) {
-        LogMessage("Failed to create %s: %s (%d)\n", kHintsInUseFilename, FRESULT_str(fr), fr);
+        LogMessage("Failed to create %s: %s (%d)", kHintsInUseFilename, FRESULT_str(fr), fr);
         return false;
     }
 
@@ -323,7 +383,7 @@ bool ScavengerHunt::SaveHints() {
     // Close the file
     fr = f_close(&hints_txt_file);
     if (FR_OK != fr) {
-        LogMessage("Failed to close %s: %s (%d)\n", kHintsInUseFilename, FRESULT_str(fr), fr);
+        LogMessage("Failed to close %s: %s (%d)", kHintsInUseFilename, FRESULT_str(fr), fr);
         return false;
     }
 
@@ -339,10 +399,10 @@ bool ScavengerHunt::Reset() {
         // File exists, try to delete it
         fr = f_unlink(kHintsInUseFilename);
         if (fr != FR_OK) {
-            LogMessage("Failed to delete %s: %s (%d)\n", kHintsInUseFilename, FRESULT_str(fr), fr);
+            LogMessage("Failed to delete %s: %s (%d)", kHintsInUseFilename, FRESULT_str(fr), fr);
             return false;
         }
-        LogMessage("Deleted %s.\n", kHintsInUseFilename);
+        LogMessage("Deleted %s.", kHintsInUseFilename);
     }
 
     return true;
@@ -351,7 +411,8 @@ bool ScavengerHunt::Reset() {
 void ScavengerHunt::LogMessage(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    vsnprintf(status_text, Hint::kHintTextMaxLen, fmt, args);
-    printf(status_text);
+    vsnprintf(notification_text, Hint::kHintTextMaxLen, fmt, args);
+    notification.DisplayNotification(notification_text, 2000);
+    printf("%s\n", notification_text);
     va_end(args);
 }

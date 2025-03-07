@@ -9,6 +9,9 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Test")
     set(CMAKE_C_STANDARD 11)
     set(CMAKE_CXX_STANDARD 17)
 
+    # Disable stack guard for now since we intentionally overflow stack on core 0.
+    # add_compile_definitions(PICO_USE_STACK_GUARDS)
+
     if (PICO_SDK_VERSION_STRING VERSION_LESS "1.3.0")
         message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.3.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
     endif()

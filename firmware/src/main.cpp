@@ -40,25 +40,28 @@ GeepsGUI gui = GeepsGUI({.display = display});
 Servo servo = Servo({.pwm_pin = BSP::servo_pwm_pin, .enable_pin = BSP::servo_enable_pin});
 
 GUIStatusBar status_bar = GUIStatusBar({});
-GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = 30});
+GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = GUIStatusBar::kStatusBarHeight + 10});
 GUIBitMap splash_screen = GUIBitMap({});
 GUICompass compass = GUICompass({.pos_x = 150, .pos_y = 75});
 GUIMenu menu = GUIMenu({.pos_x = 10, .pos_y = 40});
+GUINotification notification = GUINotification({.pos_x = 10, .pos_y = 40});
 
-ScavengerHunt scavenger_hunt = ScavengerHunt();
+ScavengerHunt* scavenger_hunt_p = nullptr;
 
 void up_button_callback() {
     status_bar.button_up_clicked_timestamp = to_ms_since_boot(get_absolute_time());
     if (menu.visible) {
         menu.ScrollPrev();
     } else {
-        scavenger_hunt.IncrementRenderedHint();
+        scavenger_hunt_p->DecrementRenderedHint();
     }
 }
 void center_button_callback() {
     status_bar.button_center_clicked_timestamp = to_ms_since_boot(get_absolute_time());
     if (menu.visible) {
         menu.Select();
+    } else {
+        scavenger_hunt_p->TryHint(scavenger_hunt_p->rendered_hint_index);
     }
 }
 void down_button_callback() {
@@ -66,7 +69,7 @@ void down_button_callback() {
     if (menu.visible) {
         menu.ScrollNext();
     } else {
-        scavenger_hunt.DecrementRenderedHint();
+        scavenger_hunt_p->IncrementRenderedHint();
     }
 }
 
@@ -100,59 +103,7 @@ void BlinkStatusLED(uint16_t blink_period_ms, float duty_cycle = 0.5f) {
     }
 }
 
-void gpio_irq_callback(uint gpio, uint32_t events) {
-    // if (gpio == BSP::sd_card_detect_pin) {
-    //     // IRQ is from SD card.
-    //     card_detect_callback(gpio, events);
-    //     sprintf(scavenger_hunt.status_text, "SD card %s.", pSD->mounted ? "mounted" : "unmounted");
-    // } else {
-    //     // IRQ is from buttons.
-    buttons.GPIOIRQCallback(gpio, events);
-    // }
-}
-
-/**
- * Manipulates GUI elements to display a given hint.
- * @param hint Hint to render.
- */
-void RenderHint(Hint& hint) {
-    // Default settings.
-    hint_box.width_chars = 25;
-    compass.visible = false;
-    menu.visible = true;
-
-    switch (hint.hint_type) {
-        case Hint::kHintTypeText: {
-            strncpy(hint_box.text, hint.hint_text, GUITextBox::kTextMaxLen);
-            break;
-        }
-        case Hint::kHintTypeImage: {
-            strncpy(hint_box.text, hint.hint_image_filename, GUITextBox::kTextMaxLen);
-            break;
-        }
-        case Hint::kHintTypeDistance: {
-            float distance_to_hint_m = CalculateGeoidalDistance(
-                gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(), hint.lat_deg, hint.lon_deg);
-            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance: %.2f m\n\n%s", distance_to_hint_m,
-                     hint.hint_text);
-            break;
-        }
-        case Hint::kHintTypeHeading: {
-            float heading_to_hint_deg = CalculateHeadingToWaypoint(
-                gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(), hint.lat_deg, hint.lon_deg);
-            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Heading: %.2f deg\n\n%s", heading_to_hint_deg,
-                     hint.hint_text);
-            hint_box.width_chars = 10;
-            compass.visible = true;
-            compass.heading_deg = heading_to_hint_deg;
-            break;
-        }
-        default: {
-            strncpy(hint_box.text, "Invalid hint type.", GUITextBox::kTextMaxLen);
-            break;
-        }
-    }
-}
+void gpio_irq_callback(uint gpio, uint32_t events) { buttons.GPIOIRQCallback(gpio, events); }
 
 /**
  * Power off the system via the POHO control pin. Only works while on battery power.
@@ -182,11 +133,11 @@ void RefreshBatteryVoltage() {
     // printf("UpdateBatteryVoltage: ADC Counts: %d, Voltage: %.2f V, Percent: %.2f%%\n", adc_counts, voltage,
     //    status_bar.battery_charge_frac * 100);
 
-    if (status_bar.battery_charge_frac < 0.05f) {
-        scavenger_hunt.LogMessage("Battery critically low. Powering off.\n");
-        delay_ms(2000);  // Allow display to update.
-        PowerOff();
-    }
+    // if (status_bar.battery_charge_frac < 0.05f) {
+    //     scavenger_hunt->LogMessage("Battery critically low. Powering off.");
+    //     delay_ms(2000);  // Allow display to update.
+    //     PowerOff();
+    // }
 }
 
 /**
@@ -194,9 +145,6 @@ void RefreshBatteryVoltage() {
  */
 void main_core1() {
     gui.AddElement(&status_bar);
-    hint_box.width_chars = 25;
-    hint_box.pos_x = 10;
-    hint_box.pos_y = GUIStatusBar::kStatusBarHeight + 10;
     gui.AddElement(&hint_box);
     gui.AddElement(&splash_screen);
     gui.AddElement(&compass);
@@ -214,13 +162,16 @@ void main_core1() {
         delay_ms(1000);
         servo.Disable();
     });
-    menu.AddRow((char*)"Reset scavenger hunt.", []() { scavenger_hunt.Reset(); });
+    menu.AddRow((char*)"Reset scavenger hunt.", []() { scavenger_hunt_p->Reset(); });
     menu.AddRow((char*)"Power off (batt only).", []() {
         // Power off the system.
         PowerOff();
     });
+    menu.AddRow((char*)"Exit menu.", []() { menu.visible = false; });
     menu.visible = false;
     gui.AddElement(&menu);
+
+    gui.AddElement(&notification);
 
     compass.visible = false;
 
@@ -235,7 +186,7 @@ void main_core1() {
     uint32_t display_refresh_time_ms = 0;
 
     // Initialization loop.
-    while (!scavenger_hunt.skip_initialization && (!gps_fix_acquired || !sd_util.sd_card_mounted)) {
+    while (!scavenger_hunt_p->skip_initialization && (!gps_fix_acquired || !sd_util.sd_card_mounted)) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
         if (!gpio_get(BSP::button_top_pin) && !gpio_get(BSP::button_bottom_pin)) {
             if (!gpio_get(BSP::button_middle_pin)) {
@@ -243,8 +194,8 @@ void main_core1() {
                 menu.visible = true;
             } else {
                 // Skip initialization if both top and bottom buttons are held on bootup.
-                scavenger_hunt.skip_initialization = true;
-                scavenger_hunt.LogMessage("Skipped initialization.\n");
+                scavenger_hunt_p->skip_initialization = true;
+                scavenger_hunt_p->LogMessage("Skipped initialization.");
             }
         }
 
@@ -265,7 +216,7 @@ void main_core1() {
         snprintf(hint_box.text, Hint::kHintTextMaxLen, "Initializing... %c \n  SD CARD [%s]\n  GPS Fix [%s]\n",
                  spinner_chars[spinner_char_index], sd_util.sd_card_mounted ? "OK  " : "  NO",
                  gps_fix_acquired ? "OK  " : "  NO");
-        strcat(hint_box.text, scavenger_hunt.status_text);
+        strcat(hint_box.text, scavenger_hunt_p->status_text);
 
         BlinkStatusLED(10);
         if (curr_time_ms >= display_refresh_time_ms) {
@@ -279,8 +230,7 @@ void main_core1() {
     while (true) {
         uint32_t curr_time_ms = to_ms_since_boot(get_absolute_time());
 
-        Hint& rendered_hint = scavenger_hunt.hints[scavenger_hunt.rendered_hint_index];
-        RenderHint(rendered_hint);
+        scavenger_hunt_p->Render();
 
         if (curr_time_ms >= display_refresh_time_ms) {
             // Refresh the display.
@@ -309,17 +259,18 @@ int main() {
     adc_gpio_init(BSP::batt_vsense_pin);
     RefreshBatteryVoltage();
 
+    scavenger_hunt_p = new ScavengerHunt(status_bar, hint_box, compass, notification);
+
     multicore_reset_core1();
     multicore_launch_core1(main_core1);
 
     gps.Init();
 
-    // gpio_set_irq_callback(gpio_irq_callback);
     gpio_set_irq_enabled_with_callback(BSP::button_top_pin, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_callback);
     gpio_set_irq_enabled(BSP::button_middle_pin, GPIO_IRQ_EDGE_FALL, true);
     gpio_set_irq_enabled(BSP::button_bottom_pin, GPIO_IRQ_EDGE_FALL, true);
     buttons.Init();
-    scavenger_hunt.Init();
+    scavenger_hunt_p->Init();
     // gpio_set_irq_enabled(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
     // TODO: Plugging in the SD card when the MCU is already started causes the SPI peripheral to fail. There's an
     // assert buried in the SD Card filesystem module that causes everything to lock up when this happens. Maybe
@@ -328,11 +279,11 @@ int main() {
     // Mimic SD card being plugged in.
     gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);
     // Block on initializing scavenger hunt from SD card.
-    while (!scavenger_hunt.skip_initialization && !sd_util.sd_card_mounted) {
+    while (!scavenger_hunt_p->skip_initialization && !sd_util.sd_card_mounted) {
         // Wait for SD card to be mounted.
     }
-    scavenger_hunt.LoadHints();
-    while (!scavenger_hunt.skip_initialization &&
+    scavenger_hunt_p->LoadHints();
+    while (!scavenger_hunt_p->skip_initialization &&
            gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX) {
         // Wait for GPS fix.
         RefreshGPS();
@@ -342,9 +293,9 @@ int main() {
     while (true) {
         RefreshGPS();
         RefreshBatteryVoltage();
-        scavenger_hunt.Update(gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(),
-                              gps.latest_gga_packet.GetUTCTimeUint());
-        // strncpy(hint_box.text, scavenger_hunt.status_text, GUITextBox::kTextMaxLen);
+        scavenger_hunt_p->Update(gps.latest_gga_packet.GetLatitude(), gps.latest_gga_packet.GetLongitude(),
+                                 gps.latest_gga_packet.GetUTCTimeUint());
+        // strncpy(hint_box.text, scavenger_hunt->status_text, GUITextBox::kTextMaxLen);
         buttons.Update();
     }
 }

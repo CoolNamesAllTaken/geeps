@@ -51,17 +51,38 @@ class Hint {
 
 class ScavengerHunt {
    public:
-    static const uint16_t kMaxHints = 100;
+    static const uint16_t kMaxHints = 50;
     static const uint16_t kHintsFileLineMaxLen = 300;
     static const uint16_t kTitleMaxLen = 100;
+    static constexpr float kHintCompleteRadiusM = 10.0f;
 
-    ScavengerHunt() {};
+    ScavengerHunt(GUIStatusBar& status_bar_in, GUITextBox& hint_box_in, GUICompass& compass_in,
+                  GUINotification& notification_in)
+        : status_bar(status_bar_in), hint_box(hint_box_in), compass(compass_in), notification(notification_in) {};
 
     bool Init();
     bool Update(float lat_deg, float lon_deg, uint32_t timestamp_utc);
 
     bool LoadHints();
     bool SaveHints();
+
+    bool TryHint(uint16_t hint_index);
+    inline float GetDistanceToHint(uint16_t hint_index) {
+        if (hint_index >= num_hints) {
+            return -1.0f;
+        }
+        return GetDistanceToHint(hints[hint_index]);
+    }
+    float GetDistanceToHint(Hint& hint);
+    float GetHeadingToHint(uint16_t hint_index) {
+        if (hint_index >= num_hints) {
+            return -1.0f;
+        }
+        return GetHeadingToHint(hints[hint_index]);
+    }
+    float GetHeadingToHint(Hint& hint);
+
+    void Render();
 
     /**
      * Reset the scavenger hunt to the first hint.
@@ -73,10 +94,16 @@ class ScavengerHunt {
         if (rendered_hint_index < num_hints - 1) {
             rendered_hint_index++;
         }
+        if (hints[rendered_hint_index].completed_timestamp_utc != -1) {
+            LogMessage("Hint %d has already been completed.", rendered_hint_index);
+        }
     }
     inline void DecrementRenderedHint() {
         if (rendered_hint_index > 0) {
             rendered_hint_index--;
+        }
+        if (hints[rendered_hint_index].completed_timestamp_utc != -1) {
+            LogMessage("Hint %d has already been completed.", rendered_hint_index);
         }
     }
 
@@ -85,9 +112,10 @@ class ScavengerHunt {
     void LogMessage(const char* fmt, ...);
 
     Hint hints[kMaxHints];
-    uint16_t num_hints;
+    uint16_t num_hints = 0;
 
     char status_text[Hint::kHintTextMaxLen] = {'\0'};
+    char notification_text[GUINotification::kNotificationMaxNumChars] = {'\0'};
 
     // Labels read from hints.txt
     char title[kTitleMaxLen] = {'\0'};
@@ -96,9 +124,16 @@ class ScavengerHunt {
     uint16_t active_hint_index = 0;    // The hint we are looking for.
     uint16_t rendered_hint_index = 0;  // The hint we are displaying.
 
+    float last_update_lat_deg = 0.0f;
+    float last_update_lon_deg = 0.0f;
+    uint32_t last_update_timestamp_utc = 0;
+
     bool skip_initialization = false;
+
+    GUINotification& notification;
+    GUIStatusBar& status_bar;
+    GUITextBox& hint_box;
+    GUICompass& compass;
 
    private:
 };
-
-extern ScavengerHunt scavenger_hunt;
