@@ -80,13 +80,18 @@ class GUIBitMap : public GeepsGUIElement {
    public:
     static const uint16_t kFilenameMaxLen = 100;
     GUIBitMap(GeepsGUIElementConfig config_in);
+    bool ReadBitMapFromFile(const char *filename);
+    bool SetBitMap(uint16_t size_x, uint16_t size_y, uint8_t *bitmap);
     void Draw(EPaperDisplay &display);
 
-    uint16_t size_x, size_y;
-    uint8_t *bitmap = nullptr;
-    char filename[kFilenameMaxLen + 1] = {'\0'};
+    bool white_background = false;
 
    private:
+    char filename_[kFilenameMaxLen + 1] = {'\0'};
+    bool bitmap_from_file_ = false;
+    uint8_t *bitmap_data_ = nullptr;
+    uint16_t size_x_, size_y_;
+    bool bitmap_not_found_ = false;
 };
 
 class GUITextBox : public GeepsGUIElement {

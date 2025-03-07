@@ -228,11 +228,12 @@ void main_core1() {
     }
 
     // Display splash screen for 2 seconds.
-    strncpy(splash_screen.filename, scavenger_hunt_p->splash_image_filename, GUIBitMap::kFilenameMaxLen);
+    splash_screen.ReadBitMapFromFile(scavenger_hunt_p->splash_image_filename);
+    splash_screen.white_background = true;
     splash_screen.visible = true;
     gui.Draw(true);
-    delay_ms(10000);
-    // splash_screen.visible = false;
+    delay_ms(2000);
+    splash_screen.visible = false;
 
     // Main display and LED loop.
     while (true) {
