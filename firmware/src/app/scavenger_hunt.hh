@@ -54,7 +54,7 @@ class ScavengerHunt {
     static const uint16_t kTitleMaxLen = 100;
     static constexpr float kHintCompleteRadiusM = 10.0f;
 
-    static const uint32_t kInactivityTimeoutIntervalMs = 60'000 * 1;
+    static const uint32_t kInactivityTimeoutIntervalMs = 60'000 * 5;  // 5 minute inactivity timeout.
 
     ScavengerHunt(GUIStatusBar& status_bar_in, GUITextBox& hint_box_in, GUIBitMap& hint_image_in,
                   GUICompass& compass_in, GUINotification& notification_in)

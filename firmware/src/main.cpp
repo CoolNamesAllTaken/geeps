@@ -103,7 +103,10 @@ void BlinkStatusLED(uint16_t blink_period_ms, float duty_cycle = 0.5f) {
     }
 }
 
-void gpio_irq_callback(uint gpio, uint32_t events) { buttons.GPIOIRQCallback(gpio, events); }
+void gpio_irq_callback(uint gpio, uint32_t events) {
+    buttons.GPIOIRQCallback(gpio, events);
+    scavenger_hunt_p->UpdateInactivityTimer();
+}
 
 void RefreshBatteryVoltage() {
     static constexpr float kADCCountsToVolts = 1.51f * 3.3f / 4095.0f;
