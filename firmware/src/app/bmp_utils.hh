@@ -106,14 +106,16 @@ inline bool ReadBMPToBuffer(const char *filename, uint8_t *buffer, uint16_t buff
             buffer[buffer_index] &= ~(pixel_value << (kBitsPerByte - 1 - bit_index));
             printf("%c", pixel_value ? '#' : ' ');  // Print image as it is read (this will be upside down).
         }
-        uint16_t num_padding_bytes = (kBytesPerWord - ((kBMPBytesPerPixel * width) % kBytesPerWord) % kBytesPerWord);
+        uint16_t num_padding_bytes = (kBytesPerWord - ((kBMPBytesPerPixel * width) % kBytesPerWord)) % kBytesPerWord;
+        printf("[%d bytes padding]", num_padding_bytes);
         uint8_t throwaway_buf[num_padding_bytes];
-        fr = f_read(&bmp_file, throwaway_buf, sizeof(throwaway_buf), &bytes_read);
+        fr = f_read(&bmp_file, throwaway_buf, num_padding_bytes, &bytes_read);
         if (bytes_read != sizeof(throwaway_buf)) {
             printf("ReadBMPToBuffer: Failed to read padding bytes: %s (%d)\n", FRESULT_str(fr), fr);
             f_close(&bmp_file);
             return false;
         }
+
         printf("\n");
     }
 
