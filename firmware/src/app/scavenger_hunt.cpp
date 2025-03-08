@@ -36,6 +36,7 @@ bool ListFiles() {
 }
 
 bool ScavengerHunt::Init() {
+    inactivity_timeout_ms = to_ms_since_boot(get_absolute_time()) + kInactivityTimeoutIntervalMs;
     if (sd_init_driver() != 0) {
         return false;
     }
@@ -53,6 +54,7 @@ bool ScavengerHunt::TryHint(uint16_t hint_index) {
     if (GetDistanceToHint(hint_index) < kHintCompleteRadiusM) {
         hints[hint_index].completed_timestamp_utc = last_update_timestamp_utc;
         LogMessage("Hint %d completed at %lu. Yay!", hint_index, hints[hint_index].completed_timestamp_utc);
+        SaveHints();
         return true;
     }
     LogMessage("Not within %.0fm of hint %d.\n", kHintCompleteRadiusM, hint_index);
@@ -72,6 +74,8 @@ void ScavengerHunt::Render() {
     // Default settings.
     hint_box.width_chars = 25;
     compass.visible = false;
+    hint_image.visible = false;
+    hint_box.visible = true;
     strncpy(status_bar.center_button_label, "TRY", GUIStatusBar::kCenterButtonLabelLen);
 
     switch (hint.hint_type) {
@@ -80,20 +84,29 @@ void ScavengerHunt::Render() {
             break;
         }
         case Hint::kHintTypeImage: {
-            strncpy(hint_box.text, hint.hint_image_filename, GUITextBox::kTextMaxLen);
+            hint_image.ReadBitMapFromFile(hint.hint_image_filename);
+            hint_image.visible = true;
+            hint_box.visible = false;
             break;
         }
         case Hint::kHintTypeDistance: {
             float distance_to_hint_m = GetDistanceToHint(hint);
-            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance: %.2f m\n\n%s", distance_to_hint_m,
-                     hint.hint_text);
+
+            if (distance_to_hint_m > 1000.0f) {
+                // Display large distances in km.
+                snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance: %.2f km\n\n%s",
+                         distance_to_hint_m / 1000.0f, hint.hint_text);
+            } else {
+                // Display small distances in m.
+                snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Distance: %.0f m\n\n%s", distance_to_hint_m,
+                         hint.hint_text);
+            }
             break;
         }
         case Hint::kHintTypeHeading: {
             float heading_to_hint_deg = GetHeadingToHint(hint);
-            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "Heading: %.2f deg\n\n%s", heading_to_hint_deg,
-                     hint.hint_text);
-            hint_box.width_chars = 10;
+            snprintf(hint_box.text, GUITextBox::kTextMaxLen, "%.2f deg\n\n%s", heading_to_hint_deg, hint.hint_text);
+            hint_box.width_chars = 20;
             compass.visible = true;
             compass.heading_deg = heading_to_hint_deg;
             break;
@@ -106,21 +119,23 @@ void ScavengerHunt::Render() {
 }
 
 bool ScavengerHunt::Update(float lat_deg, float lon_deg, uint32_t timestamp_utc) {
+    if (to_ms_since_boot(get_absolute_time()) > inactivity_timeout_ms) {
+        // Timed out; shut down to preserve battery.
+        PowerOff();
+    }
+
     last_update_lat_deg = lat_deg;
     last_update_lon_deg = lon_deg;
     last_update_timestamp_utc = timestamp_utc;
 
-    for (uint16_t i = 0; i < num_hints; i++) {
-        if (hints[i].completed_timestamp_utc != -1) {
-            // Skip hints that have already been completed.
-            continue;
-        }
-        active_hint_index = i;
+    active_hint_index = 0;
+    for (; active_hint_index < num_hints && hints[active_hint_index].completed_timestamp_utc != -1;
+         active_hint_index++) {
     }
 
     // Update the current hint dot on the display.
-    status_bar.rendered_hint_frac = (float)(rendered_hint_index + 1) / num_hints;
-    status_bar.progress_frac = (float)(active_hint_index + 1) / num_hints;
+    status_bar.rendered_hint_frac = (float)rendered_hint_index / num_hints;
+    status_bar.progress_frac = (float)active_hint_index / num_hints;
     return true;
 }
 

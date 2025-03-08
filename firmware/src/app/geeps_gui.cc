@@ -14,6 +14,10 @@
 GUIBitMap::GUIBitMap(GeepsGUIElementConfig config_in) : GeepsGUIElement(config_in) {}
 
 bool GUIBitMap::ReadBitMapFromFile(const char *filename) {
+    if (strcmp(filename, filename_) == 0) {
+        // Already set, do nothing.
+        return true;
+    }
     bitmap_not_found_ = true;
     uint16_t filename_len = strlen(filename);
     if (filename_len == 0) {
@@ -38,8 +42,8 @@ bool GUIBitMap::ReadBitMapFromFile(const char *filename) {
     printf("GUIBitMap::ReadBitMapFromFile: Reading BMP file %s (%dx%d)\n", filename_, size_x_, size_y_);
     uint16_t bmp_data_size_bytes =
         (size_x_ + (kBitsPerByte - size_x_ % kBitsPerByte) % kBitsPerByte) * size_y_ / kBitsPerByte;
-    printf("GUIBitMap::ReadBitMapFromFile: Allocating %d Bytes for BMP data\n", bmp_data_size_bytes);
-    if (bitmap_from_file_) {
+    printf("GUIBitMap::ReadBitMapFromFile: Allocating %d Bytes for BMP data.\n", bmp_data_size_bytes);
+    if (bitmap_from_file_ && bitmap_data_ != nullptr) {
         free(bitmap_data_);
     }
     bitmap_from_file_ = true;
@@ -47,7 +51,8 @@ bool GUIBitMap::ReadBitMapFromFile(const char *filename) {
 
     if (!ReadBMPToBuffer(filename_, bitmap_data_, bmp_data_size_bytes, size_x_, size_y_)) {
         free(bitmap_data_);
-        printf("GUIBitMap::ReadBitMapFromFile: Failed to read BMP file %s\n", filename_);
+        bitmap_from_file_ = false;
+        printf("GUIBitMap::ReadBitMapFromFile: Failed to read BMP file %s.\n", filename_);
         return false;
     }
     printf("GUIBitMap::Draw: Read BMP file successfully.\n");
@@ -55,14 +60,19 @@ bool GUIBitMap::ReadBitMapFromFile(const char *filename) {
     return true;
 }
 
-bool GUIBitMap::SetBitMap(uint16_t size_x_, uint16_t size_y_, uint8_t *bitmap) {
+bool GUIBitMap::SetBitMap(uint16_t size_x, uint16_t size_y, uint8_t *bitmap) {
+    if (size_x == size_x_ && size_y == size_y_ && bitmap == bitmap_data_) {
+        // Already set, do nothing.
+        return true;
+    }
+
     bitmap_not_found_ = true;
     if (bitmap_from_file_) {
         free(bitmap_data_);
     }
     bitmap_from_file_ = false;
-    size_x_ = size_x_;
-    size_y_ = size_y_;
+    size_x_ = size_x;
+    size_y_ = size_y;
     bitmap_data_ = bitmap;
     bitmap_not_found_ = false;
     return true;
@@ -78,7 +88,7 @@ void GUIBitMap::Draw(EPaperDisplay &display) {
     if (bitmap_not_found_) {
         // Draw an empty rectangle with the bitmap dimensions and a question mark in the middle.
         display.DrawRectangle(pos_x, pos_y, size_x_, size_y_, EPaperDisplay::EPAPER_BLACK, false);
-        display.DrawText(pos_x + size_x_ / 2 - 5, pos_y + size_y_ / 2 - 5, "?");
+        display.DrawText(pos_x + size_x_ / 2 - 5, pos_y + size_y_ / 2 - 5, (char *)"?");
     } else {
         display.DrawBitMap(pos_x, pos_y, bitmap_data_, size_x_, size_y_, EPaperDisplay::EPAPER_BLACK);
     }
@@ -201,7 +211,7 @@ void GUIStatusBar::Draw(EPaperDisplay &display) {
     bool center_button_clicked = timestamp_ms - button_center_clicked_timestamp < kButtonClickHighlightIntervalMs;
     display.DrawRectangle(pos_x + 180, pos_y + kStatusBarHeight + 30, 30, 20, EPaperDisplay::EPAPER_BLACK,
                           center_button_clicked);
-    display.DrawText(pos_x + 185, pos_y + kStatusBarHeight + 35, center_button_label,
+    display.DrawText(pos_x + 186, pos_y + kStatusBarHeight + 38, center_button_label,
                      center_button_clicked ? EPaperDisplay::EPAPER_WHITE : EPaperDisplay::EPAPER_BLACK);
 }
 

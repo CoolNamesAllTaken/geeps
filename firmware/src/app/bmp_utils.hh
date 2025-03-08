@@ -5,6 +5,7 @@
 static const uint16_t kBitsPerByte = 8;
 static const uint16_t kBytesPerWord = 4;
 static const uint16_t kBMPFileHeaderSizeBytes = 14;
+static const uint16_t kBMPBytesPerPixel = 3;
 
 inline bool ReadBMPDimensions(const char *filename, uint16_t &width, uint16_t &height) {
     FIL bmp_file;
@@ -86,29 +87,32 @@ inline bool ReadBMPToBuffer(const char *filename, uint8_t *buffer, uint16_t buff
     for (uint16_t row = 0; row < height; row++) {
         uint16_t col = 0;
         for (; col < width; col++) {
-            uint8_t pixel_data[3];
-            f_read(&bmp_file, pixel_data, sizeof(pixel_data), &bytes_read);
+            uint8_t pixel_data[kBMPBytesPerPixel];
+            fr = f_read(&bmp_file, pixel_data, sizeof(pixel_data), &bytes_read);
             if (bytes_read != sizeof(pixel_data)) {
-                printf("ReadBMPToBuffer: Failed to read pixel data: %s (%d)\n", FRESULT_str(fr), fr);
+                printf(
+                    "ReadBMPToBuffer: Failed to read pixel data at row %d col %d: expected %d bytes but got %d, error "
+                    "code %s (%d)\n",
+                    row, col, sizeof(pixel_data), bytes_read, FRESULT_str(fr), fr);
                 f_close(&bmp_file);
                 return false;
             }
-            uint8_t pixel_value = (pixel_data[0] + pixel_data[1] + pixel_data[2]) > 0 ? 0 : 1;
+            // Any pixel that isn't all white is considered black. This lets us use different colors for the bitmaps
+            // without causing issues.
+            uint8_t pixel_value = (pixel_data[0] + pixel_data[1] + pixel_data[2]) < 3 * UINT8_MAX ? 1 : 0;
             // Reverse rows since image is stored upside down.
             uint16_t buffer_index = (height - 1 - row) * buffer_bytes_per_row + col / kBitsPerByte;
             uint8_t bit_index = col % kBitsPerByte;
             buffer[buffer_index] &= ~(pixel_value << (kBitsPerByte - 1 - bit_index));
-            printf("%c", pixel_value ? '#' : '0');  // Print image as it is read (this will be upside down).
+            printf("%c", pixel_value ? '#' : ' ');  // Print image as it is read (this will be upside down).
         }
-        while (col % kBytesPerWord != 0) {
-            uint8_t padding_byte;
-            f_read(&bmp_file, &padding_byte, sizeof(padding_byte), &bytes_read);
-            if (bytes_read != sizeof(padding_byte)) {
-                printf("ReadBMPToBuffer: Failed to read padding byte: %s (%d)\n", FRESULT_str(fr), fr);
-                f_close(&bmp_file);
-                return false;
-            }
-            col++;
+        uint16_t num_padding_bytes = (kBytesPerWord - ((kBMPBytesPerPixel * width) % kBytesPerWord) % kBytesPerWord);
+        uint8_t throwaway_buf[num_padding_bytes];
+        fr = f_read(&bmp_file, throwaway_buf, sizeof(throwaway_buf), &bytes_read);
+        if (bytes_read != sizeof(throwaway_buf)) {
+            printf("ReadBMPToBuffer: Failed to read padding bytes: %s (%d)\n", FRESULT_str(fr), fr);
+            f_close(&bmp_file);
+            return false;
         }
         printf("\n");
     }

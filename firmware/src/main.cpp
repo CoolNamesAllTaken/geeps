@@ -17,7 +17,6 @@
 
 const uint16_t kGPSUpdateIntervalMs = 5;        // [ms]
 const uint16_t kDisplayUpdateIntervalMs = 500;  // [ms]
-const uint16_t kStatusLEDBlinkIntervalMs = 500;
 const uint16_t kMsPerSec = 1e3;
 static const uint32_t kButtonDebounceIntervalMs = 10;
 
@@ -41,6 +40,7 @@ Servo servo = Servo({.pwm_pin = BSP::servo_pwm_pin, .enable_pin = BSP::servo_ena
 
 GUIStatusBar status_bar = GUIStatusBar({});
 GUITextBox hint_box = GUITextBox({.pos_x = 10, .pos_y = GUIStatusBar::kStatusBarHeight + 10});
+GUIBitMap hint_image = GUIBitMap({.pos_x = 0, .pos_y = GUIStatusBar::kStatusBarHeight});
 GUIBitMap splash_screen = GUIBitMap({});
 GUICompass compass = GUICompass({.pos_x = 150, .pos_y = 75});
 GUIMenu menu = GUIMenu({.pos_x = 10, .pos_y = 40});
@@ -105,15 +105,6 @@ void BlinkStatusLED(uint16_t blink_period_ms, float duty_cycle = 0.5f) {
 
 void gpio_irq_callback(uint gpio, uint32_t events) { buttons.GPIOIRQCallback(gpio, events); }
 
-/**
- * Power off the system via the POHO control pin. Only works while on battery power.
- */
-void PowerOff() {
-    gpio_init(BSP::poho_ctrl_pin);
-    gpio_set_dir(BSP::poho_ctrl_pin, GPIO_OUT);
-    gpio_put(BSP::poho_ctrl_pin, 1);
-}
-
 void RefreshBatteryVoltage() {
     static constexpr float kADCCountsToVolts = 1.51f * 3.3f / 4095.0f;
     static constexpr float kADCLpFilterWeight = 0.5f;
@@ -145,6 +136,8 @@ void RefreshBatteryVoltage() {
  */
 void main_core1() {
     gui.AddElement(&status_bar);
+    hint_image.visible = false;
+    gui.AddElement(&hint_image);
     gui.AddElement(&hint_box);
     splash_screen.visible = false;
     gui.AddElement(&splash_screen);
@@ -166,7 +159,7 @@ void main_core1() {
     menu.AddRow((char*)"Reset scavenger hunt.", []() { scavenger_hunt_p->Reset(); });
     menu.AddRow((char*)"Power off (batt only).", []() {
         // Power off the system.
-        PowerOff();
+        scavenger_hunt_p->PowerOff();
     });
     menu.AddRow((char*)"Exit menu.", []() { menu.visible = false; });
     menu.visible = false;
@@ -219,7 +212,6 @@ void main_core1() {
                  gps_fix_acquired ? "OK  " : "  NO");
         strcat(hint_box.text, scavenger_hunt_p->status_text);
 
-        BlinkStatusLED(10);
         if (curr_time_ms >= display_refresh_time_ms) {
             // Refresh the display.
             gui.Draw(true);
@@ -268,7 +260,7 @@ int main() {
     adc_gpio_init(BSP::batt_vsense_pin);
     RefreshBatteryVoltage();
 
-    scavenger_hunt_p = new ScavengerHunt(status_bar, hint_box, compass, notification);
+    scavenger_hunt_p = new ScavengerHunt(status_bar, hint_box, hint_image, compass, notification);
 
     multicore_reset_core1();
     multicore_launch_core1(main_core1);
@@ -280,10 +272,6 @@ int main() {
     gpio_set_irq_enabled(BSP::button_bottom_pin, GPIO_IRQ_EDGE_FALL, true);
     buttons.Init();
     scavenger_hunt_p->Init();
-    // gpio_set_irq_enabled(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
-    // TODO: Plugging in the SD card when the MCU is already started causes the SPI peripheral to fail. There's an
-    // assert buried in the SD Card filesystem module that causes everything to lock up when this happens. Maybe
-    // just wrap the MountSDCard() function in a watchdog timer?
 
     // Mimic SD card being plugged in.
     gpio_irq_callback(BSP::sd_card_detect_pin, GPIO_IRQ_EDGE_FALL);
@@ -295,14 +283,10 @@ int main() {
     while (!scavenger_hunt_p->skip_initialization &&
            gps.latest_gga_packet.GetPositionFixIndicator() != GGAPacket::PositionFixIndicator_t::GPS_FIX) {
         // Wait for GPS fix.
+        BlinkStatusLED(100);
         RefreshGPS();
         RefreshBatteryVoltage();
     }
-
-    // Display splash screen for 2 seconds.
-    // strncpy(splash_screen.filename, scavenger_hunt_p->splash_image_filename, GUIBitMap::kFilenameMaxLen);
-    // gui.Draw(true);
-    // delay_ms(2000);
 
     while (true) {
         RefreshGPS();

@@ -41,8 +41,6 @@ class Hint {
 
     char hint_text[kHintTextMaxLen] = {'\0'};
     char hint_image_filename[kImageFilenameMaxLen] = {'\0'};
-    uint16_t hint_image_width;
-    uint16_t hint_image_height;
 
     int32_t completed_timestamp_utc = -1;  // UTC timestamp when hint was completed.
 
@@ -56,12 +54,31 @@ class ScavengerHunt {
     static const uint16_t kTitleMaxLen = 100;
     static constexpr float kHintCompleteRadiusM = 10.0f;
 
-    ScavengerHunt(GUIStatusBar& status_bar_in, GUITextBox& hint_box_in, GUICompass& compass_in,
-                  GUINotification& notification_in)
-        : status_bar(status_bar_in), hint_box(hint_box_in), compass(compass_in), notification(notification_in) {};
+    static const uint32_t kInactivityTimeoutIntervalMs = 60'000 * 1;
+
+    ScavengerHunt(GUIStatusBar& status_bar_in, GUITextBox& hint_box_in, GUIBitMap& hint_image_in,
+                  GUICompass& compass_in, GUINotification& notification_in)
+        : status_bar(status_bar_in),
+          hint_box(hint_box_in),
+          hint_image(hint_image_in),
+          compass(compass_in),
+          notification(notification_in) {};
 
     bool Init();
     bool Update(float lat_deg, float lon_deg, uint32_t timestamp_utc);
+
+    inline void UpdateInactivityTimer() {
+        inactivity_timeout_ms = to_ms_since_boot(get_absolute_time()) + kInactivityTimeoutIntervalMs;
+    }
+    /**
+     * Power off the system via the POHO control pin. Only works while on battery power.
+     */
+    inline void PowerOff() {
+        LogMessage("Powering off...");
+        gpio_init(BSP::poho_ctrl_pin);
+        gpio_set_dir(BSP::poho_ctrl_pin, GPIO_OUT);
+        gpio_put(BSP::poho_ctrl_pin, 1);
+    }
 
     bool LoadHints();
     bool SaveHints();
@@ -132,8 +149,11 @@ class ScavengerHunt {
 
     GUIStatusBar& status_bar;
     GUITextBox& hint_box;
+    GUIBitMap& hint_image;
     GUICompass& compass;
     GUINotification& notification;
+
+    uint32_t inactivity_timeout_ms;
 
    private:
 };
