@@ -69,7 +69,13 @@ void down_button_callback() {
     if (menu.visible) {
         menu.ScrollNext();
     } else {
-        scavenger_hunt_p->IncrementRenderedHint();
+        // At the end of the scavenger hunt, allow access to the admin menu.
+        if (scavenger_hunt_p->rendered_hint_index == scavenger_hunt_p->num_hints - 1 &&
+            scavenger_hunt_p->active_hint_index == scavenger_hunt_p->num_hints) {
+            menu.visible = true;
+        } else {
+            scavenger_hunt_p->IncrementRenderedHint();
+        }
     }
 }
 
