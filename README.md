@@ -3,11 +3,13 @@ Pronounced Gee-Pee-Ess.
 
 ## Docker Setup Instructions
 
-Run these commands from the `docker` directory.
+Run these commands from the top level directory.
 
 NOTE: Cloning git repos onto windows may result in files with CR+LF line endings. Docker does NOT like these, and they will break everything. Make sure that you set `git config --global core.autocrlf false` before cloning repos that will get added or mounted to a Docker container.
 
 ### Build the Docker Image
+
+Be sure to run `git submodule update --init` before building!
 
 From this directory, run the following shell command.
 
@@ -41,3 +43,31 @@ docker image rm pico-dev-image
 2. Right click on the available pico-dev-container and select "Attach Visual Studio Code" from the dropdown menu.
 3. Open the attached VS Code, and wait for it to finish installing docker stuff.
 4. In the attached visual studio code, install Cortex-Debug and the C/C++ extension.
+5. To debug using the `launch.json` file in the `firmware/.vscode` directory, use the "Open Folder" function to navigate the attached VS Code instance to the `firmware` directory.
+
+## Building Tests
+
+### Build GoogleTest
+In the docker container, navigate to the `modules/googletest` folder and execute the following.
+
+```bash
+cd googletest        # Main directory of the cloned repository.
+mkdir build          # Create a directory to hold the build output.
+cd build
+cmake -DBUILD_SHARED_LIBS=ON .. # Generate build scripts with .so files.
+make
+```
+
+This will generate the libgtest.so file that is a dependency of the Geeps tests in the next section.
+
+### Build Geeps Tests
+Create a folder called `test/build` and open a terminal there.
+```bash
+cmake ..
+make
+./geeps_test
+```
+
+## Initializing Submodules
+
+From the `modules` directory, run `git submodule update --init --recursive`.
